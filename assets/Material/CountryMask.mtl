@@ -1,0 +1,20 @@
+{
+  "__type__": "cc.Material",
+  "_name": "CountryMask",
+  "_objFlags": 0,
+  "_native": "",
+  "_effectAsset": {
+    "__uuid__": "6deb374b-6f4d-4f85-864c-06f3a6eda795"
+  },
+  "_techniqueIndex": 0,
+  "_techniqueData": {
+    "0": {
+      "defines": {
+        "USE_TEXTURE": true
+      },
+      "props": {
+        "u_percentageLoss": 0
+      }
+    }
+  }
+}

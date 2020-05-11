@@ -1,0 +1,255 @@
+// Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.  
+
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: vs
+      frag: fs
+      blendState:
+        targets:
+        - blend: true
+      rasterizerState:
+        cullMode: none
+      properties:
+        texture: { value: white }
+        time: { value: 0.5 }
+        resolution: { value: [1, 1] }
+        u_percentageLoss: { value: 100.0 }
+        u_percentagePreparedness: { value: 100.0 }
+        u_zoom: { value: 1.0 }
+        u_cellSize: { value: 10.0 }
+        u_randFactor: { value: 0.8 }
+        u_randAlpha: { value: 0.8 }
+        u_sizePower: { value: 3.0 }
+        u_sizeMultiplier: { value: 1.75 }
+        u_stepMin: { value: 0.25 }
+        u_stepMax: { value: 1.0 }
+        u_borderRadius: { value: .001 }
+}%
+
+
+CCProgram vs %{
+  precision highp float;
+
+  #include <cc-global>
+  #include <cc-local>
+
+  in vec3 a_position;
+  in vec4 a_color;
+  out vec4 v_color;
+
+  #if USE_TEXTURE
+  in vec2 a_uv0;
+  out vec2 v_uv0;
+  #endif
+
+  void main () {
+    vec4 pos = vec4(a_position, 1);
+
+    #if CC_USE_MODEL
+    pos = cc_matViewProj * cc_matWorld * pos;
+    #else
+    pos = cc_matViewProj * pos;
+    #endif
+
+    #if USE_TEXTURE
+    v_uv0 = a_uv0;
+    #endif
+
+    v_color = a_color;
+
+    gl_Position = pos;
+  }
+}%
+
+
+CCProgram fs %{
+  precision highp float;
+  
+  #include <alpha-test>
+  #include <texture>
+
+  in vec4 v_color;
+
+  #if USE_TEXTURE
+  in vec2 v_uv0;
+  uniform sampler2D texture;
+  #endif
+
+  uniform VARS {
+    vec4 u_colorForLoss;
+    vec4 u_colorForPreparedness;
+    vec2 u_location;
+    vec2 resolution;
+    float time;
+    float u_threshold;
+    float u_percentageLoss;
+    float u_percentagePreparedness;
+    float u_selected;
+    float u_zoom;
+    float u_dotSize;
+
+    float u_cellSize;
+    float u_randFactor;
+    float u_randAlpha;
+    float u_sizePower;
+    float u_sizeMultiplier;
+    float u_stepMin;
+    float u_stepMax;
+    float u_borderRadius;
+
+  };
+
+  float rand(vec2 st) {
+      return fract(sin(dot(st, vec2(12.839, 78.149))) * 43758.5453);
+  }
+
+  float randForCell(vec2 coord, vec2 offset) {
+      // Cell location
+      vec2 cellCoords = vec2(floor((coord.x + offset.x) / u_cellSize), floor((coord.y + offset.y) / u_cellSize));
+      return rand(cellCoords);
+  }
+
+  float cell(vec2 coord, vec2 offset, vec2 shift) {
+      // Cell location
+      vec2 cellCoords = vec2(floor((coord.x + offset.x) / u_cellSize), floor((coord.y + offset.y) / u_cellSize));
+      // Relative position in cell
+      vec2 cellDist = vec2(mod((coord.x + offset.x), u_cellSize), mod((coord.y + offset.y), u_cellSize));
+      // Get a pseudo random number
+      float r = 1.0 - rand(cellCoords + shift) * u_randFactor;
+      // Subtract cell cell, with a pseudo random value
+      cellDist -= u_cellSize / 2.0 * r;
+      // Subtract from offset, to allow for overlapping
+      cellDist = offset - cellDist;
+      // Normalize
+      cellDist /= u_cellSize / 2.0;
+      // Get length
+      float cd = length(cellDist);
+      // To produce fewer larger dots, exponentiate
+      // Since a lower number means a larger size, invert
+      float size = 1. / (u_sizeMultiplier * pow(r, u_sizePower));
+      
+      // Adjust alpha
+      return 1. - smoothstep(u_stepMin, u_stepMax, cd * size * r);
+  }
+
+  // Centre of cell
+  vec2 cc(vec2 coord) {
+      vec2 cellCoords = vec2(floor(coord.x / u_cellSize), floor(coord.y / u_cellSize));
+      return cellCoords * u_cellSize + u_cellSize / 2.0;
+  }
+
+  // Resolution shortcut
+  vec2 rs(vec2 coord) {
+      return coord.xy / resolution.xy;
+  }
+
+  float textureAlpha(vec2 coord) {
+      float alpha = 1.-randForCell(-coord, vec2(0., 0.)) * u_randAlpha;
+      return alpha * texture(texture, v_uv0).a;
+  }
+  float cellIntensity(vec2 coord, vec2 offset, vec2 shift) {
+      return cell(coord, offset, shift) * textureAlpha(coord + offset);
+  }
+  // Intensity of the dot
+  float dotIntensity(vec2 coord, vec2 shift) {
+      coord -= shift;
+      
+      // Get a float value representing dot intensity 
+      float di = 0.;
+      di += cellIntensity(coord, vec2(0., 0.), shift);
+      // To allow for dots to spill over into neighbouring cells,
+      // accumulate neighbouring cell values
+      di += cellIntensity(coord, vec2(0., u_cellSize), shift);
+      di += cellIntensity(coord, vec2(0., -u_cellSize), shift);
+      di += cellIntensity(coord, vec2(u_cellSize, 0.), shift);
+      di += cellIntensity(coord, vec2(-u_cellSize, 0.), shift);
+      di += cellIntensity(coord, vec2(u_cellSize, u_cellSize), shift);
+      di += cellIntensity(coord, vec2(u_cellSize, -u_cellSize), shift);
+      di += cellIntensity(coord, vec2(-u_cellSize, u_cellSize), shift);
+      di += cellIntensity(coord, vec2(-u_cellSize, -u_cellSize), shift);
+      // di = step(1.-di, .5);
+
+      return di;
+  }
+
+  vec4 makeBorder(vec2 coord) {
+      float radius = (u_borderRadius * u_borderRadius) / (resolution.x * resolution.y);
+
+      // float radius = 0.001;// / (resolution.x * resolution.y);
+      vec3 greyDark = vec3(42.0 / 255.0, 54.0 / 255.0, 68.0 / 255.0);
+      vec4 accum = texture(texture, (coord.xy));
+      // // vec4 accum = vec4(0.);
+      accum += texture(texture, (coord.xy + vec2(0., radius)));
+      accum += texture(texture, (coord.xy + vec2(0., - radius)));
+      accum += texture(texture, (coord.xy + vec2(radius, 0.)));
+      accum += texture(texture, (coord.xy + vec2(- radius, 0.)));
+      accum += texture(texture, (coord.xy + vec2(- radius, - radius)));
+      accum += texture(texture, (coord.xy + vec2(radius, - radius)));
+      accum += texture(texture, (coord.xy + vec2(radius, radius)));
+      accum += texture(texture, (coord.xy + vec2(- radius, radius)));
+      accum /= 9.;
+      accum = 1.0 - (abs(0.5 - accum) * 2.);
+      accum.rgb = greyDark * accum.a;
+      // accum *= u_selected;
+      return accum;
+  }
+
+  vec4 overlay(vec4 under, vec4 over) {
+      return over.a * over + ((1.-length(over.rgb)*over.a) * under);
+  }
+
+  void main () {
+    // Accumulates various effects
+    vec4 mask = vec4(0.);
+    vec4 o = vec4(1.);
+
+    // Get the resolution
+    vec2 uv = v_uv0;
+    // Test wavy effects
+    // uv.y += 0.05 * sin(iTime + uv.x * 10.0);
+    // uv.x += 0.05 * sin(iTime + uv.y * 10.0);
+
+    #if USE_TEXTURE
+      CCTexture(texture, uv, o);
+    #endif
+
+    // Do outline
+    vec4 border = makeBorder(uv);    
+    // o *= v_color;
+    // o += border;
+
+    // Illuminate cities
+    vec3 cities = vec3(smoothstep(0.42, 0.42, texture(texture, v_uv0.xy)));
+
+    // Do the dots
+    vec2 st = gl_FragCoord.xy - u_location.xy / u_zoom;
+    // One set of dots
+    float di1 = dotIntensity(st, vec2(0., 0.));
+    // Another set of dots
+    float di2 = dotIntensity(st, vec2(u_cellSize * 0.5, u_cellSize * 0.5));
+    // float di2 = dotIntensity(st, vec2(u_cellSize*0.5, u_cellSize*0.5));
+
+    // Fill values
+    float v1 = ( 1.0 - u_percentageLoss / 100.0 );
+    v1 = v1 * v1 * v1;
+    float v2 = ( 1.0 - u_percentagePreparedness / 100.0 );
+    v2 = v2 * v2 * v2;
+
+    // Construct the mask
+    // Add border
+    mask = border;
+    
+    vec4 color1 = vec4(di1, 0., 0., di1);
+    color1 *= 1. - v1;
+    vec4 color2 = vec4(0., di2, 0., di2);
+    color2 *= 1. - v2;
+    mask = overlay(mask, color1);
+    mask = overlay(mask, color2);
+
+    ALPHA_TEST(o);
+
+    // gl_FragColor = mask;
+    gl_FragColor = mask;
+  }
+}%

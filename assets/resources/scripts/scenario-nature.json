@@ -1,0 +1,153 @@
+{
+	"version":"1.0",
+	"eng": { 
+		"name": "Nature Scenario",
+		"description": "Obtained from Rintoul et al. (2018), 'Choosing the future of Antarctica', Nature, 558, 233-241",
+		"icon": "",
+		"feedback_email": "",
+		"threat_type": "",
+		"threat_type_locked": "",
+		"threat_name": "",
+		"popup_1_title": "Welcome to Antarctic Futures",
+		"popup_1_description": "The future of Antarctica and the future of the world are deeply connected. What kind of policy action will halt climate change and save Antarctica from environmental destruction? The aim of the game is to build the right global policy platform to survive until year 2070.",
+		"popup_2_title": "OK",
+		"popup_2_description": "Click on the blue icons to collect resources!",
+		"messages": {
+			"negative": [
+				"Global temperatures are rising, and could be 3.5 degrees higher by 2070!",
+				"New ice-free areas are appearing on the Antarctic continent!",
+				"Warming of Southern Oceans pose risks to shellfish and other marine life.",
+				"Fishing, tourism and commercial shipping are expanding in the Southern Ocean!",
+				"Globally, sea level rises cost coastal cities $1 trillion USD each year!",
+				"Ships can now access new parts of the Antarctic continent...",
+				"Warmer waters see a rise in baleen whales!",
+				"Southern Ocean fish and penguin populations are declining...",
+				"Invasive species - grasses, insects, biota - are settling permanently in Antarctica...",
+				"Calls to protect endangered species appear to be ignored by Antarctic Treaty signatories...",
+				"Human population is on track to exceed 10 billion by 2070...",
+				"New technologies are enabling polar mining for oil and other resources!",
+				"Antarctica tourism reaches 1 million visitors per year!"
+			],
+			"positive": [
+				"Finally! The physical environment of Antarctica and the Southern Ocean is returning to 2020 levels...",
+				"'Hey Jude'! Ozone levels in the Antarctic stratosphere are returning to the values of the 1960s...",
+				"Ocean acidification is no longer increasing dramatically...",
+				"Major ice shelves remain in tact... for now.",
+				"Sea level rises are restricted to 6cm per annum!",
+				"Systematic conservation begins...",
+				"Great! Invasive species are unable to settle permanently on the Antarctic!",
+				"Decisive steps are being taken to limit the impact of increased human engagement with Antarctica.",
+				"Truly global action on the Sustainable Development Goals is now underway!",
+				"Eureka! Scientists discover new compounds from Antarctic biota, with major industrial and medical applications..."
+			]
+		}
+	
+	},
+	"esp": {
+		"name": "Escenario de la naturaleza",
+		"description": "Obtenido de Rintoul et al. (2018), 'Choosing the future of Antarctica', Nature, 558, 233-241",
+		"icon": "",
+		"feedback_email": "",
+		"threat_type": "",
+		"threat_type_locked": "",
+		"threat_name": "",
+		"popup_1_title": "Bienvenido a Antarctic Futures",
+		"popup_1_description": "El futuro de la Antártida y el futuro del mundo están profundamente conectados. ¿Qué tipo de acción política detendrá el cambio climático y salvará a la Antártida de la destrucción del medio ambiente? El objetivo del juego es construir la plataforma de política global adecuada para sobrevivir hasta el año 2070.",
+		"popup_2_title": "OK",
+		"popup_2_description": "Haga clic en los iconos azules para reunir recursos!",
+		"messages": {
+			"negative": [
+				"Las temperaturas globales están subiendo, y podrían ser 3,5 grados más altas para el año 2070!",
+				"Nuevas áreas libres de hielo están apareciendo en el continente antártico!",
+				"El calentamiento de los océanos meridionales plantea riesgos para los mariscos y otras formas de vida marina.",
+				"La pesca, el turismo y la navegación comercial se están expandiendo en el Océano Antártico!",
+				"A nivel mundial, el aumento del nivel del mar cuesta a las ciudades costeras 1 billón de dólares al año.",
+				"Los barcos ya pueden acceder a nuevas partes del continente antártico....",
+				"Las aguas más cálidas ven un aumento en las ballenas con barbas!",
+				"Las poblaciones de peces y pingüinos del Océano Austral están disminuyendo....",
+				"Las especies invasoras - hierbas, insectos, biota - se están asentando permanentemente en la Antártida....",
+				"Los llamamientos para proteger las especies amenazadas parecen ser ignorados por los signatarios del Tratado Antártico...",
+				"La población humana va camino de superar los 10.000 millones para 2070...",
+				"Las nuevas tecnologías están permitiendo la minería polar para el petróleo y otros recursos!",
+				"El turismo en la Antártida alcanza el millón de visitantes al año!"
+			],
+			"positive": [
+				"¡Por fin! El entorno físico de la Antártida y el Océano Austral está volviendo a los niveles de 2020...",
+				"¡Hey Jude! Los niveles de ozono en la estratosfera antártica están volviendo a los valores de la década de 1960....",
+				"La acidificación de los océanos ya no está aumentando drásticamente...",
+				"Las principales plataformas de hielo permanecen intactas.... por ahora.",
+				"El aumento del nivel del mar está restringido a 6 cm por año!",
+				"Comienza la conservación sistemática....",
+				"¡Genial! Las especies invasoras no pueden establecerse permanentemente en la Antártida!",
+				"Se están tomando medidas decisivas para limitar el impacto del aumento de la participación humana en la Antártida.",
+				"La acción verdaderamente global sobre los Objetivos de Desarrollo Sostenible ya está en marcha!",
+				"¡Eureka! Los científicos descubren nuevos compuestos de la biota antártica, con importantes aplicaciones industriales y médicas...."
+			]
+		}
+	
+	},
+    "start_country": "",
+    "start_country_locked": "",
+    "start_country_percentage_affected": "",
+    "start_country_percentage_dead": "",
+    "start_country_percentage_zombie": "",
+
+    "scenario_score_adjusted": "",
+    "event_restriction": "",
+    "lock_difficulty": "",
+    "gene_selection": "",
+    "allow_cheats": "",
+
+    "start_specified": 1,
+    "start_day": 1,
+    "start_month": 8,
+	"start_year": 2018,
+	"target_month": 1,
+	"target_year": 2070,
+
+	"starting_resources": 8,
+
+    "threat_details" : {
+    	"threat_template": "",
+    	"starting_conditions": {
+	    	"starting_loss": 0.1,
+	    	"starting_infectivity": 1,
+	    	"starting_severity": 1,
+	    	"starting_lethality": 10
+    	},
+    	"transmission": {
+	    	"transmission_air": 1.0,
+	    	"transmission_sea": 1.0,
+	    	"transmission_land": 1.0    		
+    	},
+    	"environmental_effectivness": {
+    		"wealthy_country": 0.0,
+    		"poor_country": 1.0,
+    		"urban_country": 1.0,
+    		"rural_country": 1.0,
+    		"hot_country": 0.1,
+    		"cold_country": 0.1,
+    		"humid_country": 1.0,
+    		"arid_country": 1.0
+    	},
+    	"other_stats": {
+    		"cure_requirement": 0.0, 
+    		"mutation_likelihood": 0.5
+    	},
+    	"advanced_stats": {
+    		"loss_increase_speed": 0.02, 
+    		"minimum_loss_increase": 0.002, 
+    		"infectivity_increase_speed": 1.0, 
+    		"minimum_infectivity_increase": 0.1, 
+    		"severity_increase_speed": 1.0, 
+    		"minimum_severity_increase": 1.0, 
+    		"lethality_increase_speed": 0.05, 
+    		"minimum_lethality_increase_speed": 0.4, 
+    		"enable_corpse_transmission": false,
+    		"enable_land_transmission": true,
+    		"enable_sea_transmission": true,
+    		"enable_air_transmission": true,
+    		"infected_points_pot": 0 
+    	}
+	}
+}
