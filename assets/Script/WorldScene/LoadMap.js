@@ -146,16 +146,6 @@ cc.Class({
     /**
      * Returns an array of points associated with a country.
      */
-    pointArrayOLD(world, name) {
-
-        return world.sortedObjs.filter(so => so.name == name).map(so => so.points);
-
-    },
-
-
-    /**
-     * Returns an array of points associated with a country.
-     */
     pointArray(world, name) {
 
         return world.countriesJson[name].points;
@@ -279,44 +269,40 @@ cc.Class({
     initCountries() { 
         let world = this;
 
-        /*
-        this.sortedObjs = this.map.getObjectGroups()[0].getObjects().slice(0).sort((a, b) => { 
-            return (a.points[0].y * cc.winSize.height + a.points[0].x) > (b.points[0].y * cc.winSize.height + b.points[0].x);  
-        }); 
-        world.countries = world.map.getObjectGroups()[0].getObjects().reduce((map, obj) => {  
+        world.countries = Object.values(world.countriesJson).reduce((map, obj) => {  
 
-            if (!map[obj.name]) {
+                if (!map[obj.iso_a3]) {
 
-                map[obj.name] = {
+                map[obj.iso_a3] = {
 
-                    name: obj.NAME,
-                    points: this.pointArray(world, obj.name),
-                    extremes: this.extremes(world, obj.name),
-                    centroid: this.centroids(world, obj.name),
-                    area: this.areas(world, obj.name),
+                    name: obj.name,
+                    points: this.pointArray(world, obj.iso_a3),
+                    extremes: this.extremes(world, obj.iso_a3),
+                    centroid: this.centroids(world, obj.iso_a3),
+                    area: this.areas(world, obj.iso_a3),
                     
                     affected_chance: 1.0,
-                    pop_est: parseInt(obj.POP_EST),
+                    pop_est: parseInt(obj.pop_est),
                     pop_aware: 0,
                     pop_aware_percent: 0,
                     pop_prepared: 0,
                     pop_prepared_percent: 0,
 
-                    gdp_est: parseInt(obj.GDP_MD_EST),
-                    gid: obj.GID,
-                    iso_a2: obj.ISO_A2,
-                    iso_a3: obj.ISO_A3,
-                    subregion: obj.SUBREGION,
-                    economy: obj.ECONOMY,
-                    income_grp: obj.INCOME_GRP,
-                    income_grp_num: parseInt(obj.INCOME_GRP.charAt(0)),
-                    equator_dist: obj.EQUATOR_DIST,
-                    offsetX: obj.OFFSET_X,
-                    offsetY: obj.OFFSET_Y,
+                    gdp_est: parseInt(obj.gdp_md_est),
+                    gid: 1,
+                    iso_a2: obj.iso_a2,
+                    iso_a3: obj.iso_a3,
+                    subregion: obj.subregion,
+                    economy: obj.economy,
+                    income_grp: obj.income_grp,
+                    income_grp_num: parseInt(obj.income_grp.charAt(0)),
+                    equator_dist: obj.equatorDist,
+                    offsetX: obj.offsetX,
+                    offsetY: obj.offsetY,
 
                     policy: 0,
-                    previousLoss: this.gameParams.previousLoss,
-                    loss: this.gameParams.previousLoss,
+                    previousLoss: gameParams.previousLoss,
+                    loss: gameParams.previousLoss,
                     neighbours: [],
                     points_shared: 0,
                     points_total: 0,
@@ -333,58 +319,6 @@ cc.Class({
             return map; 
 
         }, {});
-
-        */
-
-        world.countries = Object.values(world.countriesJson).reduce((map, obj) => {  
-        if (!map[obj.iso_a3]) {
-
-            map[obj.iso_a3] = {
-
-                name: obj.name,
-                points: this.pointArray(world, obj.iso_a3),
-                extremes: this.extremes(world, obj.iso_a3),
-                centroid: this.centroids(world, obj.iso_a3),
-                area: this.areas(world, obj.iso_a3),
-                
-                affected_chance: 1.0,
-                pop_est: parseInt(obj.pop_est),
-                pop_aware: 0,
-                pop_aware_percent: 0,
-                pop_prepared: 0,
-                pop_prepared_percent: 0,
-
-                gdp_est: parseInt(obj.gdp_md_est),
-                gid: 1,
-                iso_a2: obj.iso_a2,
-                iso_a3: obj.iso_a3,
-                subregion: obj.subregion,
-                economy: obj.economy,
-                income_grp: obj.income_grp,
-                income_grp_num: parseInt(obj.income_grp.charAt(0)),
-                equator_dist: obj.equatorDist,
-                offsetX: obj.offsetX,
-                offsetY: obj.offsetY,
-
-                policy: 0,
-                previousLoss: this.gameParams.previousLoss,
-                loss: this.gameParams.previousLoss,
-                neighbours: [],
-                points_shared: 0,
-                points_total: 0,
-                shared_border_percentage: 0,
-                policyPoints: [],
-                policyDots: [],
-                destructionPoints: [],
-                destructionDots: [] ,
-                selected: false   
-            };
-
-        } 
-
-        return map; 
-
-    }, {});
 
 
         // Add proportion of main land mass with shared borders
@@ -505,72 +439,12 @@ cc.Class({
         });
 
         // Add world populations
-        this.gameParams.populationWorld = Object.keys(world.countries).map(function(c) { 
+        gameParams.populationWorld = Object.keys(world.countries).map(function(c) { 
             return world.countries[c].pop_est; 
         }).reduce(function(a, c) {
             return a + parseInt(c);
         }, 0);
 
-    },
-
-    /**
-     * Update time variables.
-     */
-    updateTimeVars(interval) {
-
-        gameParams.timeInterval = interval;
-        gameParams.tutorialInterval = gameParams.timeInterval * TUTORIAL_INTERVAL_MULTIPLIER;
-        gameParams.resourceInterval = gameParams.timeInterval * RESOURCE_INTERVAL_MULTIPLIER; 
-        gameParams.crisisInterval = gameParams.timeInterval * CRISIS_INTERVAL_MULTIPLIER;
-
-    },
-
-    /**
-     * Sets up game parameters at the start of play
-     */
-    calculatePolicyConnections() {
-
-        gameParams.policyOptions = {};
-        let policyLen = 0;
-    
-        Object.keys(RESOURCES).forEach(key => {
-    
-            RESOURCES[key].policyOptions.forEach(pol => {
-    
-                gameParams.policyOptions[pol.id] = pol;
-                if (policyLen < pol.id)
-                    policyLen = pol.id;
-    
-            });
-        });
-        
-        gameParams.policyRelations = {};
-        
-        for (let i = 0; i < policyLen; i++){
-    
-            const source = gameParams.policyOptions[i+1];
-            gameParams.policyRelations[source.id] = {};
-    
-            for (let j = i + 1; j < policyLen; j++){
-    
-                const target = gameParams.policyOptions[j+1];
-                if (gameParams.policyRelations[target.id] === undefined)
-                    gameParams.policyRelations[target.id] = {};
-                
-                const val = RESOURCE_MATRIX[j][i];
-                const rel = RESOURCE_RELATIONS[j][i];
-                gameParams.policyRelations[source.id][target.id] = val;
-                
-                if (rel == 1) {
-    
-                    gameParams.policyRelations[target.id][source.id] = val;
-    
-                }
-    
-            }
-    
-        }
-    
     },
 
     /**
@@ -674,6 +548,77 @@ cc.Class({
     },
 
     /**
+     * Update time variables.
+     */
+    updateTimeVars(interval) {
+
+        gameParams.timeInterval = interval;
+        gameParams.tutorialInterval = gameParams.timeInterval * TUTORIAL_INTERVAL_MULTIPLIER;
+        gameParams.resourceInterval = gameParams.timeInterval * RESOURCE_INTERVAL_MULTIPLIER; 
+        gameParams.crisisInterval = gameParams.timeInterval * CRISIS_INTERVAL_MULTIPLIER;
+
+    },
+
+    /**
+     * Sets up game parameters at the start of play
+     */
+    calculatePolicyConnections() {
+
+        gameParams.policyOptions = {};
+        let policyLen = 0;
+    
+        Object.keys(RESOURCES).forEach(key => {
+    
+            RESOURCES[key].policyOptions.forEach(pol => {
+    
+                gameParams.policyOptions[pol.id] = pol;
+                if (policyLen < pol.id)
+                    policyLen = pol.id;
+    
+            });
+        });
+        
+        gameParams.policyRelations = {};
+        
+        for (let i = 0; i < policyLen; i++){
+    
+            const source = gameParams.policyOptions[i+1];
+            gameParams.policyRelations[source.id] = {};
+    
+            for (let j = i + 1; j < policyLen; j++){
+    
+                const target = gameParams.policyOptions[j+1];
+                if (gameParams.policyRelations[target.id] === undefined)
+                    gameParams.policyRelations[target.id] = {};
+                
+                const val = RESOURCE_MATRIX[j][i];
+                const rel = RESOURCE_RELATIONS[j][i];
+                gameParams.policyRelations[source.id][target.id] = val;
+                
+                if (rel == 1) {
+    
+                    gameParams.policyRelations[target.id][source.id] = val;
+    
+                }
+    
+            }
+    
+        }
+    
+    },
+
+    /**
+     * Sets up game parameters at the start of play
+     */
+    startGameParams() {
+        
+        gameParams.state = GAME_STATES.STARTED;
+
+    },
+
+    
+
+    /**
      * Message box
      * @param {*} parent 
      * @param {*} title
@@ -683,7 +628,6 @@ cc.Class({
      */
     showMessageBoxOK(parent, title, message, prompt1, callback1, prompt2, callback2) {
 
-        // parent.pauseAllActions(); 
         gameParams.modal = true;
         gameParams.state = GAME_STATES.PAUSED;
 
@@ -708,14 +652,17 @@ cc.Class({
                 btn1.node.x = -0.25 * world.messageBox.width;
                 btn2.node.x = 0.25 * world.messageBox.width;
                 btn2.node.opacity = 255;
+                btn2.interactable = true;
+                btn2.enabled = true;
                 buttons.push(btn2);
 
             }
             else {
 
                 btn1.x = 0.0 * world.messageBox.width;
-                
                 btn2.node.opacity = 0;
+                btn2.interactable = false;
+                btn2.enabled = false;
                 
             }
         }
@@ -726,6 +673,8 @@ cc.Class({
                 btn1.node.x = -0.25 * world.messageBox.width;
                 btn2.node.x = 0.25 * world.messageBox.width;
                 btn2.node.opacity = 255;
+                btn2.interactable = true;
+                btn2.enabled = true;
                 buttons.push(btn2);
 
             }
@@ -733,6 +682,8 @@ cc.Class({
 
                 btn1.node.x = 0.0 * world.messageBox.width;
                 btn2.node.opacity = 0;
+                btn2.interactable = false;
+                btn2.enabled = false;
 
             }
 
@@ -763,7 +714,10 @@ cc.Class({
             event.stopPropagation();
 
         };
-        btn2.node.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
+        if (btn2.interactable)
+            btn2.node.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
+        else
+            btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
 
         buttons.push(btn1);
         
@@ -785,101 +739,58 @@ cc.Class({
      */
     showQuizBox(parent, title, message, wrongAnswer, rightAnswer) {
 
-        parent.pauseAllActions(); 
         gameParams.modal = true;
         gameParams.state = GAME_STATES.PAUSED;
 
-        let winWidth = cc.winSize.width, 
-            winHeight = cc.winSize.height;
-        let lyr1OffsetX = 0.05, lyr2OffsetX = 0.55,
-            lyr1OffsetY = 0.05, lyr2OffsetY = 0.05;
-        let lbl1OffsetX = 0.05, lbl2OffsetX = 0.55,
-            lbl1OffsetY = 0.2, lbl2OffsetY = 0.2;
-        let btn1OffsetX = 0.25, btn2OffsetX = 0.75,
-            btn1OffsetY = 0.1, btn2OffsetY = 0.1;
-        let btn1Text = "OPTION 1", btn2Text = "OPTION 2";
-        
+        world.quizBox.opacity = 255;
+        world.quizBox.zIndex = 103;
+
+        let btn1 = world.quizBox.getChildByName("btn1");
+        let btn2 = world.quizBox.getChildByName("btn2");
+        let buttons = [];
+
         if (Math.random() > 0.5) {
 
-            let tmp = lyr1OffsetX;
-            lyr1OffsetX = lyr2OffsetX;
-            lyr2OffsetX = tmp;
-            tmp = lbl1OffsetX;
-            lbl1OffsetX = lbl2OffsetX;
-            lbl2OffsetX = tmp;
-            tmp = btn1OffsetX;
-            btn1OffsetX = btn2OffsetX;
-            btn2OffsetX = tmp;
-            tmp = btn1Text;
-            btn1Text = btn2Text;
-            btn2Text = tmp;
+            let tmp = btn2;
+            btn2 = btn1;
+            btn1 = tmp;
 
         }
 
-        let layerBackground = new cc.LayerColor(COLOR_LICORICE, winWidth * 0.85, winHeight * 0.86);
-        layerBackground.attr({ 
-            x: winWidth / 2 - layerBackground.width / 2, 
-            y: winHeight / 2 - layerBackground.height / 2});
-        parent.addChild(layerBackground, 4);
+        btn1.getChildByName("Background").getChildByName("optContents").getComponent(cc.Label).string = rightAnswer;
+        btn2.getChildByName("Background").getChildByName("optContents").getComponent(cc.Label).string = wrongAnswer;
 
-        let titleText = new ccui.Text(title, FONT_FACE_TITLE, FONT_FACE_TITLE_BIG);
-        titleText.overflow = cc.Label.Overflow.REFLOW;
-        titleText.setAnchorPoint(0.5, 0);
-        titleText.setContentSize(cc.size(layerBackground.width * 0.9, layerBackground.height * 0.15));
-        titleText.setPosition(layerBackground.width * 0.5, layerBackground.height * 0.85);
-        titleText.horizontalAlign = (cc.Label.HorizontalAlign.CENTER);
-        titleText.verticalAlign = cc.Label.VerticalAlign.CENTER;
-        titleText.color = COLOR_WHITE;
-        layerBackground.addChild(titleText, 2);
+        let btn1Func = function(event) {
 
-        let contentText = new ccui.Text(message, FONT_FACE_BODY, FONT_FACE_BODY_MEDIUM);
-        contentText.overflow = cc.Label.Overflow.REFLOW;
-        contentText.setAnchorPoint(0, 0);
-        contentText.setContentSize(cc.size(layerBackground.width * 0.9, layerBackground.height * 0.35));
-        contentText.setPosition(layerBackground.width * 0.05, layerBackground.height * 0.5);
-        contentText.horizontalAlign = cc.Label.HorizontalAlign.LEFT;
-        contentText.verticalAlign = cc.Label.VerticalAlign.TOP;
-        contentText.color = COLOR_WHITE;
-        contentText.getVirtualRenderer().setLineHeight(FONT_FACE_BODY_BIG + FONT_SPACING)
-        layerBackground.addChild(contentText, 2);
-
-        let buttons = [];
-        let opt1Layer = new cc.LayerColor(COLOR_WHITE);
-        opt1Layer.setPosition(layerBackground.width * lyr1OffsetX, layerBackground.height * lyr1OffsetY);
-        opt1Layer.setContentSize(cc.size(layerBackground.width * 0.4, layerBackground.height * 0.5));
-        layerBackground.addChild(opt1Layer, 2);
-        let option1Text = new ccui.Text(wrongAnswer, FONT_FACE_BODY, FONT_FACE_BODY_MEDIUM);
-        option1Text.overflow = cc.Label.Overflow.REFLOW;
-        option1Text.setAnchorPoint(0, 0);
-        option1Text.setPosition(opt1Layer.width * 0.05, opt1Layer.height * 0.3);
-        option1Text.setContentSize(cc.size(opt1Layer.width * 0.9, opt1Layer.height * 0.7));
-        option1Text.horizontalAlign = cc.Label.HorizontalAlign.LEFT;
-        option1Text.verticalAlign = cc.Label.VerticalAlign.CENTER;
-        option1Text.color = (COLOR_LICORICE);
-        opt1Layer.addChild(option1Text, 2);
-
-        let btn1 = new ccui.Button();
-        btn1.setTouchEnabled(true);
-        btn1.setSwallowTouches(false);
-        btn1.setTitleText(btn1Text);
-        btn1.setTitleColor(COLOR_LICORICE);
-        btn1.setTitleFontSize(FONT_FACE_BODY_BIG);
-        btn1.setTitleFontName(FONT_FACE_BODY);
-        btn1.setScale9Enabled(true);
-        btn1.loadTextures(res.button_white, res.button_grey, res.button_grey);
-        btn1.setBright(true);
-        btn1.setEnabled(true);
-        btn1.setAnchorPoint(0, 0);
-        btn1.setPosition(opt1Layer.width * 0.05, opt1Layer.height * 0.05);
-        btn1.setContentSize(cc.size(opt1Layer.width * 0.9, opt1Layer.height * 0.25));
-        opt1Layer.addChild(btn1);
-
-        handleMouseTouchEvent(btn1, () => {
-
-            layerBackground.removeAllChildren(true);
-            layerBackground.removeFromParent(true);
-            parent.resumeAllActions(); 
+            world.messageBox.opacity = 0;
+            btn1.node.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
+            btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
+            //parent.node.resumeAllActions(); 
             gameParams.modal = false;
+            callback1();
+            event.stopPropagation();
+
+            world.showMessageBoxOK(parent, "CRISIS RESPONSE", "Great response to this crisis!", "OK!", function() {
+                
+                const res = Math.floor(1 + Math.random() * 3);
+                gameParams.resources += res;
+
+                gameParams.state = GAME_STATES.STARTED;
+
+            });
+
+        };
+        btn1.node.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
+        
+        let btn2Func = function(event) {
+
+            world.messageBox.opacity = 0;
+            btn1.node.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
+            btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
+            //parent.node.resumeAllActions(); 
+            gameParams.modal = false;
+            callback2();
+            event.stopPropagation();
 
             showMessageBoxOK(parent, "CRISIS RESPONSE", "Good try, but this won't be enough to preserve the future of Antarctica!", "OK!", function() {
                 
@@ -893,55 +804,8 @@ cc.Class({
 
             });
 
-        });
-
-        let opt2Layer = new cc.LayerColor(COLOR_WHITE);
-        opt2Layer.setPosition(layerBackground.width * lyr2OffsetX, layerBackground.height * lyr2OffsetY);
-        opt2Layer.setContentSize(cc.size(layerBackground.width * 0.4, layerBackground.height * 0.5));
-        layerBackground.addChild(opt2Layer, 2);
-        let option2Text = new ccui.Text(rightAnswer, FONT_FACE_BODY, FONT_FACE_BODY_MEDIUM);
-        option2Text.overflow = cc.Label.Overflow.REFLOW;
-        option2Text.setAnchorPoint(0, 0);
-        option2Text.setPosition(opt2Layer.width * 0.05, opt2Layer.height * 0.3);
-        option2Text.setContentSize(cc.size(opt2Layer.width * 0.9, opt2Layer.height * 0.7));
-        option2Text.horizontalAlign = cc.Label.HorizontalAlign.LEFT;
-        option2Text.verticalAlign = cc.Label.VerticalAlign.CENTER;
-        option2Text.color = (COLOR_LICORICE);
-        opt2Layer.addChild(option2Text, 2);
-
-        btn2 = new ccui.Button();
-        btn2.setTouchEnabled(true);
-        btn2.setSwallowTouches(false);
-        btn2.setTitleText(btn2Text);
-        btn2.setTitleColor(COLOR_LICORICE);
-        btn2.setTitleFontSize(FONT_FACE_BODY_BIG);
-        btn2.setTitleFontName(FONT_FACE_BODY);
-        btn2.setScale9Enabled(true);
-        btn2.loadTextures(res.button_white, res.button_grey, res.button_grey);
-        btn2.setBright(true);
-        btn2.setEnabled(true);
-        btn2.setAnchorPoint(0, 0);
-        btn2.setPosition(opt2Layer.width * 0.05, opt2Layer.height * 0.05);
-        btn2.setContentSize(cc.size(opt2Layer.width * 0.9, opt2Layer.height * 0.25));
-        opt2Layer.addChild(btn2);  
-
-        handleMouseTouchEvent(btn2, () => {
-            
-            layerBackground.removeAllChildren(true);
-            layerBackground.removeFromParent(true);
-            parent.resumeAllActions(); 
-            gameParams.modal = false;
-
-            world.showMessageBoxOK(parent, "CRISIS RESPONSE", "Great response to this crisis!", "OK!", function() {
-                
-                const res = Math.floor(1 + Math.random() * 3);
-                gameParams.resources += res;
-
-                gameParams.state = GAME_STATES.STARTED;
-
-            });
-
-        });
+        };
+        btn2.node.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
 
         buttons.push(btn1);
         buttons.push(btn2);
@@ -1032,15 +896,15 @@ cc.Class({
         window.clearTimeout(gameParams.timeoutID );
         gameParams.state = GAME_STATES.PAUSED;
         
-        showMessageBoxOK(parent, "Game Over", message, prompt, function() {
+        world.showMessageBoxOK(parent, "Game Over", message, prompt, function() {
 
             initGameParams(world.scenarioData);
             gameParams.state = GAME_STATES.GAME_OVER;
             gameParams.startCountry = null;
             gameParams.policies = {};
-            world.tweetLabel.setString(gameParams.scenarioName);
-            world.tweetLabel.attr({ x: world.tweetBackground.width / 2, width: world.tweetBackground.width });
-            world.tweetAlertLabel.attr({ x: world.tweetLabel.x });
+            world.tweetLabel.string = (gameParams.scenarioName);
+            // world.tweetLabel.attr({ x: world.tweetBackground.width / 2, width: world.tweetBackground.width });
+            // world.tweetAlertLabel.attr({ x: world.tweetLabel.x });
 
             cc.director.runScene(new SelectOptionsScene());
             //cc.director.runScene(new LoadingScene());
@@ -1081,12 +945,24 @@ cc.Class({
 
     initControls()  {
 
+        // Convenience variables
         world.btnQuit = world.topBar.getChildByName("btnQuit");
         world.btnSettings = world.topBar.getChildByName("btnSettings");
         world.btnSound = world.topBar.getChildByName("btnSound");
         world.btnPause = world.topBar.getChildByName("btnPause");
         world.btnPlay = world.topBar.getChildByName("btnPlay");
         world.btnFF = world.topBar.getChildByName("btnFF");
+        world.tweetLabel = world.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet");
+        world.bottomBar = cc.director.getScene().getChildByName("layout").getChildByName("bottomBar");
+        world.countryLabel = world.bottomBar.getChildByName("lblCountry").getComponent(cc.Label);
+        world.countryLoss = world.bottomBar.getChildByName("lblLossPercent").getComponent(cc.Label);
+        world.countryLossProgress = world.bottomBar.getChildByName("progressBarLoss").getComponent(cc.ProgressBar);
+        world.countryAwarePrepared = world.bottomBar.getChildByName("lblPreparednessPercent").getComponent(cc.Label);
+        world.countryPreparedProgress = world.bottomBar.getChildByName("progressBarPreparedness").getComponent(cc.ProgressBar);
+        world.resourceScoreLabel = cc.director.getScene().getChildByName("resourceScoreBackground").getChildByName("lblResourceScore").getComponent(cc.Label);
+        world.quizBox = cc.director.getScene().getChildByName("quizBox");
+
+        // Handlers
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnQuit"), function() {
             gameParams.state = GAME_STATES.PAUSED;
 
@@ -1138,26 +1014,34 @@ cc.Class({
 
         });
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnPause"), function() {
+
             gameParams.state = GAME_STATES.PAUSED;
-            world.btnPause.enabled = false;
-            world.btnPlay.enabled = true;
-            world.btnFF.enabled = true;            
+            world.btnPause.getComponent(cc.Button).interactable = false;
+            world.btnPlay.getComponent(cc.Button).interactable = true;
+            world.btnFF.getComponent(cc.Button).interactable = true;
+            world.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).pause();
+
         });
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnPlay"), function() {
+            
             world.updateTimeVars(MONTH_INTERVAL);
             gameParams.state = GAME_STATES.STARTED;
-            world.btnPause.enabled = true;
-            world.btnPlay.enabled = false;
-            world.btnFF.enabled = true;            
+            world.btnPause.getComponent(cc.Button).interactable = true;
+            world.btnPlay.getComponent(cc.Button).interactable = false;
+            world.btnFF.getComponent(cc.Button).interactable = true;
+            world.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).play();
+
         });
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnFF"), function() {
+
             world.updateTimeVars(MONTH_INTERVAL_FF);
             gameParams.state = GAME_STATES.STARTED;
-            world.btnPause.enabled = true;
-            world.btnPlay.enabled = true;
-            world.btnFF.enabled = false;            
-        });
+            world.btnPause.getComponent(cc.Button).interactable = true;
+            world.btnPlay.getComponent(cc.Button).interactable = true;
+            world.btnFF.getComponent(cc.Button).interactable = false;
+            world.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).play();
 
+        });
 
 
         let btnDesignPolicy = world.node.getChildByName("bottomBar").getChildByName("btnDesignPolicy");
@@ -1165,12 +1049,10 @@ cc.Class({
         let designPolicy = cc.director.getScene().getChildByName("layerDesignPolicy");
         let resourceScore = cc.director.getScene().getChildByName("resourceScoreBackground");
         let stats = cc.director.getScene().getChildByName("layerStats");
+        let messageBox = cc.director.getScene().getChildByName("layerMessageBox");
 
-        // Set ordering
-        designPolicy.zIndex = -1;
-        stats.zIndex = -1;
-        resourceScore.zIndex = 101;
 
+        // Add handling for bottom bar buttons
         btnDesignPolicy.on(cc.Node.EventType.TOUCH_END, function() {
             gameParams.state = GAME_STATES.PAUSED;
             designPolicy.zIndex = 100;
@@ -1190,6 +1072,186 @@ cc.Class({
             gameParams.state = GAME_STATES.STARTED;
             stats.zIndex = -1;
         }, btnStatsQuit);
+
+        // Set ordering
+        designPolicy.zIndex = -1;
+        stats.zIndex = -1;
+        resourceScore.zIndex = 101;
+        messageBox.zIndex = 103;
+        
+    },
+        
+    processResourceSelection(event) {
+            
+        // Do nothing if game is paused
+        if (gameParams.state === GAME_STATES.PAUSED)
+            return;
+
+        const res = Math.floor(1 + Math.random() * 3);
+        gameParams.resources += res;
+
+        console.log(event.target);
+        event.target.destroy();
+
+        if (!gameParams.resourcesAdded) {
+            
+            gameParams.state = GAME_STATES.PAUSED;
+            gameParams.resourcesAdded = true;
+            
+            if (gameParams.tutorialMode) {
+                
+                world.showMessageBoxOK(world, "HINT:", TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language], "OK!", function() {
+                    
+                    gameParams.tutorialHints.push(TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language]);
+                    gameParams.state = GAME_STATES.STARTED;
+
+                });
+
+            }
+            else {
+                
+                gameParams.state = GAME_STATES.STARTED;
+
+            }
+        }
+
+    },
+
+    processCrisisSelection(event) {
+
+        // Do nothing if game is paused
+        if (gameParams.state === GAME_STATES.PAUSED)
+            return;
+
+        gameParams.crisisCountry = null;
+        let crisis = null;
+
+        for (let i = 0; i < gameParams.crises.length; i++) {
+
+            if (gameParams.crises[i].id == event.target.crisisId) {
+
+                const crisisInCountry = gameParams.crises[i];
+                crisis = CRISES[crisisInCountry.crisis];
+                gameParams.crises.splice(i, 1);
+                break;
+
+            }
+        }
+
+        event.target.destroy();
+        
+        if (!gameParams.alertCrisis && gameParams.tutorialMode) {
+
+            gameParams.state = GAME_STATES.PAUSED;
+            gameParams.alertCrisis = true;
+            
+            world.showMessageBoxOK(world, 
+                gd.lang.crisis_title[cc.sys.localStorage.language], 
+                gd.lang.crisis_message[cc.sys.localStorage.language] + crisis[cc.sys.localStorage.language] + "!", "OK!", function() {
+
+                gameParams.state = GAME_STATES.STARTED;
+
+            });
+
+        }
+        else {
+
+            // Add Crisis Quiz, 50% of the time
+            if (Math.random() < 0.5) {
+            // if (Math.random() < 1.0) {
+
+                // Show quiz
+                let qi = gd.quizzes[Math.floor(Math.random() * gd.quizzes.length)];
+                let quiz = qi.quiz[cc.sys.localStorage.language];
+                let wrong_answer = qi.wrong_answer[cc.sys.localStorage.language];
+                let right_answer = qi.right_answer[cc.sys.localStorage.language];
+
+                world.showQuizBox(world, "CRISIS ALERT!", quiz, wrong_answer, right_answer);
+
+            }
+
+        }
+
+    },
+    
+    /**
+     * Update month / year in the interface
+     * @param {*} world 
+     */
+    refreshDate() {
+
+        // world.topBar.getChildByName("lblDay").getComponent(cc.Label).string = (gameParams.currentDate.getDate()).toString();
+        world.topBar.getChildByName("lblMonth").getComponent(cc.Label).string = (gameParams.currentDate.getMonth() + 1).toString();
+        world.topBar.getChildByName("lblYear").getComponent(cc.Label).string = (gameParams.currentDate.getFullYear()).toString();
+
+    },
+
+    /**
+     * Show country-level stats.
+     */
+    printCountryStats() {
+
+        const country = world.countries[gameParams.currentCountry];
+        world.countryLabel.string = (country.name);
+
+        const lossPercent = Math.floor(country.loss);
+        const preparedPercent = Math.floor(country.pop_prepared_percent);
+
+        world.countryLoss.string = (lossPercent + "%" );
+        world.countryLossProgress.progress = lossPercent / 100.0;
+        
+        if (lossPercent >= LOSS_TOTAL)
+            world.countryLossProgress.setOpacity(255);
+        else if (lossPercent >= LOSS_PARTIAL)
+            world.countryLossProgress.setOpacity(191);
+        world.countryAwarePrepared.string = (preparedPercent + "%");
+        // if (preparedPercent >= 20)
+        //     world.countryAwarePrepared.setOpacity(255);
+        world.countryPreparedProgress.progress = preparedPercent / 100.0;
+
+    },
+
+    /**
+     * Show world-level stats.
+     */
+    printWorldStats() {
+
+        world.countryLabel.string = (gd.lang.world_label[cc.sys.localStorage.language]);
+
+        const lossPercent = Math.round(gameParams.totalLoss);
+        const preparedPercent = Math.round(gameParams.populationPreparedPercent);
+
+        world.countryLoss.string = (lossPercent + "%" );
+        world.countryAwarePrepared.string = (preparedPercent + "%");
+
+        world.countryLossProgress.setPercent(lossPercent);
+        world.countryPreparedProgress.setPercent(preparedPercent);
+
+    },
+
+    generateResourceDistribution() {
+
+        let dists = [];
+        let total = 0;
+
+        for (let i = 0; i < 16; i++) {
+
+            let weight = 1;
+            if (gameParams.policies[i + 1] !== undefined) 
+                weight += gameParams.policies[i + 1];
+            
+            total += weight;
+            dists.push(weight);
+
+        }
+
+        for (let i = 0; i < dists.length; i++) {
+
+            dists[i] /= total;
+
+        }
+
+        return dists;
 
     },
 
@@ -1218,9 +1280,32 @@ cc.Class({
             // }
         });
 
+        // Load policy icons
+        world.policyIcons = [];
+        Object.keys(res).forEach(function(r) {
+
+            let resUrl = res[r];
+            cc.loader.loadRes(resUrl, cc.SpriteFrame, function(err, asset) {
+
+                world.policyIcons.push(asset);
+
+            })
+
+        });
+        world.crisisIcons = {};
+        Object.keys(CRISES).forEach(function(r) {
+
+            let resUrl = CRISES[r].image;
+            cc.loader.loadRes(resUrl, cc.SpriteFrame, function(err, asset) {
+
+                world.crisisIcons[r] = (asset);
+
+            })
+
+        });
         var url = cc.url.raw('resources/scripts/json-equal-greyscale.json');
         cc.loader.load( url, function( err, res) {
-            // cc.log( 'load['+ url +'], err['+err+'] result: ' + JSON.stringify( res ) );
+
             if (err == null) {
                 world.countriesJson = res.json;
                 world.initCountries();            
@@ -1231,6 +1316,7 @@ cc.Class({
                 cc.loader.loadResDir("countries", cc.SpriteFrame, function (err, assets, urls) {
                     
                     for (var i = 0; i < assets.length; i++) {
+                        
                         const spriteNode = new cc.Node('Sprite ');
                         const sp = spriteNode.addComponent(cc.Sprite);
                         sp.spriteFrame = assets[i];
@@ -1239,6 +1325,7 @@ cc.Class({
                         let url = urls[i];
                         let iso = url.match('/([A-Z]*)_')[1];
                         world.countryNodes[iso] = spriteNode;
+
                     }
 
                     var scene = cc.director.getScene();
@@ -1253,7 +1340,7 @@ cc.Class({
                             countryNode.setAnchorPoint(0.0, 0.0);
                             countryNode.setPosition((country.offsetX), 
                                                     (cc.winSize.height - ( 1 * Y_OFFSET  ) - country.offsetY));
-                            countryNode.parent = scene;
+                            // countryNode.parent = scene;
                             countryNode.zIndex = 2;
 
                         }
@@ -1269,8 +1356,1204 @@ cc.Class({
 
     },
 
+
+    generateWeightedPolicyIndex(r) {
+
+        let dists = world.generateResourceDistribution();
+        let counter = 0;
+        let chosenPolicy = 0;
+
+        for (let i = 0; i < dists.length; i++) {
+
+            let prob = dists[i];
+            counter += prob;
+
+            if (counter > r) {
+
+                chosenPolicy = i;
+                break;
+            
+            }
+
+        }
+
+        return chosenPolicy;
+
+    },
+
+    /**
+     * Generate a policy icon, based on a weighted average of existing policies.
+     */
+    generatePolicyIcon() {
+
+        let policyIndex = world.generateWeightedPolicyIndex(Math.random());
+        let icon = "";
+
+        switch(policyIndex) {
+            case 0:
+                icon = res.resource_economy_1;
+                break;
+            case 1:
+                icon = res.resource_economy_2;
+                break;
+            case 2:
+                icon = res.resource_economy_3;
+                break;
+            case 3:
+                icon = res.resource_economy_4;
+                break;
+            case 4:
+                icon = res.resource_politics_1;;
+                break;
+            case 5:
+                icon = res.resource_politics_2;;
+                break;
+            case 6:
+                icon = res.resource_politics_3;;
+                break;
+            case 7:
+                icon = res.resource_politics_4;;
+                break;
+            case 8:
+                icon = res.resource_culture_1;;
+                break;
+            case 9:
+                icon = res.resource_culture_2;;
+                break;
+            case 10:
+                icon = res.resource_culture_3;;
+                break;
+            case 11:
+                icon = res.resource_culture_4;;
+                break;
+            case 12:
+                icon = res.resource_ecology_1;;
+                break;
+            case 13:
+                icon = res.resource_ecology_2;;
+                break;
+            case 14:
+                icon = res.resource_ecology_3;;
+                break;
+            case 15:
+                icon = res.resource_ecology_4;;
+                break;
+        }
+
+        
+        return policyIndex;
+    },
+                            
+    // Add chance of new resource
+    addResource() {
+
+        const btnRes = new cc.Node('Resource');
+        const sp = btnRes.addComponent(cc.Sprite);
+        const policyIcon = world.generatePolicyIcon();
+        sp.spriteFrame = world.policyIcons[policyIcon];
+        // btnRes.setTouchEnabled(true);
+        // btnRes.setSwallowTouches(false);
+        // btnRes.setScale9Enabled(true);
+        
+        
+        const ind = Math.floor(Math.random() * Object.keys(world.countries).length);
+        const countryRand = world.countries[Object.keys(world.countries)[ind]];
+        const pt = countryRand.centroid;
+        btnRes.setPosition( pt.x, (world.node.height - (2 * Y_OFFSET) ) - pt.y + RESOURCE_SIZE_H / 2 );
+        btnRes.setContentSize(cc.size(RESOURCE_SIZE_W, RESOURCE_SIZE_H));
+        // btnRes.setColor(COLOR_RESOURCE);
+        btnRes.placedAt = gameParams.counter;
+        btnRes.setAnchorPoint(0.0, 0.0);
+        btnRes.parent = cc.director.getScene();
+        btnRes.zIndex = 102;
+        world.buttons.push(btnRes);
+
+        btnRes.on(cc.Node.EventType.TOUCH_END, world.processResourceSelection, btnRes);
+        // world.handleMouseTouchEvent(btnRes, world.processResourceSelection);
+
+        /*
+        if (gameParams.automateMode) {
+            
+            const r = Math.random();
+            if (r < parseFloat(gameParams.automateScript.resourcesProb)) {
+
+                fireClickOnTarget(btnRes);
+
+            }
+
+        }
+        */
+
+        if (!gameParams.alertResources) {
+
+            if (gameParams.tutorialMode) {
+                
+                gameParams.state = GAME_STATES.PAUSED;
+                gameParams.alertResources = true;
+
+                world.showMessageBoxOK(world, "HINT:", TUTORIAL_MESSAGES.FIRST_RESOURCE_SHOWN[cc.sys.localStorage.language], "OK!", function(that) {
+                
+                    gameParams.tutorialHints.push(TUTORIAL_MESSAGES.FIRST_RESOURCE_SHOWN[cc.sys.localStorage.language]);
+                    //gameParams.state = GAME_STATES.STARTED;
+                    gameParams.state = GAME_STATES.PAUSED_TUTORIAL;
+
+                });
+
+            }
+
+        }
+
+        gameParams.lastResource = gameParams.counter;
+
+    },
+                            
+    /**
+     * Calculate the probability distribution of crisis & country
+     */ 
+    crisisProbDistribution() {
+        
+        const probs = [];
+        const crisisKeys = Object.keys(CRISES);
+        const countryKeys = Object.keys(world.countries);
+        let denom = 0;
+        
+        crisisKeys.forEach(ck => {
+
+            const crisis = CRISES[ck];
+            
+            countryKeys.forEach(yk => {
+            
+                const country = world.countries[yk];
+                const lossProp = country.loss / gameParams.totalLoss;
+                const preparedProp = country.pop_prepared_percent / gameParams.populationPreparedPercent;
+                
+                let totalInfluence = 1.0;
+                totalInfluence += lossProp * crisis.influence_of_environmental_loss;
+                totalInfluence += preparedProp * crisis.influence_of_preparedness;
+                
+                if (isNaN(totalInfluence))
+                    totalInfluence = 0.0;
+                
+                if (totalInfluence > 0) {
+                
+                    denom += totalInfluence;
+                    probs.push(totalInfluence);
+                
+                }
+
+            });
+
+        });
+        console.log(probs.length)
+
+        for (let i = 0; i < probs.length; i++) {
+        
+            probs[i] /= denom;
+        
+        }
+        
+        return probs;
+
+    },
+
+    crisisProbLocation(r) {
+
+        const probs = world.crisisProbDistribution();
+        const crisisKeys = Object.keys(CRISES);
+        const countryKeys = Object.keys(world.countries);
+        let crisisCountry = {};
+        let counter = 0;
+        
+        for (let i = 0; i < probs.length; i++) {
+        
+            counter += probs[i];
+
+            if (r < counter) {
+
+                const crisisID = Math.floor(crisisKeys.length * i / probs.length);
+                const countryID = i % countryKeys.length;
+                crisisCountry.crisis = crisisKeys[crisisID];
+                crisisCountry.country = countryKeys[countryID];
+                crisisCountry.id = i;
+                crisisCountry.counter = gameParams.counter;
+                break;
+
+            }
+        
+        }
+
+        return crisisCountry;
+
+    },
+
+    /**
+     * Add a new crisis.
+     */
+    addCrisis() {
+
+        const r2 = Math.random();
+        const crisisInCountry = world.crisisProbLocation(r2);
+        gameParams.crisisCountry = crisisInCountry;
+        gameParams.crises.push(crisisInCountry);
+        gameParams.crisisCount++;
+        const crisis = CRISES[crisisInCountry.crisis];
+        const country = world.countries[crisisInCountry.country];
+
+        const btnCrisis = new cc.Node('Crisis');
+        const sp = btnCrisis.addComponent(cc.Sprite);
+        sp.spriteFrame = world.crisisIcons[crisisInCountry.crisis];
+
+        const pt = country.centroid;
+        btnCrisis.setPosition(pt.x, (world.node.height - (2 * Y_OFFSET) ) - pt.y + RESOURCE_SIZE_H / 2 );
+        btnCrisis.setContentSize(cc.size(RESOURCE_SIZE_W, RESOURCE_SIZE_H));
+        // btnCrisis.setColor(COLOR_DESTRUCTION_POINTS);
+        btnCrisis.placedAt = gameParams.counter;
+        btnCrisis.setAnchorPoint(0.0, 0.0);
+        btnCrisis.crisisId = crisisInCountry.id;
+        btnCrisis.name = "crisis" + crisisInCountry.id;
+        btnCrisis.parent = cc.director.getScene();
+        btnCrisis.zIndex = 102;
+        world.buttons.push(btnCrisis);
+
+        btnCrisis.on(cc.Node.EventType.TOUCH_END, world.processCrisisSelection, btnCrisis);
+
+        // After the third crisis, add notifications to the news feed
+        let message = gd.lang.crisis_prefix[cc.sys.localStorage.language] + 
+                        crisis[cc.sys.localStorage.language] + 
+                        gd.lang.crisis_suffix[cc.sys.localStorage.language] + 
+                        country.name + "."; 
+        
+        // btnCrisis.setTitleColor(COLOR_LICORICE);
+        // btnCrisis.setTitleText(crisis.name);
+
+        if (gameParams.crisisCount < 4) {
+
+            gameParams.state = GAME_STATES.PAUSED;
+            message += gd.lang.crisis_explanation[cc.sys.localStorage.language];
+
+            let buttons = world.showMessageBoxOK(world, gd.lang.crisis_alert[cc.sys.localStorage.language], message, "OK!", (that) => {
+
+                if (gameParams.tutorialMode)
+                    gameParams.state = GAME_STATES.PAUSED_TUTORIAL;
+                else
+                    gameParams.state = GAME_STATES.STARTED;
+
+            });
+
+            if (gameParams.automateMode) {
+
+                fireClickOnTarget(buttons[0]);
+
+            }                    
+
+        }
+        else {
+            
+            // if (gameParams.messageOverride == null)
+            //     gameParams.messageOverride = message;
+
+        }
+        
+        gameParams.lastCrisis = gameParams.counter;
+
+    },
+
+    /**
+     * Add tutorial.
+     */
+    addTutorial() {
+
+        if (gameParams.tutorialHints.length < 2 || gameParams.tutorialHints.length >= 6)
+            return;
+
+        gameParams.state = GAME_STATES.PAUSED;
+        let message = null;
+        switch(gameParams.tutorialHints.length) {
+            case 2:
+            default:
+                message = TUTORIAL_MESSAGES.RANDOM_1[cc.sys.localStorage.language];
+                break;
+            case 3:
+                message = TUTORIAL_MESSAGES.RANDOM_2[cc.sys.localStorage.language];
+                break;
+            case 4:
+                message = TUTORIAL_MESSAGES.RANDOM_3[cc.sys.localStorage.language];
+                break;
+            case 5:
+                message = TUTORIAL_MESSAGES.RANDOM_4[cc.sys.localStorage.language];
+                break;
+        }
+
+        world.showMessageBoxOK(world, "HINT:", message, "OK", function() {
+            
+            gameParams.tutorialHints.push(message);
+            gameParams.state = GAME_STATES.STARTED;
+
+        });
+
+    },
+
+    sigmoidalPercent(percent, inflectionPoint) {
+
+        if (inflectionPoint === undefined)
+            inflectionPoint = 50;
+
+        // Some value between -1.0 and 1.0
+        let normedPercent = ( percent - inflectionPoint ) / inflectionPoint;
+        let normedPercentWithFactor = normedPercent * 1.0;
+        // Some value between e (2.78...) and 1 / e (0.367) 
+        let sigmoidalPercent = 1 / Math.pow(Math.E, normedPercentWithFactor);
+
+        return sigmoidalPercent;
+
+    },
+
+    // Evaluates loss
+    evaluateLoss(country) {
+
+        const lossCurrent = country.loss;
+
+        // Add random amount to default rate of loss
+        const rateOfLoss = gameParams.rateOfLoss * (0.5 + Math.random());
+        const rateOfLossMonthly = rateOfLoss;
+        let rateOfLossFactor = 1 + rateOfLossMonthly;
+
+        // Weaken rate of loss by population prepared for good policy
+        const preparednessFactor = 1 + 0.1 * country.pop_prepared_percent / 100.0;
+        rateOfLossFactor /= preparednessFactor;
+
+        //let crisis = CRISES[gameParams.crises[0].crisis];
+        gameParams.crises.forEach(crisisInCountry => {
+            
+            const crisis = CRISES[crisisInCountry.crisis];
+            // Add effects of country / global loss ratio to crisis effect
+            // Take the square root of the ratio of country to world loss, and multiply this by the crisis effect
+            rateOfLossFactor *= (1 + crisis.effect_on_environmental_loss * (Math.pow(lossCurrent / gameParams.totalLoss, 0.5)));
+            
+        });
+
+        const sigmoidalLossFactor = ( 1 + (rateOfLossFactor - 1) * world.sigmoidalPercent(lossCurrent) );
+        let lossNew = lossCurrent + (sigmoidalLossFactor - 1);
+
+        if (lossNew > 100)
+            lossNew = 100;
+        if (lossNew < 0)
+            lossNew = 0;
+
+        return lossNew;
+
+    },
+
+    /**
+     * Transmit policy effects from a country
+     * @param {*} Calculates transmission of policies from 
+     */
+    transmitFrom(country) {
+        
+        const neighbours = country.neighbours;
+        const sharedBorder = country.shared_border_percentage;
+        const transmissionLand = world.scenarioData.threat_details.transmission.transmission_land;
+        const transmissionSea = world.scenarioData.threat_details.transmission.transmission_sea;
+        const transmissionAir = world.scenarioData.threat_details.transmission.transmission_air;
+        const infectivityMinimumIncrease = world.scenarioData.threat_details.advanced_stats.minimum_infectivity_increase;
+
+        const likelihoodOfTransmission = country.affected_chance; //infectivityIncreaseSpeed / 100.0;
+
+        const popCountry = country.pop_est;
+        const popWorld = gameParams.populationWorld;
+        const popFactor = Math.log(popCountry) / Math.log(popWorld);
+        
+        const income = country.income_grp;
+        const incomeVal = parseFloat(income.charAt(0)) / 6.0; // 5 income groups + 1, so there are no zeroes
+        
+        // THE FOLLOWING CODE MAKES USE OF AVAILABLE GEOGRAPHIC INFORMATION TO DEVELOP A PROXY FOR TRANSMISSION
+
+        const landProb = sharedBorder * transmissionLand * likelihoodOfTransmission * popFactor * incomeVal;
+        // Sea probability increases with (a) low shared border and (b) high income and (c) high population
+        const seaProb = (1  - sharedBorder)  * transmissionSea * likelihoodOfTransmission * popFactor * (1 - incomeVal);
+        // Air probability increases with (a) low shared border and (b) high income and (c) high population
+        const airProb = sharedBorder * transmissionAir * likelihoodOfTransmission * popFactor * (1 - incomeVal);
+        
+        let candidateCountry = null;
+
+        // Start with land
+        if (Math.random() < landProb && neighbours.length > 0) {
+            
+            const neighbourIndex = Math.floor(Math.random() * neighbours.length);
+            const neighbour = world.countries[neighbours[neighbourIndex]];
+            if (neighbour.policy == 0) {
+            
+                candidateCountry = neighbour;
+            
+            }
+
+        }
+        else if (Math.random() < seaProb) {
+            
+            const countriesShuffled = world.shuffleArray(Object.keys(world.countries));
+            const countryChance = Math.random();
+            
+            for (let i = 0; i < countriesShuffled.length; i++) {
+                
+                const countryCheck = world.countries[countriesShuffled[i]];
+                
+                if (countryChance < ( 1 - countryCheck.shared_border_percentage ) && countryCheck.policy == 0) {
+
+                    candidateCountry = countryCheck;
+                    break;
+
+                }
+            
+            }
+
+        }
+        else if (Math.random() < airProb) {
+            const countriesShuffled = world.shuffleArray(Object.keys(world.countries));
+            const countryChance = Math.random();
+            
+            for (let i = 0; i < countriesShuffled.length; i++) {
+            
+                const countryCheck = world.countries[countriesShuffled[i]];
+                const incomeCheck = countryCheck.income_grp;
+                const incomeValCheck = parseFloat(incomeCheck.charAt(0)) / 6.0; // 5 income groups + 1, so there are no zeroes
+            
+                if (countryChance < ( 1 - incomeValCheck ) && countryCheck.policy == 0) {
+            
+                    candidateCountry = countryCheck;
+                    break;
+            
+                }
+            
+            }
+        
+        }
+        if (candidateCountry != null ) {
+        
+            candidateCountry.affected_chance = 0.1;
+        
+            if (country.affected_chance < 1.0)
+                country.affected_chance *= 0.1;
+        
+            candidateCountry.policy = 1.0;
+            candidateCountry.pop_aware = parseInt(candidateCountry.pop_est) * infectivityMinimumIncrease;
+        
+        }
+
+    },
+
+    infectWithin(country) {
+        
+        if (country.affected_chance == 0)
+            return;
+
+        if (country.pop_aware >= parseInt(country.pop_est))
+            return;
+
+        // Calculate infectivity
+        const infectivityIncreaseSpeed = world.scenarioData.threat_details.advanced_stats.infectivity_increase_speed;
+        const infectivityMinimumIncrease = world.scenarioData.threat_details.advanced_stats.minimum_infectivity_increase;
+
+        let infectivityRate = infectivityIncreaseSpeed;
+
+        Object.keys(gameParams.policies).forEach(strategy => {
+            const level = gameParams.policies[strategy];
+            switch(strategy.id) {
+                case 1:
+                    // Increase infectivity when reducing inequality for low income countries
+                    infectivityRate *= (Math.log(1 + country.income_grp_num));
+                    break;
+                case 2:
+                    // Increase infectivity with free trade countries for high income countries
+                    infectivityRate *= (Math.log((((5 + 1) - country.income_grp_num)) * 1.1));
+                    break;
+                case 3:
+                    // Increase infectivity with regulations for high income countries
+                    infectivityRate *= (Math.log((((5 + 1) - country.income_grp_num)) * 1.1));
+                    break;
+                case 4:
+                    // Increase infectivity with automation for high income countries
+                    infectivityRate *= (Math.log((((5 + 1) - country.income_grp_num)) * 1.1));
+                    break;
+                case 5:
+                    // Increase infectivity 
+                    infectivityRate *= 1.1;
+                    break;
+                case 6:
+                    // Increase infectivity 
+                    infectivityRate *= 1.1;
+                    break;
+                case 7:
+                    // Increase infectivity with boosted military for high income countries
+                    infectivityRate *= (Math.log((((5 + 1) - country.income_grp_num)) * 1.1));
+                    break;
+                case 8:
+                    // Increase infectivity when boosting democracy for low income countries
+                    infectivityRate *= (Math.log(2 + country.income_grp_num));
+                    break;
+                case 9:
+                    // Increase infectivity when boosting democracy for low income countries
+                    infectivityRate *= (Math.log(2 + country.income_grp_num));
+                    break;
+                case 10:
+                    // Increase infectivity with social media for high income countries
+                    infectivityRate *= (Math.log((((5 + 2) - country.income_grp_num)) * 0.8));
+                    break;
+                case 11:
+                    // Increase infectivity with celebrity endorsements for high income countries
+                    infectivityRate *= (Math.log(1 + country.income_grp_num));
+                    break;
+                case 12:
+                    // Increase infectivity with festivals for high income countries
+                    infectivityRate *= (Math.log(1 + country.income_grp_num));
+                    break;
+                case 13:
+                    // Increase infectivity with green cities for high income countries
+                    infectivityRate *= (Math.log((((5 + 1) - country.income_grp_num)) * 1.1));
+                    break;
+                case 14:
+                    infectivityRate *= (Math.log(1 + country.income_grp_num));
+                    break;
+                case 15:
+                infectivityRate *= (Math.log((((5 + 1) - country.income_grp_num)) * 1.1));
+                    break;
+                case 16:
+                    infectivityRate *= (Math.log(1 + country.income_grp_num));
+                    break;
+            
+            };
+
+        });
+
+        if ((infectivityRate - 1) < infectivityMinimumIncrease)
+            infectivityRate = 1 + infectivityMinimumIncrease;
+        country.pop_aware = (1 + country.pop_aware) * infectivityRate;
+        if (country.pop_aware > country.pop_est)
+            country.pop_aware = country.pop_est;
+
+    },
+
+    calculatePolicyBalanceOnPreparedness() {
+
+        const strategyCount = Object.values(gameParams.policies).reduce((accum, level) => accum + level, 0);
+        if (strategyCount == 0)
+            return 1.0;
+
+        const domainMean = strategyCount / 4;
+        let ecn = 0, pol = 0, cul = 0, eco = 0;
+        Object.keys(gameParams.policies).forEach(policyID => {
+            const policy = gameParams.policyOptions[policyID]
+            const level = gameParams.policies[policyID];
+            switch (policy.domain) {
+                case 1:
+                    ecn += level;
+                    break;
+                case 2:
+                    pol += level;
+                    break;
+                case 3:
+                    cul += level;
+                    break;
+                case 4:
+                    eco += level;
+                    break;
+            }
+        });
+
+        const variances = Math.pow(ecn - domainMean, 2) + Math.pow(pol - domainMean, 2) + Math.pow(cul - domainMean, 2) + Math.pow(eco - domainMean, 2);
+
+        // Suppress the effect of imbalanced resources
+        const policyBalance = 1 - Math.pow((variances / Math.pow(strategyCount, 2)), 4);
+        
+        return policyBalance;
+
+    },
+
+
+    calculateSinglePolicyImpactOnPreparedness(country, index) {
+
+        let severityEffect = 1.0;
+
+        const policyID = parseInt(Object.keys(gameParams.policies)[index]);
+        const policy = gameParams.policyOptions[policyID];
+        const level = gameParams.policies[policyID];
+
+        // Generate a natural log, so that level 1 = 1; level 2 = 1.31; level 3 = 1.55
+        const levelMultiplier = Math.log(level + 1.718);
+
+        // Check population
+        const pop = parseInt(country.pop_est);
+        // https://content.meteoblue.com/en/meteoscool/general-climate-zones
+        if (pop < 10000000) {
+
+            severityEffect *= (1 + policy.effect_on_pop_low * levelMultiplier);
+
+        }
+        else if (pop < 100000000) {
+
+            severityEffect *= (1 + policy.effect_on_pop_medium * levelMultiplier);
+
+        }
+        else {
+
+            severityEffect *= (1 + policy.effect_on_pop_high * levelMultiplier);
+
+        }
+
+        // Check income
+        switch (country.income_grp_num ) {
+            case 1:
+            case 2:
+                severityEffect *= (1 + policy.effect_on_income_high * levelMultiplier);
+                break;
+            case 3:
+                severityEffect *= (1 + policy.effect_on_income_medium_high * levelMultiplier);
+                break;
+            case 4:
+                severityEffect *= (1 + policy.effect_on_income_low_medium * levelMultiplier);
+                break;
+            case 5:
+                severityEffect *= (1 + policy.effect_on_income_low * levelMultiplier);
+                break;
+        }
+
+        // Check climate zone
+        const latitude = parseFloat(country.equator_dist);
+        // https://content.meteoblue.com/en/meteoscool/general-climate-zones
+        if (latitude > -23.5 && latitude < 23.5) {
+            
+            severityEffect *= (1 + policy.effect_on_geo_tropic * levelMultiplier);
+        
+        }
+        else if (latitude > -40 && latitude < 40) {
+
+            severityEffect *= (1 + policy.effect_on_geo_subtropic * levelMultiplier);
+
+        }
+        else if (latitude > -60 && latitude < 60) {
+
+            severityEffect *= (1 + policy.effect_on_geo_temperate * levelMultiplier);
+
+        }
+        else {
+
+            severityEffect *= (1 + policy.effect_on_geo_polar * levelMultiplier);
+
+        }
+
+        // Calculate impact of other strategies
+        for (let j = index + 1; j < Object.keys(gameParams.policies).length; j++) {
+            // if (i == j)
+            //     continue;
+
+            const otherPolicyID = parseInt(Object.keys(gameParams.policies)[j]);
+            const otherLevel = gameParams.policies[otherPolicyID];
+            // Generate a natural log, so that level 1 = 1; level 2 = 1.31; level 3 = 1.55
+            const otherLevelMultiplier = Math.log(otherLevel + 1.718);
+
+            const relation = gameParams.policyRelations[policyID][otherPolicyID];
+            
+            if (typeof(relation) !== "undefined") {
+            
+                severityEffect *= (1 + relation * otherLevelMultiplier);
+            
+            }
+
+        }
+
+        return severityEffect;
+
+    },
+
+    calculatePolicyImpactOnPreparedness(country) {
+        
+        let severityEffect = 1.0;
+
+        for (let i = 0; i < Object.keys(gameParams.policies).length; i++) {
+
+            severityEffect *= world.calculateSinglePolicyImpactOnPreparedness(country, i);
+
+        }
+        
+        // Add sigmoidal effect
+        let sigmoidalInfluence = world.sigmoidalPercent(country.pop_prepared_percent, 5) + 0.5;
+
+        return severityEffect * sigmoidalInfluence;
+
+    },
+
+    registerPreparednessWithin(country) {
+
+        if (country.affected_chance == 0)
+            return;
+
+        // const popAware = country.pop_aware;
+        const popAware = country.pop_est;
+        let popPrepared = country.pop_prepared;
+
+        // Calculate severity
+        let severityIncreaseSpeed = world.scenarioData.threat_details.advanced_stats.severity_increase_speed;
+        const severityMinimumIncrease = world.scenarioData.threat_details.advanced_stats.minimum_severity_increase;
+        const policyBalance =  world.calculatePolicyBalanceOnPreparedness();
+        const policyImpact =  world.calculatePolicyImpactOnPreparedness(country);
+        const policyEffect = policyBalance * policyImpact * severityIncreaseSpeed;
+        const policyEffectNormalised = 1 + ((policyEffect - 1) / (MONTH_INTERVAL));
+
+        if (severityIncreaseSpeed < severityMinimumIncrease) {
+
+            severityIncreaseSpeed = severityMinimumIncrease;
+
+        }
+
+        if (popPrepared == 0) {
+
+            // 1 person
+            popPrepared = 1; //popAware * 0.01;
+
+        }
+        else {
+
+            popPrepared *= (policyEffectNormalised);
+
+        }
+
+        if (popPrepared > popAware) {
+
+            popPrepared = popAware;
+
+        }
+
+        if (popPrepared > country.pop_est) {
+
+            popPrepared = country.pop_est;
+
+        }
+
+        country.pop_prepared = popPrepared;
+            
+    },
+
+    doSim() {
+
+        if (gameParams.startCountry === null || gameParams.state !== GAME_STATES.PREPARED)
+            return;
+
+        let buttons = [];
+
+        const country = world.countries[gameParams.startCountry];
+        country.policy = 1.0;
+        country.affected_chance = 1.0;
+
+        // Shuffle from https://gist.github.com/guilhermepontes/17ae0cc71fa2b13ea8c20c94c5c35dc4
+        world.shuffleArray = a => a.sort(() => Math.random() - 0.5);
+
+        world.startGameParams();
+        world.refreshDate();
+        world.buttons = [];
+
+    
+        /**
+         * Updates the game state at regular intervals
+         */
+        const updateTime = () => {
+
+            if (gameParams.state !== GAME_STATES.STARTED) {
+
+                // Refresh the timeout
+                gameParams.timeoutID = setTimeout(updateTime, 20);
+                return;
+
+            }
+
+            gameParams.counter++;
+            
+
+            // Handle automation here
+            if (gameParams.automateMode) {
+
+                // Select resources
+                for (let i = 0 ; i < gameParams.automateScript.policyEvents.length; i++) {
+
+                    let pe = gameParams.automateScript.policyEvents[i];
+                    
+                    if (gameParams.counter == pe.counter / MONTH_INTERVAL) {
+
+                        fireClickOnTarget(world.btnDevelopPolicy, function() {
+                            
+                            let resNames = Object.values(RESOURCES).map(res => res.name);
+                            let resGrp = Math.floor((pe.policyID - 1) / resNames.length);
+                            let element = world.designPolicyLayer.getChildByName(resNames[resGrp]);
+
+                            fireClickOnTarget(element, function() {
+                                let btn = world.designPolicyLayer.policyButtons[pe.policyID - 1];
+                                
+                                fireClickOnTarget(btn, function() {
+
+                                    fireClickOnTarget(world.designPolicyLayer.investButton, function() {
+
+                                        fireClickOnTarget(world.designPolicyLayer.btnExit);
+
+                                    });
+
+                                });
+                            });
+                        });
+                        break;
+
+                    }
+                };
+
+                // Select crisis
+                for (let i = 0; i < gameParams.crises.length; i++) {
+
+                    let crisisInCountry = gameParams.crises[i];
+                    
+                    if (gameParams.counter == crisisInCountry.counter + gameParams.automateScript.crisisDuration) {
+                        
+                        let target = world.worldBackground.getChildByName("crisis"+crisisInCountry.id);
+                        fireClickOnTarget(target);
+
+                    }
+
+                }
+
+            }
+
+            if (gameParams.counter % gameParams.timeInterval == 0) {
+
+                gameParams.currentDate = new Date(gameParams.currentDate.valueOf());
+                gameParams.currentDate.setDate(gameParams.currentDate.getDate() + 30.417);
+
+                // Show message box for each new decade
+                const currentYear = gameParams.currentDate.getFullYear();
+                const previousYear = gameParams.previousDate.getFullYear();
+                
+                // Change of year
+                if (currentYear > previousYear) {
+
+                    gameParams.stats[previousYear] = {
+                        loss: gameParams.totalLoss,
+                        prepared: gameParams.populationPreparedPercent
+                    };
+
+                    // Change of decade
+                    let message = "";
+                    let showDialog = false;
+
+                    // Sort narratives by loss for comparison
+                    const narratives = Object.values(NARRATIVES.n2048).sort((o1, o2) => {return o2.loss - o1.loss});
+
+                    switch (currentYear) {
+                        case 2048:
+                            showDialog = true;
+                            
+                            for (let i = 0; i < narratives.length; i++) {
+                            
+                                const n = narratives[i];
+                            
+                                if (gameParams.totalLoss > n.loss) {
+                                    
+                                    let index = Math.floor(Math.random() * n[cc.sys.localStorage.language].length);
+                                    message = n[cc.sys.localStorage.language][index];
+                                    break;
+
+                                }
+
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                        
+                    if (showDialog) {
+
+                        gameParams.state = GAME_STATES.PAUSED;
+                        let buttons = world.showMessageBoxOK(world, 
+                            gd.lang.bulletin[cc.sys.localStorage.language] + currentYear, 
+                            message, "OK", function() {
+                                gameParams.state = GAME_STATES.STARTED;
+                            });
+
+                        if (gameParams.automateMode) {
+
+                            world.fireClickOnTarget(buttons[0]);
+
+                        }
+
+                    }
+
+                }
+
+                gameParams.previousDate = gameParams.currentDate;
+
+
+                // Add policy robustness and loss
+                let totalPolicy = 0, totalLoss = 0;
+                let countriedAffected = 0, populationAware = 0, populationPrepared = 0;
+                
+                Object.keys(world.countries).forEach( key => {
+
+                    const country = world.countries[key];
+                    const loss = world.evaluateLoss(country);
+
+                    if (loss >= 0.1) {
+                        country.previousLoss = country.loss;
+                        country.loss = loss;
+                    }
+
+                    if (country.affected_chance) {
+
+                        world.transmitFrom(country);
+                        world.infectWithin(country);
+                        world.registerPreparednessWithin(country);
+
+                        countriedAffected++;
+                        populationAware += country.pop_aware;
+                        populationPrepared += country.pop_prepared;
+
+                        country.pop_aware_percent = 100 * country.pop_aware / country.pop_est;
+                        let existingConvincedPercentage = country.pop_prepared_percent;
+                        country.pop_prepared_percent = 100 * country.pop_prepared / country.pop_est;
+
+                        let imin = (existingConvincedPercentage > 0.5) ? parseInt(existingConvincedPercentage) : 0;
+                        let imax = (country.pop_prepared_percent > 0.5) ? parseInt(country.pop_prepared_percent) : 0;
+
+                    }
+
+                    totalPolicy += country.policy;
+                    totalLoss += country.loss;
+
+                });
+
+                totalPolicy /= Object.keys(world.countries).length;
+                gameParams.policy = totalPolicy;
+
+                totalLoss /= Object.keys(world.countries).length;
+                gameParams.previousLoss = totalLoss;
+                gameParams.totalLoss = totalLoss;
+
+                gameParams.countriedAffected = countriedAffected;
+                gameParams.populationAware = populationAware;
+                gameParams.populationPrepared = populationPrepared;
+                gameParams.populationAwarePercent = 100 * gameParams.populationAware / gameParams.populationWorld;
+                gameParams.populationPreparedPercent = 100 * gameParams.populationPrepared / gameParams.populationWorld;
+
+                if (gameParams.currentCountry != null) {
+
+                    world.printCountryStats();
+
+                }
+                else {
+
+                    world.printWorldStats();
+
+                }
+
+            }
+
+
+            // Various events
+            let ci = gameParams.crisisInterval;
+            Object.keys(gameParams.policies).forEach(policyID => {
+
+                const policy = gameParams.policyOptions[policyID];
+                const policyLevel = gameParams.policies[policyID];
+                ci /= 1 + (policy.effect_on_crises * Math.log(policyLevel + 1.718));
+                
+            });         
+
+            // Check enough time has elapsed to generate a new resource with some probability (1 / RESOURCE_CHANCE)
+            if (gameParams.counter - gameParams.lastCrisis >= ci  && Math.random() < CRISIS_CHANCE) {
+
+                world.addCrisis();
+
+            }
+
+            let adjustEffect = (effect) => {
+
+                // Effect must be positive
+                effect += 1.000001;
+                // Invert effect
+                effect = 1.0 / effect;
+                // Multiply by difficulty
+                if (effect > 1.0)
+                    effect = Math.pow(effect, gameParams.difficultyMultiplier);
+                else 
+                    effect = Math.pow(effect, 1.0 / gameParams.difficultyMultiplier);
+
+                return effect;
+
+            };
+
+            let ri = gameParams.resourceInterval;
+            gameParams.crises.forEach(crisisInCountry => {
+                
+                let crisis = CRISES[crisisInCountry.crisis];
+                let crisisEffect = crisis.effect_on_resources;
+                let country = world.countries[crisisInCountry.country];
+                // Add country-specific effects here
+                // ...
+
+                // Add to overall effect
+                ri *= adjustEffect(crisisEffect);
+                
+            }); 
+
+            Object.keys(gameParams.policies).forEach(policyID => {
+
+                let policy = gameParams.policyOptions[policyID];
+                let policyLevel = gameParams.policies[policyID];
+
+                ri *= adjustEffect(policy.effect_on_resources * Math.log(policyLevel + 1.718));
+                
+            }); 
+
+            // Check enough time has elapsed to generate a new resource with some probability (1 / RESOURCE_CHANCE)
+            if (gameParams.counter - gameParams.lastResource >= ri) {
+
+                world.addResource();
+                gameParams.resourceInterval *= 1.1;
+
+            }
+            
+            if (gameParams.tutorialMode && gameParams.counter % gameParams.tutorialInterval == 0) {
+                
+                world.addTutorial();
+
+            }
+
+            // Add buttons
+            const newButtons = [];
+            for (let i = 0; i < world.buttons.length; i++) {
+
+                const button = world.buttons[i];
+                if (gameParams.counter > button.placedAt + RESOURCE_DURATION) 
+                    button.removeFromParent();
+                else 
+                    newButtons.push(button);
+
+            }
+            world.buttons = newButtons;
+            
+            // Update labels
+            world.resourceScoreLabel.string = gameParams.resources;
+            world.refreshDate();
+
+            // Game over                        
+            if (gameParams.totalLoss >= 100) {
+
+                // Sort narratives by loss for comparison
+                const narratives = Object.values(NARRATIVES.n2070).sort((o1, o2) => {return o2.loss - o1.loss});
+                const n = narratives[0];
+                const index = Math.floor(Math.random() * n[cc.sys.localStorage.language].length);
+                const message = n[cc.sys.localStorage.language][index];
+                gameOver(world, message, "OK");
+
+            }
+            else if (gameParams.currentDate >= gameParams.targetDate) {
+
+                let message = "";
+                // Sort narratives by loss for comparison
+                const narratives = Object.values(NARRATIVES.n2070).sort((o1, o2) => {return o2.loss - o1.loss});
+                
+                for (let i = 0; i < narratives.length; i++) {
+
+                    const n = narratives[i];
+                    if (gameParams.totalLoss > n.loss) {
+
+                        const index = Math.floor(Math.random() * n[cc.sys.localStorage.language].length);
+                        message = n[cc.sys.localStorage.language][index];
+                        break;
+
+                    }
+
+                }
+
+                gameOver(world, message, "OK");
+
+            }
+
+            // Refresh the timeout
+            gameParams.timeoutID = setTimeout(updateTime, 20);
+
+        }; 
+
+        // Run the updates in the background, so interaction is not blocked.
+        // cc.async.parallel([
+        //     function() {
+        //         updateTime();
+        //     }
+        // ]);
+        updateTime();
+    },
+
     start () {
         console.log(this._time);
+
+        const beginSim = () => {
+
+            gameParams.state = GAME_STATES.PREPARED;
+
+            world.btnPause.getComponent(cc.Button).interactable = true;
+            world.btnPlay.getComponent(cc.Button).interactable = false;
+            world.btnFF.getComponent(cc.Button).interactable = true;
+
+            world.doSim();
+
+        };
+
+
+        let nestedButtons = null;
+
+        let antCountries = ["NZL", "AUS", "ZAF", "ARG", "CHL"];
+        let startCountry = antCountries[Math.floor(Math.random() * antCountries.length)];
+        
+        let buttons = world.showMessageBoxOK(world, 
+            world.scenarioData[cc.sys.localStorage.language].popup_1_title, 
+            world.scenarioData[cc.sys.localStorage.language].popup_1_description, 
+            gd.lang.start_tutorial[cc.sys.localStorage.language], (that) => {
+
+                gameParams.tutorialMode = true;
+                gameParams.startCountry = startCountry;
+                // gameParams.startCountry = keys[Math.floor(Math.random() * keys.length)]
+                gameParams.statsCountry = startCountry;
+                gameParams.currentCountry = startCountry;
+                const countryName = world.countries[gameParams.startCountry].name;
+                
+                nestedButtons = world.showMessageBoxOK(world, 
+                    gd.lang.start_prepare[cc.sys.localStorage.language], 
+                    gd.lang.start_mission_a[cc.sys.localStorage.language]  + 
+                    countryName + 
+                    gd.lang.start_mission_b[cc.sys.localStorage.language], 
+                    world.scenarioData[cc.sys.localStorage.language].popup_2_title, 
+                    (that) => {
+                    
+                        beginSim();
+
+                });
+
+            },
+            gd.lang.start_tutorial_skip[cc.sys.localStorage.language], (that) => {
+
+                gameParams.tutorialMode = false;
+                gameParams.startCountry = startCountry;
+                // gameParams.startCountry = keys[Math.floor(Math.random() * keys.length)]
+                gameParams.statsCountry = startCountry;
+                gameParams.currentCountry = startCountry;
+                const countryName = world.countries[gameParams.startCountry].name;
+
+                nestedButtons = world.showMessageBoxOK(world, 
+                    gd.lang.start_prepare[cc.sys.localStorage.language], 
+                    gd.lang.start_mission_a[cc.sys.localStorage.language]  + 
+                    countryName + 
+                    gd.lang.start_mission_b[cc.sys.localStorage.language], 
+                    world.scenarioData[cc.sys.localStorage.language].popup_2_title, 
+                    (that) => {
+
+                        beginSim();
+
+                    });
+            }
+        );
     },
 
     update (dt) {
@@ -1278,8 +2561,10 @@ cc.Class({
         this._time += dt;
         // this.material.u_percentageLoss = this.material.u_time % 100.0;
         this.material.setProperty('time', this._time);
-        this.material.setProperty('u_percentageLoss', Math.sin(this._time) * 100.0);
-        this.material.setProperty('u_percentagePreparedness', Math.cos(this._time) * 100.0);
+        this.material.setProperty('u_percentageLoss', gameParams.totalLoss);
+        this.material.setProperty('u_percentagePreparedness', gameParams.populationPreparedPercent);
+        // this.material.setProperty('u_percentageLoss', Math.sin(this._time) * 100.0);
+        // this.material.setProperty('u_percentagePreparedness', Math.cos(this._time) * 100.0);
         
     },
 });

@@ -1,0 +1,36 @@
+{
+  "ver": "2.3.4",
+  "uuid": "d6c42471-d5c4-4a29-97a0-913aedefac02",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "genMipmaps": false,
+  "packable": true,
+  "width": 64,
+  "height": 72,
+  "platformSettings": {},
+  "subMetas": {
+    "ICON_RESOURCE_POLITICS_2": {
+      "ver": "1.0.4",
+      "uuid": "1e0a0da8-3b54-467d-ab3b-aefcf3699f29",
+      "rawTextureUuid": "d6c42471-d5c4-4a29-97a0-913aedefac02",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 0,
+      "trimX": 13,
+      "trimY": 9,
+      "width": 38,
+      "height": 54,
+      "rawWidth": 64,
+      "rawHeight": 72,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

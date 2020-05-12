@@ -13,6 +13,12 @@
     ]
   ],
   "excluded-modules": [
+    "Collider",
+    "Dynamic Atlas",
+    "DragonBones",
+    "Physics",
+    "Spine Skeleton",
+    "TiledMap",
     "3D",
     "3D Primitive",
     "3D Physics/cannon.js",

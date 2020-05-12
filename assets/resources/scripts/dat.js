@@ -71,6 +71,34 @@ const LOSS_PARTIAL = 80;
 
 
 // RESOURCES
+const res = {
+    resource_economy_1: "icons/ICON_RESOURCE_ECONOMY_1",
+    resource_economy_2: "icons/ICON_RESOURCE_ECONOMY_2",
+    resource_economy_3: "icons/ICON_RESOURCE_ECONOMY_3",
+    resource_economy_4: "icons/ICON_RESOURCE_ECONOMY_4",
+    resource_politics_1: "icons/ICON_RESOURCE_POLITICS_1",
+    resource_politics_2: "icons/ICON_RESOURCE_POLITICS_2",
+    resource_politics_3: "icons/ICON_RESOURCE_POLITICS_3",
+    resource_politics_4: "icons/ICON_RESOURCE_POLITICS_4",
+    resource_culture_1: "icons/ICON_RESOURCE_CULTURE_1",
+    resource_culture_2: "icons/ICON_RESOURCE_CULTURE_2",
+    resource_culture_3: "icons/ICON_RESOURCE_CULTURE_3",
+    resource_culture_4: "icons/ICON_RESOURCE_CULTURE_4",
+    resource_ecology_1: "icons/ICON_RESOURCE_ECOLOGY_1",
+    resource_ecology_2: "icons/ICON_RESOURCE_ECOLOGY_2",
+    resource_ecology_3: "icons/ICON_RESOURCE_ECOLOGY_3",
+    resource_ecology_4: "icons/ICON_RESOURCE_ECOLOGY_4",
+};
+
+const crisis = {
+    crisis_1: "icons/ICON_CRISIS_CRASH",
+    crisis_2: "icons/ICON_CRISIS_DISPLACEMENT",
+    crisis_3: "icons/ICON_CRISIS_PANDEMIC",
+    crisis_4: "icons/ICON_CRISIS_WAR",
+    crisis_5: "icons/ICON_CRISIS_WATER_SHORTAGE",
+    crisis_6: "icons/ICON_CRISIS_WEATHER"
+};
+
 const RESOURCES = {
     economic: {
         eng: {
@@ -801,7 +829,7 @@ const CRISES = {
     WATER_SHORTAGE: {
         eng: "Water shortage",
         esp: "Escasez de agua",
-        image: "res/images/NEW_ICONS/ICON_CRISIS_WATER_SHORTAGE.png",
+        image: "icons/ICON_CRISIS_WATER_SHORTAGE",
         effect_on_climate: 0,
         effect_on_population: 0,
         effect_on_global_gdp: 0,
@@ -815,7 +843,7 @@ const CRISES = {
     FINANCIAL_CRISIS: {
         eng: "Financial crisis",
         esp: "Crisis financiera",
-        image: "res/images/NEW_ICONS/ICON_CRISIS_CRASH.png",
+        image: "icons/ICON_CRISIS_CRASH",
         effect_on_climate: 0,
         effect_on_population: 0,
         effect_on_global_gdp: 0,
@@ -829,7 +857,7 @@ const CRISES = {
     EXTREME_WEATHER_EVENT: {
         eng: "Extreme weather event",
         esp: "Evento meteorológico extremo",
-        image: "res/images/NEW_ICONS/ICON_CRISIS_WEATHER.png",
+        image: "icons/ICON_CRISIS_WEATHER",
         effect_on_climate: 0,
         effect_on_population: 0,
         effect_on_global_gdp: 0,
@@ -843,7 +871,7 @@ const CRISES = {
     FORCED_DISPLACEMENT: {
         eng: "Forced displacement",
         esp: "Desplazamiento forzado",
-        image: "res/images/NEW_ICONS/ICON_CRISIS_DISPLACEMENT.png",
+        image: "icons/ICON_CRISIS_DISPLACEMENT",
         effect_on_climate: 0,
         effect_on_population: 0,
         effect_on_global_gdp: 0,
@@ -857,7 +885,7 @@ const CRISES = {
     EPIDEMIC: {
         eng: "Epidemic",
         esp: "Epidémico",
-        image: "res/images/NEW_ICONS/ICON_CRISIS_EPIDEMIC.png",
+        image: "icons/ICON_CRISIS_EPIDEMIC",
         effect_on_climate: 0,
         effect_on_population: 0,
         effect_on_global_gdp: 0,
@@ -871,7 +899,7 @@ const CRISES = {
     WAR: {
         eng: "War",
         esp: "Guerra",
-        image: "res/images/NEW_ICONS/ICON_CRISIS_WAR.png",
+        image: "icons/ICON_CRISIS_WAR",
         effect_on_climate: 0,
         effect_on_population: 0,
         effect_on_global_gdp: 0,
