@@ -15,7 +15,7 @@ CCEffect %{
         time: { value: 0.5 }
         resolution: { value: [1, 1] }
         u_percentageLoss: { value: 100.0 }
-        u_percentagePreparedness: { value: 100.0 }
+        u_percentagePrep: { value: 100.0 }
         u_zoom: { value: 1.0 }
         u_cellSize: { value: 10.0 }
         u_randFactor: { value: 0.8 }
@@ -84,7 +84,7 @@ CCProgram fs %{
     float time;
     float u_threshold;
     float u_percentageLoss;
-    float u_percentagePreparedness;
+    float u_percentagePrep;
     float u_selected;
     float u_zoom;
     float u_dotSize;
@@ -191,7 +191,7 @@ CCProgram fs %{
       accum /= 9.;
       accum = 1.0 - (abs(0.5 - accum) * 2.);
       accum.rgb = greyDark * accum.a;
-      // accum *= u_selected;
+      accum *= u_selected;
       return accum;
   }
 
@@ -233,7 +233,7 @@ CCProgram fs %{
     // Fill values
     float v1 = ( 1.0 - u_percentageLoss / 100.0 );
     v1 = v1 * v1 * v1;
-    float v2 = ( 1.0 - u_percentagePreparedness / 100.0 );
+    float v2 = ( 1.0 - u_percentagePrep / 100.0 );
     v2 = v2 * v2 * v2;
 
     // Construct the mask

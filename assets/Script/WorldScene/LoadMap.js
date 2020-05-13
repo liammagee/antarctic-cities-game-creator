@@ -320,6 +320,16 @@ cc.Class({
 
         }, {});
 
+        /**
+         * Sorts objects by their relative screen position, to avoid overlapping tiles.
+         */
+        world.sortedObjs = Object.values(world.countries).sort((a, b) => { 
+
+            return (a.points[0].y * cc.winSize.height + a.points[0].x) > (b.points[0].y * cc.winSize.height + b.points[0].x);  
+
+        });
+
+
 
         // Add proportion of main land mass with shared borders
         let allPoints = {};
@@ -745,6 +755,9 @@ cc.Class({
         world.quizBox.opacity = 255;
         world.quizBox.zIndex = 103;
 
+        world.quizBox.getChildByName("quizTitle").getComponent(cc.Label).string = title;
+        world.quizBox.getChildByName("quizContents").getComponent(cc.Label).string = message;
+
         let btn1 = world.quizBox.getChildByName("btn1");
         let btn2 = world.quizBox.getChildByName("btn2");
         let buttons = [];
@@ -763,11 +776,10 @@ cc.Class({
         let btn1Func = function(event) {
 
             world.messageBox.opacity = 0;
-            btn1.node.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
-            btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
+            btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
+            btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
             gameParams.modal = false;
-            callback1();
             event.stopPropagation();
 
             world.showMessageBoxOK(parent, "CRISIS RESPONSE", "Great response to this crisis!", "OK!", function() {
@@ -780,16 +792,15 @@ cc.Class({
             });
 
         };
-        btn1.node.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
+        btn1.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
         
         let btn2Func = function(event) {
 
             world.messageBox.opacity = 0;
-            btn1.node.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
-            btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
+            btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
+            btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
             gameParams.modal = false;
-            callback2();
             event.stopPropagation();
 
             showMessageBoxOK(parent, "CRISIS RESPONSE", "Good try, but this won't be enough to preserve the future of Antarctica!", "OK!", function() {
@@ -805,7 +816,7 @@ cc.Class({
             });
 
         };
-        btn2.node.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
+        btn2.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
 
         buttons.push(btn1);
         buttons.push(btn2);
@@ -1201,12 +1212,12 @@ cc.Class({
         world.countryLossProgress.progress = lossPercent / 100.0;
         
         if (lossPercent >= LOSS_TOTAL)
-            world.countryLossProgress.setOpacity(255);
+            world.countryLossProgress.opacity = 255;
         else if (lossPercent >= LOSS_PARTIAL)
-            world.countryLossProgress.setOpacity(191);
+            world.countryLossProgress.opacity = 191;
         world.countryAwarePrepared.string = (preparedPercent + "%");
         // if (preparedPercent >= 20)
-        //     world.countryAwarePrepared.setOpacity(255);
+        //     world.countryAwarePrepared.opacity = 255;
         world.countryPreparedProgress.progress = preparedPercent / 100.0;
 
     },
@@ -1224,8 +1235,8 @@ cc.Class({
         world.countryLoss.string = (lossPercent + "%" );
         world.countryAwarePrepared.string = (preparedPercent + "%");
 
-        world.countryLossProgress.setPercent(lossPercent);
-        world.countryPreparedProgress.setPercent(preparedPercent);
+        world.countryLossProgress.progress = lossPercent / 100.0;
+        world.countryPreparedProgress.progress = preparedPercent / 100.0;
 
     },
 
@@ -1253,6 +1264,82 @@ cc.Class({
 
         return dists;
 
+    },
+
+    selectCountry(event, location) {
+
+        if (gameParams.state !== GAME_STATES.PREPARED && gameParams.state !== GAME_STATES.STARTED && gameParams.state !== GAME_STATES.PAUSED)
+            return;
+        
+        const target = event.getCurrentTarget();
+        const locationInNode = target.convertToNodeSpaceAR(location);
+        let x = 0, y = 0;
+        world.lastLayerID = -1;
+
+        let start = 0, end = world.sortedObjs.length;
+        if (world.lastLayerID > -1) {
+
+            start = (start < 0) ? 0 : start;
+            end = (end > world.sortedObjs.length) ? world.sortedObjs.length : end;
+
+        };
+
+        const ed = (pt1, pt2) => {
+            return Math.sqrt(Math.pow(pt1.x - pt2.x, 2) + Math.pow(pt1.y - pt2.y, 2));
+        };
+
+        let minED = -1, selectedCountry = null;
+        for (let j = start; j < end; j++) {
+
+            const poly = world.sortedObjs[j];
+            const mousePoint = {x: locationInNode.x, y: cc.winSize.height - locationInNode.y - (2 * Y_OFFSET)};
+            const cd = world.collisionDetection(poly.points[0], mousePoint);
+
+            if (cd) {
+
+                world.lastLayerID = j;
+                const countryObj = world.countries[poly.iso_a3];
+                const ced = ed(countryObj.centroid, mousePoint);
+                if (minED === -1 || ced < minED) {
+
+                    minED = ced;
+                    selectedCountry = poly.iso_a3;
+                    break;
+
+                }
+
+            }
+
+        }
+
+        // Pick the match with the closest centroid ID
+        if (selectedCountry != null) {
+
+            if (gameParams.currentCountry != null) {
+                
+                world.countries[gameParams.currentCountry].selected = false;
+
+            }
+            gameParams.currentCountry = selectedCountry;
+
+            if (gameParams.currentCountry != null)
+                world.countries[gameParams.currentCountry].selected = true;
+            currentCountry = selectedCountry;
+            
+            world.printCountryStats();
+
+        }
+        else {
+            
+            if (gameParams.currentCountry != null)
+                world.countries[gameParams.currentCountry].selected = false;
+            gameParams.currentCountry = null;
+
+            world.printWorldStats();
+
+        }
+
+        return true;
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -1320,8 +1407,14 @@ cc.Class({
                         const spriteNode = new cc.Node('Sprite ');
                         const sp = spriteNode.addComponent(cc.Sprite);
                         sp.spriteFrame = assets[i];
-                        sp.materials = [world.material];
-                        sp.setMaterial(0, world.material);
+                        let materialVariant = cc.MaterialVariant.create(world.material);
+                        materialVariant.setProperty('u_selected', 0.0);
+                        materialVariant.setProperty('u_percentageLoss', 0.0);
+                        materialVariant.setProperty('u_percentagePrep', 0.0);
+                        sp.materials = [materialVariant];
+                        sp.setMaterial(0, materialVariant);
+                        // sp.materials = [world.material];
+                        // sp.setMaterial(0, world.material);
                         let url = urls[i];
                         let iso = url.match('/([A-Z]*)_')[1];
                         world.countryNodes[iso] = spriteNode;
@@ -1340,9 +1433,33 @@ cc.Class({
                             countryNode.setAnchorPoint(0.0, 0.0);
                             countryNode.setPosition((country.offsetX), 
                                                     (cc.winSize.height - ( 1 * Y_OFFSET  ) - country.offsetY));
-                            // countryNode.parent = scene;
+                            countryNode.parent = scene;
                             countryNode.zIndex = 2;
 
+                            //let layout = cc.director.getScene().getChildByName("layout");
+                            /*
+                            countryNode.on(cc.Node.EventType.MOUSE_ENTER, function(event) {
+                                
+                                let mv = countryNode.getComponent(cc.Sprite).materials[0];
+                                mv.setProperty("u_selected", 1.0);
+                                mv.setProperty('u_percentageLoss', country.loss);
+                                console.log("Entered " + country.name);
+                                gameParams.currentCountry = country.iso_a3;
+                                world.printCountryStats();
+                                                                    
+                            });
+                            countryNode.on(cc.Node.EventType.MOUSE_EXIT, function(event) {
+                                
+                                let mv = countryNode.getComponent(cc.Sprite).materials[0];
+                                mv.setProperty("u_selected", 0.0);
+                                mv.setProperty('u_percentageLoss', country.loss);
+                                console.log("Exited " + country.name);
+                                gameParams.currentCountry = null;
+                                world.printWorldStats();
+
+                            });
+                            */
+                            
                         }
                     }
             
@@ -1353,6 +1470,13 @@ cc.Class({
 
         // Initialise controls
         world.initControls();
+
+        let fg = cc.director.getScene().getChildByName("foreground");
+        fg.on(cc.Node.EventType.MOUSE_MOVE, function(event) {
+            
+            world.selectCountry(event, event.getLocation());
+                                                
+        });
 
     },
 
@@ -1544,7 +1668,6 @@ cc.Class({
             });
 
         });
-        console.log(probs.length)
 
         for (let i = 0; i < probs.length; i++) {
         
@@ -2562,9 +2685,27 @@ cc.Class({
         // this.material.u_percentageLoss = this.material.u_time % 100.0;
         this.material.setProperty('time', this._time);
         this.material.setProperty('u_percentageLoss', gameParams.totalLoss);
-        this.material.setProperty('u_percentagePreparedness', gameParams.populationPreparedPercent);
+        this.material.setProperty('u_percentagePrep', gameParams.populationPreparedPercent);
         // this.material.setProperty('u_percentageLoss', Math.sin(this._time) * 100.0);
-        // this.material.setProperty('u_percentagePreparedness', Math.cos(this._time) * 100.0);
+        // this.material.setProperty('u_percentagePrep', Math.cos(this._time) * 100.0);
+        if (world.countryNodes !== undefined) {
+
+            Object.keys(world.countryNodes).forEach((key) => {
+
+                let countryNode = world.countryNodes[key];
+                let country = world.countries[key];
+                if (country !== undefined) {
+
+                    let mv = countryNode.getComponent(cc.Sprite).materials[0];
+                    mv.setProperty('u_selected', (country.selected ? 1.0 : 0.0));
+                    mv.setProperty('u_percentageLoss', country.loss);
+                    mv.setProperty('u_percentagePrep', country.pop_prepared_percent / 100.0);
+
+                }
+    
+            });
+
+        }
         
     },
 });

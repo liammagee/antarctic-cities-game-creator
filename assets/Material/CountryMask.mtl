@@ -13,7 +13,8 @@
         "USE_TEXTURE": true
       },
       "props": {
-        "u_percentageLoss": 0
+        "u_percentageLoss": 0,
+        "u_percentagePrep": 0
       }
     }
   }
