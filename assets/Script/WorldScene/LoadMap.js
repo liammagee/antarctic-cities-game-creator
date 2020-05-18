@@ -10,6 +10,13 @@ cc.Class({
 
 
     properties: {
+        defaultMaterial: {
+            // ATTRIBUTES:
+            default: null,        // The default value will be used only when the component attaching
+                                  // to a node for the first time
+            type: cc.Material, // optional, default is typeof default
+            serializable: true,   // optional, default is true
+        },
         messageBox: {
             // ATTRIBUTES:
             default: null,        // The default value will be used only when the component attaching
@@ -636,7 +643,7 @@ cc.Class({
      * @param {*} prompt 
      * @param {*} callback 
      */
-    showMessageBoxOK(parent, title, message, prompt1, callback1, prompt2, callback2) {
+    showMessageBox(parent, title, message, prompt1, callback1, prompt2, callback2) {
 
         gameParams.modal = true;
         gameParams.state = GAME_STATES.PAUSED;
@@ -775,14 +782,14 @@ cc.Class({
 
         let btn1Func = function(event) {
 
-            world.messageBox.opacity = 0;
+            world.quizBox.opacity = 0;
             btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
             gameParams.modal = false;
             event.stopPropagation();
 
-            world.showMessageBoxOK(parent, "CRISIS RESPONSE", "Great response to this crisis!", "OK!", function() {
+            world.showMessageBox(parent, "CRISIS RESPONSE", "Great response to this crisis!", "OK!", function() {
                 
                 const res = Math.floor(1 + Math.random() * 3);
                 gameParams.resources += res;
@@ -796,14 +803,14 @@ cc.Class({
         
         let btn2Func = function(event) {
 
-            world.messageBox.opacity = 0;
+            world.quizBox.opacity = 0;
             btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
             gameParams.modal = false;
             event.stopPropagation();
 
-            showMessageBoxOK(parent, "CRISIS RESPONSE", "Good try, but this won't be enough to preserve the future of Antarctica!", "OK!", function() {
+            world.showMessageBox(parent, "CRISIS RESPONSE", "Good try, but this won't be enough to preserve the future of Antarctica!", "OK!", function() {
                 
                 const res = Math.floor(1 + Math.random() * 3);
                 if (gameParams.resources - res > 0)
@@ -812,6 +819,7 @@ cc.Class({
                     gameParams.resources = 0;
                 
                 gameParams.state = GAME_STATES.STARTED;
+
 
             });
 
@@ -822,6 +830,64 @@ cc.Class({
         buttons.push(btn2);
         
         return buttons;
+
+    },
+
+
+    /**
+     * Message box
+     * @param {*} parent 
+     * @param {*} title
+     * @param {*} message 
+     * @param {*} prompt 
+     * @param {*} callback 
+     */
+    showSettingsBox(parent) {
+
+        gameParams.modal = true;
+        gameParams.state = GAME_STATES.PAUSED;
+
+        world.settingsBox.opacity = 255;
+        world.settingsBox.zIndex = 104;
+
+        let btn1 = world.settingsBox.getChildByName("apply");
+        let btn2 = world.settingsBox.getChildByName("cancel");
+        let gs = (cc.sys.localStorage.greyscale == 'true')
+        world.settingsBox.getChildByName("toggleContainer").getChildByName("toggle1").getComponent(cc.Toggle).isChecked = gs;
+        world.settingsBox.getChildByName("toggleContainer").getChildByName("toggle2").getComponent(cc.Toggle).isChecked = !gs;
+
+        let btn1Func = function(event) {
+
+            let gsChecked = world.settingsBox.getChildByName("toggleContainer").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
+
+            cc.sys.localStorage.greyscale = gsChecked;
+            gameParams.greyscale = gsChecked;
+
+            if (gsChecked) {
+                world.backgroundGreyscale.opacity = (255);
+                world.backgroundColour.opacity = (0);
+            }
+            else {
+                world.backgroundGreyscale.opacity = (0);
+                world.backgroundColour.opacity = (255);
+            }
+            
+            gameParams.state = GAME_STATES.STARTED;
+            world.settingsBox.opacity = 0;
+        };
+        btn1.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
+        
+        let btn2Func = function(event) {
+
+            world.settingsBox.opacity = 0;
+            btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
+            btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
+            gameParams.modal = false;
+            event.stopPropagation();
+            gameParams.state = GAME_STATES.STARTED;
+
+        };
+        btn2.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
 
     },
 
@@ -903,11 +969,11 @@ cc.Class({
         
         world.postResultsToServer();
 
-        parent.pauseAllActions(); 
+        // parent.pauseAllActions(); 
         window.clearTimeout(gameParams.timeoutID );
         gameParams.state = GAME_STATES.PAUSED;
         
-        world.showMessageBoxOK(parent, "Game Over", message, prompt, function() {
+        world.showMessageBox(parent, "Game Over", message, prompt, function() {
 
             initGameParams(world.scenarioData);
             gameParams.state = GAME_STATES.GAME_OVER;
@@ -971,13 +1037,14 @@ cc.Class({
         world.countryAwarePrepared = world.bottomBar.getChildByName("lblPreparednessPercent").getComponent(cc.Label);
         world.countryPreparedProgress = world.bottomBar.getChildByName("progressBarPreparedness").getComponent(cc.ProgressBar);
         world.resourceScoreLabel = cc.director.getScene().getChildByName("resourceScoreBackground").getChildByName("lblResourceScore").getComponent(cc.Label);
-        world.quizBox = cc.director.getScene().getChildByName("quizBox");
+        world.quizBox = cc.director.getScene().getChildByName("layerQuizBox");
+        world.settingsBox = cc.director.getScene().getChildByName("layerSettings");
 
         // Handlers
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnQuit"), function() {
             gameParams.state = GAME_STATES.PAUSED;
 
-            world.showMessageBoxOK(world.node.parent, "Quit Game", "", 
+            world.showMessageBox(world.node.parent, "Quit Game", "", 
                 "Quit Game", () => {
                 
                     world.postResultsToServer();
@@ -993,30 +1060,18 @@ cc.Class({
 
                 });            
         });
-        world.handleMouseTouchEvent(world.topBar.getChildByName("btnSettings"), function() {
+        world.topBar.getChildByName("btnSettings").on(cc.Node.EventType.TOUCH_END, function() {
 
             gameParams.state = GAME_STATES.PAUSED;
 
-            cc.sys.localStorage.greyscale = !(cc.sys.localStorage.greyscale == 'true');
-            gameParams.greyscale = cc.sys.localStorage.greyscale;
+            world.showSettingsBox(world.node.parentπ);
 
-            if (gameParams.greyscale == 'true') {
-                world.backgroundGreyscale.opacity = (255);
-                world.backgroundColour.opacity = (0);
-            }
-            else {
-                world.backgroundGreyscale.opacity = (0);
-                world.backgroundColour.opacity = (255);
-            }
-                // world.background.spriteFrame = '';
-            
-            gameParams.state = GAME_STATES.STARTED;
-        });
+        }, this);
 
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnSound"), function() {
             gameParams.state = GAME_STATES.PAUSED;
 
-            world.showMessageBoxOK(world.node.parent, "Sound", "Not yet implemented", 
+            world.showMessageBox(world.node.parent, "Sound", "Not yet implemented", 
                 "OK", () => {
                 
                     gameParams.state = GAME_STATES.STARTED;
@@ -1065,13 +1120,31 @@ cc.Class({
 
         // Add handling for bottom bar buttons
         btnDesignPolicy.on(cc.Node.EventType.TOUCH_END, function() {
+            
             gameParams.state = GAME_STATES.PAUSED;
-            designPolicy.zIndex = 100;
+            designPolicy.zIndex = 103;
+            resourceScore.zIndex = 104;
+            let layerDesignPolicy = cc.director.getScene().getChildByName("layerDesignPolicy");
+            let policyLabel = layerDesignPolicy.getChildByName("policyLabel");
+            let policyDescription = layerDesignPolicy.getChildByName("policyDescription");
+            let policyCostLabel = layerDesignPolicy.getChildByName("policyCostLabel");
+            let btnPolicyInvest = layerDesignPolicy.getChildByName("btnPolicyInvest");
+            
+            policyLabel.opacity = 0;
+            policyLabel.getComponent(cc.Label).string = "<< Select";
+            policyDescription.opacity = 255;
+            const policyGeneralLabel = gd.lang.policy_platform_hint[cc.sys.localStorage.language];
+            policyDescription.getComponent(cc.Label).string = policyGeneralLabel;
+            policyCostLabel.opacity = 0;
+            btnPolicyInvest.getComponent(cc.Button).interactable = true;
+            btnPolicyInvest.opacity = 0;
+    
         });
         let btnDesignPolicyQuit = designPolicy.getChildByName("btnDesignPolicyQuit");
         btnDesignPolicyQuit.on(cc.Node.EventType.TOUCH_END, function() {
             gameParams.state = GAME_STATES.STARTED;
             designPolicy.zIndex = -1;
+            resourceScore.zIndex = 101;
         }, btnDesignPolicyQuit);
 
         btnStats.on(cc.Node.EventType.TOUCH_END, function() {
@@ -1091,6 +1164,388 @@ cc.Class({
         messageBox.zIndex = 103;
         
     },
+
+    initPolicyDesign() {
+
+        let layerDesignPolicy = cc.director.getScene().getChildByName("layerDesignPolicy");
+        let pageView = layerDesignPolicy.getChildByName("pageview").getComponent(cc.PageView);
+        let resourceScoreLabel = cc.director.getScene().getChildByName("resourceScoreBackground").getChildByName("lblResourceScore").getComponent(cc.Label);
+
+        // Switch pages
+        let btnEconomy = layerDesignPolicy.getChildByName("btnEconomy");
+        let btnPolitics = layerDesignPolicy.getChildByName("btnPolitics");
+        let btnCulture = layerDesignPolicy.getChildByName("btnCulture");
+        let btnEcology = layerDesignPolicy.getChildByName("btnEcology");
+
+        let policyLabel = layerDesignPolicy.getChildByName("policyLabel");
+        let policyDescription = layerDesignPolicy.getChildByName("policyDescription");
+        let policyCostLabel = layerDesignPolicy.getChildByName("policyCostLabel");
+        let btnPolicyInvest = layerDesignPolicy.getChildByName("btnPolicyInvest");
+
+        pageView.setCurrentPageIndex(0);
+        btnEconomy.getComponent(cc.Button).interactable = false;
+        btnEconomy.getChildByName("Label").color = COLOR_UMBER;
+
+        let allButtons = [btnEconomy, btnPolitics, btnCulture, btnEcology];
+        let prevButton = btnEconomy;
+        let policyButtons = [];
+
+        const costCalculation = (policySelected) => {
+            
+            let policyLevel = gameParams.policies[policySelected.id];
+            let cost = policySelected.cost_1;
+
+            if (policyLevel !== undefined) {
+
+                switch(policyLevel) {
+                    case 1:
+                        cost = policySelected.cost_2;
+                        break;
+                    case 2:
+                        cost = policySelected.cost_3;
+                        break;
+                    case 3:
+                        cost = 0;
+                        break;
+                }
+
+            }
+
+            let dists = world.generateResourceDistribution();
+            let policyCategory = Math.floor((policySelected.id - 1) / 4);
+            let weights = [];
+
+            for (let i = 0; i < dists.length; i++) {
+
+                if (i % 4 == 0) {
+
+                    weights.push(dists[i] * 4);
+                    
+                }
+                else {
+
+                    let wi = Math.floor(i / 4);
+                    weights[wi] += dists[i] * 4;
+
+                }
+
+            }
+
+            if (weights[policyCategory] > 1)
+                cost *= weights[policyCategory];
+            
+            cost = Math.round(cost);
+
+            return cost;
+
+        };
+        // Changes buttons with switching pages
+        const switchPage = (btn, index) => {
+
+            policySelected = null;
+            pageView.setCurrentPageIndex(index);
+            btn.getComponent(cc.Button).interactable = false;
+            btn.getChildByName("Label").color = COLOR_UMBER;
+
+            if (prevButton != null && prevButton != btn) {
+                
+                prevButton.getComponent(cc.Button).interactable = true;
+                prevButton.getChildByName("Label").color = COLOR_ICE;
+
+            }
+            
+            prevButton = btn;
+
+            policyLabel.opacity = 0;
+            const policyGeneralLabel = gd.lang.policy_platform_hint[cc.sys.localStorage.language];
+            policyDescription.getComponent(cc.Label).string = policyGeneralLabel;
+            policyCostLabel.opacity = 0;
+            btnPolicyInvest.opacity = 0;
+
+        };
+        const makeButton = function(text, point, index) {
+
+            let btn = allButtons[index];
+            btn.getChildByName("Label").getComponent(cc.Label).string = text;
+            
+            btn.on(cc.Node.EventType.TOUCH_END, function(event) {
+                switchPage(btn, index);
+            }, layerDesignPolicy);
+
+            // Select the first button only
+            if (index == 0) {
+            
+                btn.getComponent(cc.Button).interactable = false;
+                btn.getChildByName("Label").color = COLOR_UMBER;
+                prevButton = btn;
+            
+            }
+            
+            return btn;
+
+        };
+
+        btnPolicyInvest.on(cc.Node.EventType.TOUCH_END,  () => {
+
+            const cost = costCalculation(policySelected);
+
+            if (gameParams.resources - cost >= 0 && 
+                gameParams.policies[policySelected.id] === undefined) {
+
+                gameParams.resources -= cost;  
+                gameParams.policies[policySelected.id] = 1;
+                policySelectedButton.enabled = false;
+                resourceScoreLabel.string = (gameParams.resources.toString());
+                levelButtons[policySelected.id * 100 + 1].getComponent(cc.Sprite).spriteFrame = world.dotOff;
+                levelButtons[policySelected.id * 100 + 1].color = COLOR_UMBER;
+
+            }
+            else if (gameParams.resources - cost >= 0 && 
+                gameParams.policies[policySelected.id] === 1) {
+
+                gameParams.resources -= cost;  
+                gameParams.policies[policySelected.id] = 2;
+                policySelectedButton.enabled = false;
+                resourceScoreLabel.string = (gameParams.resources.toString());
+                levelButtons[policySelected.id * 100 + 2].getComponent(cc.Sprite).spriteFrame = world.dotOff;
+                levelButtons[policySelected.id * 100 + 2].color = COLOR_UMBER;
+
+            }
+            else if (gameParams.resources - cost >= 0 && 
+                gameParams.policies[policySelected.id] == 2) {
+
+                gameParams.resources -= cost;  
+                gameParams.policies[policySelected.id] = 3;
+                policySelectedButton.enabled = false;
+                resourceScoreLabel.string = (gameParams.resources.toString());
+                levelButtons[policySelected.id * 100 + 3].getComponent(cc.Sprite).spriteFrame = world.dotOff;
+                levelButtons[policySelected.id * 100 + 3].color = COLOR_UMBER;
+
+            }
+
+            let newCost = costCalculation(policySelected);
+            policyCostLabel.getComponent(cc.Label).string = (gd.lang.policy_platform_cost[cc.sys.localStorage.language] + newCost.toString());
+
+            if (gameParams.policies[policySelected.id] == 3) {
+
+                btnPolicyInvest.getComponent(cc.Button).interactable = false;
+                btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = (gd.lang.policy_platform_completed[cc.sys.localStorage.language]);
+
+            }
+            else if (newCost <= gameParams.resources) {
+
+                btnPolicyInvest.getComponent(cc.Button).interactable = true;
+                btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = (gd.lang.policy_platform_invest[cc.sys.localStorage.language]);
+
+            }
+            else {
+
+                btnPolicyInvest.getComponent(cc.Button).interactable = false;
+                btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = (gd.lang.policy_platform_more_resources[cc.sys.localStorage.language]);
+
+            }
+
+        }, this);
+
+        Object.values(RESOURCES).forEach((res, index) => {
+            
+            let btn = makeButton(res[cc.sys.localStorage.language].name, new cc.Vec2(300 + 200 * index, 80), index);
+            //allButtons.push(btn);
+        
+        });
+
+        const pageCount = 4;
+        const levelButtons = {};
+       
+        for (let i = 0; i < pageCount; ++i) {
+
+            let resourceGrp = RESOURCES[Object.keys(RESOURCES)[i]];
+            let xLoc = 0, yLoc = 0, policyOptionCounter = 0; 
+            let page = pageView.node.getChildByName("view").getChildByName("content").children[i];
+
+            for (let j = 0; j < resourceGrp.policyOptions.length; j++) {
+
+                let opt = resourceGrp.policyOptions[j];
+                
+                xLoc = (policyOptionCounter % 2) * page.width / 2;
+                yLoc = (1 - Math.floor(policyOptionCounter / 2)) * page.height / 2;
+                policyOptionCounter++;
+
+                const optNode = new cc.Node();
+                optNode.setAnchorPoint(cc.Vec2(0.0, 0.0));
+                optNode.parent = page;
+                optNode.setPosition(xLoc, yLoc);
+                optNode.setContentSize(cc.size(page.width / 3, page.height / 3));
+
+                const btnNodeBgd = new cc.Node();
+                btnNodeBgd.setAnchorPoint(cc.Vec2(0, 0));
+                btnNodeBgd.setContentSize(cc.size(104, 104));
+                btnNodeBgd.setPosition(50, 50);
+                btnNodeBgd.parent = optNode;
+                btnNodeBgd.color = COLOR_ICE;
+                cc.loader.loadRes(opt.img_normal, cc.SpriteFrame, function (err, sfNormal) {
+                    const btnBgd = btnNodeBgd.addComponent(cc.Sprite);
+                    btnBgd.materials = [world.defaultMaterial];
+                    btnBgd.spriteFrame = sfNormal;
+                });
+
+                optNode.cost_1 = opt.cost_1;
+                optNode.cost_2 = opt.cost_2;
+                optNode.cost_3 = opt.cost_3;
+                optNode.option = opt;
+                optNode.enabled = true;
+
+                if (gameParams.policies[opt.id] !== undefined) {
+                    optNode.enabled = false;
+                }
+
+                let btnLabelNode = new cc.Node();
+                btnLabelNode.name = "Label";
+                btnLabelNode.color = COLOR_ICE;
+                const btnLabel = btnLabelNode.addComponent(cc.Label);
+                btnLabel.string = opt[cc.sys.localStorage.language].text;
+                btnLabel.font = world.titleFont;
+                btnLabel.fontSize = 20;
+                btnLabel.verticalAlign = cc.Label.VerticalAlign.BOTTOM
+                btnLabelNode.setPosition(0, 0);
+                btnLabelNode.setAnchorPoint(0.0, 0.0);
+                btnLabelNode.setContentSize(optNode.width, optNode.height * 0.1);
+                btnLabelNode.parent = optNode;
+
+                const policySelector = (event) => {
+
+                    policySelected = optNode.option;
+                    policyLabel.getComponent(cc.Label).string = (policySelected[cc.sys.localStorage.language].text_long);
+                    policyDescription.getComponent(cc.Label).string = (policySelected[cc.sys.localStorage.language].description);
+                    
+                    const cost = costCalculation(policySelected);
+                    policyCostLabel.getComponent(cc.Label).string = gd.lang.policy_platform_cost[cc.sys.localStorage.language] + cost.toString();
+
+                    if (gameParams.policies[opt.id] == 3) {
+
+                        btnPolicyInvest.getComponent(cc.Button).interactable = false;
+                        btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = gd.lang.policy_platform_completed[cc.sys.localStorage.language];
+
+                    }
+                    else if (cost <= gameParams.resources) {
+
+                        btnPolicyInvest.getComponent(cc.Button).interactable = true;
+                        btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = gd.lang.policy_platform_invest[cc.sys.localStorage.language];
+
+                    }
+                    else {
+
+                        btnPolicyInvest.getComponent(cc.Button).interactable = false;
+                        btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = gd.lang.policy_platform_more_resources[cc.sys.localStorage.language];
+
+                    }
+
+                    policySelectedButton = optNode;
+
+                    policyLabel.opacity = 255;
+                    policyDescription.opacity = 255;
+                    policyCostLabel.opacity = 255;
+                    btnPolicyInvest.opacity = 255;
+
+                };
+
+                const enterBtn = function(event) {
+                    // if (!optNode.enabled)
+                    //     return;
+                    btnNodeBgd.color = COLOR_UMBER;
+                    btnLabelNode.color = COLOR_UMBER;
+                };
+                const exitBtn = function(event) {
+                    btnNodeBgd.color = COLOR_ICE;
+                    btnLabelNode.color = COLOR_ICE;
+                };
+                
+                [optNode, btnNodeBgd, btnLabelNode].forEach((node) => { node.on(cc.Node.EventType.TOUCH_END, policySelector, optNode);  } );
+                [optNode, btnNodeBgd, btnLabelNode].forEach((node) => { node.on(cc.Node.EventType.MOUSE_ENTER, enterBtn, optNode);  } );
+                [optNode, btnNodeBgd, btnLabelNode].forEach((node) => { node.on(cc.Node.EventType.MOUSE_LEAVE, exitBtn, optNode);  } );
+
+                let btnLvl1Node = new cc.Node();
+                let btnLvl1 = btnLvl1Node.addComponent(cc.Sprite);
+                btnLvl1.spriteFrame = world.dotOff;
+                btnLvl1.materials = [world.defaultMaterial];
+                let btnLvl2Node = new cc.Node();
+                let btnLvl2 = btnLvl2Node.addComponent(cc.Sprite);
+                btnLvl2.spriteFrame = world.dotOff;
+                btnLvl2.materials = [world.defaultMaterial];
+                let btnLvl3Node = new cc.Node();
+                let btnLvl3 = btnLvl3Node.addComponent(cc.Sprite);
+                btnLvl3.spriteFrame = world.dotOff;
+                btnLvl3.materials = [world.defaultMaterial];
+
+                if (gameParams.policies[opt.id] === undefined) {
+                    
+                    btnLvl1.spriteFrame = world.dotOff;
+                    btnLvl2.spriteFrame = world.dotOff;
+                    btnLvl3.spriteFrame = world.dotOff;
+
+                }
+                else if (gameParams.policies[opt.id] === 1) {
+                    
+                    btnLvl1.spriteFrame = world.dotOn;
+                    btnLvl2.spriteFrame = world.dotOff;
+                    btnLvl3.spriteFrame = world.dotOff;
+
+                }
+                else if (gameParams.policies[opt.id] === 2) {
+                    
+                    btnLvl1.spriteFrame = world.dotOn;
+                    btnLvl2.spriteFrame = world.dotOn;
+                    btnLvl3.spriteFrame = world.dotOff;
+
+                }
+                else if (gameParams.policies[opt.id] === 3) {
+                    
+                    btnLvl1.spriteFrame = world.dotOn;
+                    btnLvl2.spriteFrame = world.dotOn;
+                    btnLvl3.spriteFrame = world.dotOn;
+
+                }
+
+                btnLvl1Node.setPosition(0 , 50);
+                btnLvl1Node.setContentSize(25, 25);
+                btnLvl1Node.setAnchorPoint(cc.Vec2(0.0, 0.0));
+                btnLvl2Node.setPosition(0 , btnLvl1Node.y + 35);
+                btnLvl2Node.setContentSize(25, 25);
+                btnLvl2Node.setAnchorPoint(cc.Vec2(0.0, 0.0));
+                btnLvl3Node.setPosition(0 , btnLvl2Node.y + 35);
+                btnLvl3Node.setAnchorPoint(cc.Vec2(0.0, 0.0));
+                btnLvl3Node.setContentSize(25, 25);
+                btnLvl1Node.parent = optNode;
+                btnLvl2Node.parent = optNode;
+                btnLvl3Node.parent = optNode;
+                
+                levelButtons[opt.id * 100 + 1] = btnLvl1Node;
+                levelButtons[opt.id * 100 + 2] = btnLvl2Node;
+                levelButtons[opt.id * 100 + 3] = btnLvl3Node;
+
+            }
+        }        
+
+        btnEconomy.on(cc.Node.EventType.TOUCH_END, function(event) {
+            switchPage(btnEconomy, 0);
+        });
+        btnPolitics.on(cc.Node.EventType.TOUCH_END, function(event) {
+            switchPage(btnPolitics, 1);
+        });
+        btnCulture.on(cc.Node.EventType.TOUCH_END, function(event) {
+            switchPage(btnCulture, 2);
+        });
+        btnEcology.on(cc.Node.EventType.TOUCH_END, function(event) {
+            switchPage(btnEcology, 3);
+        });
+
+        pageView.node.on('page-turning', function(pv) {
+            let index = pv.getCurrentPageIndex();
+            let btn = allButtons[index];
+            switchPage(btn, index);
+        }, world);
+
+    },
         
     processResourceSelection(event) {
             
@@ -1101,7 +1556,6 @@ cc.Class({
         const res = Math.floor(1 + Math.random() * 3);
         gameParams.resources += res;
 
-        console.log(event.target);
         event.target.destroy();
 
         if (!gameParams.resourcesAdded) {
@@ -1111,7 +1565,7 @@ cc.Class({
             
             if (gameParams.tutorialMode) {
                 
-                world.showMessageBoxOK(world, "HINT:", TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language], "OK!", function() {
+                world.showMessageBox(world, "HINT:", TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language], "OK!", function() {
                     
                     gameParams.tutorialHints.push(TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language]);
                     gameParams.state = GAME_STATES.STARTED;
@@ -1156,7 +1610,7 @@ cc.Class({
             gameParams.state = GAME_STATES.PAUSED;
             gameParams.alertCrisis = true;
             
-            world.showMessageBoxOK(world, 
+            world.showMessageBox(world, 
                 gd.lang.crisis_title[cc.sys.localStorage.language], 
                 gd.lang.crisis_message[cc.sys.localStorage.language] + crisis[cc.sys.localStorage.language] + "!", "OK!", function() {
 
@@ -1361,11 +1815,20 @@ cc.Class({
         this.initGameParams(scenarioData);     
 
         cc.loader.loadRes( 'singleColor', cc.SpriteFrame, function( err, asset) {
-
-            // if (err == null) {
-                world.singleColor = asset;
-            // }
+            world.singleColor = asset;
         });
+
+        cc.loader.loadRes( 'icons/DOT_ON', cc.SpriteFrame, function( err, asset) {
+            world.dotOn = asset;
+            cc.loader.loadRes( 'icons/DOT_OFF', cc.SpriteFrame, function( err, asset) {
+                world.dotOff = asset;
+
+                // Initialise policy screen
+                world.initPolicyDesign();
+
+            });
+        });
+
 
         // Load policy icons
         world.policyIcons = [];
@@ -1413,8 +1876,6 @@ cc.Class({
                         materialVariant.setProperty('u_percentagePrep', 0.0);
                         sp.materials = [materialVariant];
                         sp.setMaterial(0, materialVariant);
-                        // sp.materials = [world.material];
-                        // sp.setMaterial(0, world.material);
                         let url = urls[i];
                         let iso = url.match('/([A-Z]*)_')[1];
                         world.countryNodes[iso] = spriteNode;
@@ -1435,30 +1896,6 @@ cc.Class({
                                                     (cc.winSize.height - ( 1 * Y_OFFSET  ) - country.offsetY));
                             countryNode.parent = scene;
                             countryNode.zIndex = 2;
-
-                            //let layout = cc.director.getScene().getChildByName("layout");
-                            /*
-                            countryNode.on(cc.Node.EventType.MOUSE_ENTER, function(event) {
-                                
-                                let mv = countryNode.getComponent(cc.Sprite).materials[0];
-                                mv.setProperty("u_selected", 1.0);
-                                mv.setProperty('u_percentageLoss', country.loss);
-                                console.log("Entered " + country.name);
-                                gameParams.currentCountry = country.iso_a3;
-                                world.printCountryStats();
-                                                                    
-                            });
-                            countryNode.on(cc.Node.EventType.MOUSE_EXIT, function(event) {
-                                
-                                let mv = countryNode.getComponent(cc.Sprite).materials[0];
-                                mv.setProperty("u_selected", 0.0);
-                                mv.setProperty('u_percentageLoss', country.loss);
-                                console.log("Exited " + country.name);
-                                gameParams.currentCountry = null;
-                                world.printWorldStats();
-
-                            });
-                            */
                             
                         }
                     }
@@ -1466,7 +1903,6 @@ cc.Class({
                 });
             }
         });
-
 
         // Initialise controls
         world.initControls();
@@ -1575,19 +2011,16 @@ cc.Class({
         const sp = btnRes.addComponent(cc.Sprite);
         const policyIcon = world.generatePolicyIcon();
         sp.spriteFrame = world.policyIcons[policyIcon];
-        // btnRes.setTouchEnabled(true);
-        // btnRes.setSwallowTouches(false);
-        // btnRes.setScale9Enabled(true);
-        
         
         const ind = Math.floor(Math.random() * Object.keys(world.countries).length);
         const countryRand = world.countries[Object.keys(world.countries)[ind]];
         const pt = countryRand.centroid;
+        console.log(countryRand.name)
         btnRes.setPosition( pt.x, (world.node.height - (2 * Y_OFFSET) ) - pt.y + RESOURCE_SIZE_H / 2 );
         btnRes.setContentSize(cc.size(RESOURCE_SIZE_W, RESOURCE_SIZE_H));
         // btnRes.setColor(COLOR_RESOURCE);
         btnRes.placedAt = gameParams.counter;
-        btnRes.setAnchorPoint(0.0, 0.0);
+        btnRes.setAnchorPoint(0.5, 0.0);
         btnRes.parent = cc.director.getScene();
         btnRes.zIndex = 102;
         world.buttons.push(btnRes);
@@ -1615,7 +2048,7 @@ cc.Class({
                 gameParams.state = GAME_STATES.PAUSED;
                 gameParams.alertResources = true;
 
-                world.showMessageBoxOK(world, "HINT:", TUTORIAL_MESSAGES.FIRST_RESOURCE_SHOWN[cc.sys.localStorage.language], "OK!", function(that) {
+                world.showMessageBox(world, "HINT:", TUTORIAL_MESSAGES.FIRST_RESOURCE_SHOWN[cc.sys.localStorage.language], "OK!", function(that) {
                 
                     gameParams.tutorialHints.push(TUTORIAL_MESSAGES.FIRST_RESOURCE_SHOWN[cc.sys.localStorage.language]);
                     //gameParams.state = GAME_STATES.STARTED;
@@ -1727,11 +2160,12 @@ cc.Class({
         sp.spriteFrame = world.crisisIcons[crisisInCountry.crisis];
 
         const pt = country.centroid;
+        console.log(country.name)
         btnCrisis.setPosition(pt.x, (world.node.height - (2 * Y_OFFSET) ) - pt.y + RESOURCE_SIZE_H / 2 );
         btnCrisis.setContentSize(cc.size(RESOURCE_SIZE_W, RESOURCE_SIZE_H));
         // btnCrisis.setColor(COLOR_DESTRUCTION_POINTS);
         btnCrisis.placedAt = gameParams.counter;
-        btnCrisis.setAnchorPoint(0.0, 0.0);
+        btnCrisis.setAnchorPoint(0.5, 0.0);
         btnCrisis.crisisId = crisisInCountry.id;
         btnCrisis.name = "crisis" + crisisInCountry.id;
         btnCrisis.parent = cc.director.getScene();
@@ -1754,7 +2188,7 @@ cc.Class({
             gameParams.state = GAME_STATES.PAUSED;
             message += gd.lang.crisis_explanation[cc.sys.localStorage.language];
 
-            let buttons = world.showMessageBoxOK(world, gd.lang.crisis_alert[cc.sys.localStorage.language], message, "OK!", (that) => {
+            let buttons = world.showMessageBox(world, gd.lang.crisis_alert[cc.sys.localStorage.language], message, "OK!", (that) => {
 
                 if (gameParams.tutorialMode)
                     gameParams.state = GAME_STATES.PAUSED_TUTORIAL;
@@ -1807,7 +2241,7 @@ cc.Class({
                 break;
         }
 
-        world.showMessageBoxOK(world, "HINT:", message, "OK", function() {
+        world.showMessageBox(world, "HINT:", message, "OK", function() {
             
             gameParams.tutorialHints.push(message);
             gameParams.state = GAME_STATES.STARTED;
@@ -2390,7 +2824,7 @@ cc.Class({
                     if (showDialog) {
 
                         gameParams.state = GAME_STATES.PAUSED;
-                        let buttons = world.showMessageBoxOK(world, 
+                        let buttons = world.showMessageBox(world, 
                             gd.lang.bulletin[cc.sys.localStorage.language] + currentYear, 
                             message, "OK", function() {
                                 gameParams.state = GAME_STATES.STARTED;
@@ -2569,7 +3003,7 @@ cc.Class({
                 const n = narratives[0];
                 const index = Math.floor(Math.random() * n[cc.sys.localStorage.language].length);
                 const message = n[cc.sys.localStorage.language][index];
-                gameOver(world, message, "OK");
+                world.gameOver(world, message, "OK");
 
             }
             else if (gameParams.currentDate >= gameParams.targetDate) {
@@ -2610,7 +3044,6 @@ cc.Class({
     },
 
     start () {
-        console.log(this._time);
 
         const beginSim = () => {
 
@@ -2630,7 +3063,7 @@ cc.Class({
         let antCountries = ["NZL", "AUS", "ZAF", "ARG", "CHL"];
         let startCountry = antCountries[Math.floor(Math.random() * antCountries.length)];
         
-        let buttons = world.showMessageBoxOK(world, 
+        let buttons = world.showMessageBox(world, 
             world.scenarioData[cc.sys.localStorage.language].popup_1_title, 
             world.scenarioData[cc.sys.localStorage.language].popup_1_description, 
             gd.lang.start_tutorial[cc.sys.localStorage.language], (that) => {
@@ -2642,7 +3075,7 @@ cc.Class({
                 gameParams.currentCountry = startCountry;
                 const countryName = world.countries[gameParams.startCountry].name;
                 
-                nestedButtons = world.showMessageBoxOK(world, 
+                nestedButtons = world.showMessageBox(world, 
                     gd.lang.start_prepare[cc.sys.localStorage.language], 
                     gd.lang.start_mission_a[cc.sys.localStorage.language]  + 
                     countryName + 
@@ -2664,7 +3097,7 @@ cc.Class({
                 gameParams.currentCountry = startCountry;
                 const countryName = world.countries[gameParams.startCountry].name;
 
-                nestedButtons = world.showMessageBoxOK(world, 
+                nestedButtons = world.showMessageBox(world, 
                     gd.lang.start_prepare[cc.sys.localStorage.language], 
                     gd.lang.start_mission_a[cc.sys.localStorage.language]  + 
                     countryName + 
@@ -2680,14 +3113,11 @@ cc.Class({
     },
 
     update (dt) {
-        // console.log(this._time, dt);
+
         this._time += dt;
-        // this.material.u_percentageLoss = this.material.u_time % 100.0;
-        this.material.setProperty('time', this._time);
-        this.material.setProperty('u_percentageLoss', gameParams.totalLoss);
-        this.material.setProperty('u_percentagePrep', gameParams.populationPreparedPercent);
-        // this.material.setProperty('u_percentageLoss', Math.sin(this._time) * 100.0);
-        // this.material.setProperty('u_percentagePrep', Math.cos(this._time) * 100.0);
+        // this.material.setProperty('time', this._time);
+        // this.material.setProperty('u_percentageLoss', gameParams.totalLoss);
+        // this.material.setProperty('u_percentagePrep', gameParams.populationPreparedPercent);
         if (world.countryNodes !== undefined) {
 
             Object.keys(world.countryNodes).forEach((key) => {
