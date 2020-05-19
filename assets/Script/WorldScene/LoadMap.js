@@ -648,8 +648,8 @@ cc.Class({
         gameParams.modal = true;
         gameParams.state = GAME_STATES.PAUSED;
 
+        world.messageBox.zIndex = 104;
         world.messageBox.opacity = 255;
-        let btn1Offset = 0.5, btn2Offset = 0.0;
         let lblTitle = world.messageBox.getChildByName("messageBoxTitle").getComponent(cc.Label);
         let lblContents = world.messageBox.getChildByName("messageBoxContents").getComponent(cc.Label);
         let btn1 = world.messageBox.getChildByName("btn1").getComponent(cc.Button);
@@ -1122,8 +1122,8 @@ cc.Class({
         btnDesignPolicy.on(cc.Node.EventType.TOUCH_END, function() {
             
             gameParams.state = GAME_STATES.PAUSED;
-            designPolicy.zIndex = 103;
-            resourceScore.zIndex = 104;
+            designPolicy.zIndex = 105;
+            resourceScore.zIndex = 106;
             let layerDesignPolicy = cc.director.getScene().getChildByName("layerDesignPolicy");
             let policyLabel = layerDesignPolicy.getChildByName("policyLabel");
             let policyDescription = layerDesignPolicy.getChildByName("policyDescription");
@@ -1148,20 +1148,184 @@ cc.Class({
         }, btnDesignPolicyQuit);
 
         btnStats.on(cc.Node.EventType.TOUCH_END, function() {
+            
             gameParams.state = GAME_STATES.PAUSED;
-            stats.zIndex = 102;
+            stats.zIndex = 105;
+            let page1 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_1");
+            let page2 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_2");
+            let page3 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_3");
+    
+            // Functions
+            let drawSegment = function(pt1, pt2, width, color) {
+                graphics.lineWidth = width;
+                graphics.strokeColor = color;
+                graphics.fillColor = color;
+                graphics.moveTo(pt1.x, pt1.y);
+                graphics.lineTo(pt2.x + 1, pt2.y);
+                graphics.stroke();
+                graphics.fill();
+    
+            };
+            const makeString = function(num) { return (Math.round(num * 10) / 10).toString() + '%'; };
+
+            // World
+            page1.getChildByName("lblYear").getComponent(cc.Label).string = gd.lang.stats_year[cc.sys.localStorage.language] + gameParams.currentDate.getFullYear();
+            page1.getChildByName("lblYearMessage").getComponent(cc.Label).string = gd.lang.stats_year_message_a[cc.sys.localStorage.language] + (gameParams.targetDate.getFullYear() - gameParams.currentDate.getFullYear()) + gd.lang.stats_year_message_b[cc.sys.localStorage.language];
+            page1.getChildByName("lblLoss").getComponent(cc.Label).string = gd.lang.stats_loss[cc.sys.localStorage.language];
+            page1.getChildByName("lblLossMessage").getComponent(cc.Label).string = gd.lang.stats_loss_message_a[cc.sys.localStorage.language] + gameParams.startDate.getFullYear() + gd.lang.stats_loss_message_b[cc.sys.localStorage.language] + makeString(gameParams.totalLoss) + ".";
+            page1.getChildByName("lblPreparedness").getComponent(cc.Label).string = gd.lang.stats_preparedness[cc.sys.localStorage.language] + makeString(gameParams.populationPreparedPercent) + " / " + Math.round(gameParams.populationPrepared / 1000000) + "M";
+            let pd = gd.lang.stats_preparedness_message_a[cc.sys.localStorage.language] + makeString(gameParams.populationPreparedPercent) + gd.lang.stats_preparedness_message_b[cc.sys.localStorage.language];
+            page1.getChildByName("lblPreparednessMessage").getComponent(cc.Label).string = pd;
+
+            // Countries
+            // Sort countries
+            const countriesSorted = Object.values(world.countries).sort((a, b) => {
+                if(a.name < b.name) { return -1; }
+                if(a.name > b.name) { return 1; }
+                return 0;            
+            });
+            let txtCountry = '', txtLoss = '', txtPreparedness = '';
+            
+            let content = page2.getChildByName("scrollview").getChildByName("view").getChildByName("content");
+            content.destroyAllChildren();
+            //.getChildByName("itemCountry").getComponent(cc.Label).string = txtCountry;
+
+            let counter = 0;
+            countriesSorted.forEach((country) => {
+                counter++;
+                let color = country.loss > 20 ? COLOR_DESTRUCTION_POINTS : (country.pop_prepared_percent > 20 ? COLOR_POLICY_POINTS : COLOR_ICE);
+
+                let cn = new cc.Node();
+                let cnl = cn.addComponent(cc.Label);
+                cn.color = color;
+                cnl.string = country.name;
+                cnl.fontSize = 20;
+                cnl.font = world.titleFont;
+                cnl.horizontalAlign = cc.Label.HorizontalAlign.LEFT;
+                cn.setAnchorPoint(0, 0);
+                cn.x = 0;
+                cn.y = -40 + counter * -24;
+                cn.parent = content;
+
+                let cnln = new cc.Node();
+                let cnll = cnln.addComponent(cc.Label);
+                cnln.color = color;
+                cnll.string = makeString(country.loss);
+                cnll.fontSize = 20;
+                cnll.font = world.titleFont;
+                cnll.horizontalAlign = cc.Label.HorizontalAlign.RIGHT;
+                cnln.setAnchorPoint(1, 0);
+                cnln.x = 580;
+                cnln.y = -40 + counter * -24;
+                cnln.parent = content;
+
+                let cnpn = new cc.Node();
+                let cnlp = cnpn.addComponent(cc.Label);
+                cnpn.color = color;
+                cnlp.string = makeString(country.pop_prepared_percent);
+                cnlp.fontSize = 20;
+                cnlp.font = world.titleFont;
+                cnlp.horizontalAlign = cc.Label.HorizontalAlign.RIGHT;
+                cnpn.setAnchorPoint(1, 0);
+                cnpn.x = 780;
+                cnpn.y = -40 + counter * -24;
+                cnpn.parent = content;
+                
+            });
+            // console.log(txtCountry);
+            // page2.getChildByName("scrollview").getChildByName("view").getChildByName("content").getChildByName("itemCountry").getComponent(cc.Label).string = txtCountry;
+            // page2.getChildByName("scrollview").getChildByName("view").getChildByName("content").getChildByName("itemLoss").getComponent(cc.Label).string = txtLoss;
+            // page2.getChildByName("scrollview").getChildByName("view").getChildByName("content").getChildByName("itemPreparedness").getComponent(cc.Label).string = txtPreparedness;
+
+            // Trends
+            let drawNode = page3.getChildByName("graph");
+            let graphics = drawNode.getComponent(cc.Graphics);
+            graphics.clear();
+            drawNode.destroyAllChildren();
+            
+            let x_o = 0, yP_o = 0, yL_o = 0, x = 0, yP = 0, yL = 0;
+            const colorD =  new cc.Color(COLOR_DESTRUCTION_POINTS.r, 
+                                        COLOR_DESTRUCTION_POINTS.g, 
+                                        COLOR_DESTRUCTION_POINTS.b, 255);
+            const colorP =  new cc.Color(COLOR_POLICY_POINTS.r, 
+                                        COLOR_POLICY_POINTS.g, 
+                                        COLOR_POLICY_POINTS.b, 255);
+
+            const graphX = 4;
+            const graphY = 0;
+            const years = gameParams.targetDate.getFullYear() - gameParams.startDate.getFullYear();
+            let scaleFactor = 0.9;
+            const graphIncrementX = page3.width * scaleFactor / years;
+            const graphIncrementY = page3.height * scaleFactor / 100;
+            const graphOffset = 0;
+            const lineOffset = -10;    
+            drawSegment(new cc.Vec2(graphX, graphOffset + lineOffset), new cc.Vec2(graphX + page3.width * scaleFactor, graphOffset + lineOffset), 1, COLOR_ICE);
+            drawSegment(new cc.Vec2(graphX, graphOffset + lineOffset), new cc.Vec2(graphX, graphOffset + page3.height * scaleFactor), 1, COLOR_ICE);
+    
+            for (let i = gameParams.startDate.getFullYear(); i < gameParams.targetDate.getFullYear(); i++) {
+    
+                const index = i - gameParams.startDate.getFullYear();
+
+                const stats = gameParams.stats[i];
+
+                if (stats === undefined)
+                    continue;
+    
+                const loss = stats.loss;
+                const prepared = stats.prepared;
+                x = graphX + index * graphIncrementX;
+                yL = graphOffset + (100 - Math.round(loss)) * graphIncrementY;
+                yP = graphOffset + Math.round(prepared) * graphIncrementY;
+    
+                if (index > 0) {
+    
+                    // Line 
+                    // drawNode.drawSegment(cc.p(x_o, yL_o), cc.p(x, yL), 2, COLOR_DESTRUCTION_POINTS);
+                    // drawNode.drawSegment(cc.p(x_o, yP_o), cc.p(x, yP), 2, COLOR_POLICY_POINTS);
+    
+                    // Staircase
+                    drawSegment(new cc.Vec2(x_o, yL_o), new cc.Vec2(x - 1, yL_o), 1, colorD);
+                    drawSegment(new cc.Vec2(x, yL_o), new cc.Vec2(x, yL), 1, colorD);
+                    drawSegment(new cc.Vec2(x_o, yP_o), new cc.Vec2(x - 1, yP_o), 1, colorP);
+                    drawSegment(new cc.Vec2(x, yP_o), new cc.Vec2(x, yP), 1, colorP);
+    
+                }
+                x_o = x, yL_o = yL, yP_o = yP;
+    
+            }
+    
+            let lblDestructionScoreNode = new cc.Node();
+            let lblDestructionScore = lblDestructionScoreNode.addComponent(cc.Label);
+            lblDestructionScore.string = makeString(gameParams.totalLoss);
+            lblDestructionScore.font = world.titleFont;
+            lblDestructionScore.fontSize = 28;
+            lblDestructionScoreNode.color = colorD;
+            lblDestructionScoreNode.setPosition(4 + graphX + x, graphY + yL);
+            lblDestructionScoreNode.setAnchorPoint(0, 0.5);
+            lblDestructionScoreNode.parent = drawNode;
+            lblDestructionScoreNode.zIndex = 106;
+            let lblPolicyScoreNode = new cc.Node();
+            let lblPolicyScore = lblPolicyScoreNode.addComponent(cc.Label);
+            lblPolicyScore.string = makeString(gameParams.populationPreparedPercent);
+            lblPolicyScore.font = world.titleFont;
+            lblPolicyScore.fontSize = 28;
+            lblPolicyScoreNode.color = colorP;
+            lblPolicyScoreNode.setPosition(4 + graphX + x, graphY + yP);
+            lblPolicyScoreNode.setAnchorPoint(0, 0.5);
+            lblPolicyScoreNode.parent = drawNode;
+            lblPolicyScoreNode.zIndex = 106;
+
         }, btnStats);
         let btnStatsQuit = stats.getChildByName("btnStatsQuit");
         btnStatsQuit.on(cc.Node.EventType.TOUCH_END, function() {
+            
             gameParams.state = GAME_STATES.STARTED;
             stats.zIndex = -1;
+
         }, btnStatsQuit);
 
         // Set ordering
-        designPolicy.zIndex = -1;
         stats.zIndex = -1;
-        resourceScore.zIndex = 101;
-        messageBox.zIndex = 103;
         
     },
 
@@ -1284,7 +1448,6 @@ cc.Class({
             return btn;
 
         };
-
         btnPolicyInvest.on(cc.Node.EventType.TOUCH_END,  () => {
 
             const cost = costCalculation(policySelected);
@@ -1346,7 +1509,6 @@ cc.Class({
             }
 
         }, this);
-
         Object.values(RESOURCES).forEach((res, index) => {
             
             let btn = makeButton(res[cc.sys.localStorage.language].name, new cc.Vec2(300 + 200 * index, 80), index);
@@ -1545,6 +1707,58 @@ cc.Class({
             switchPage(btn, index);
         }, world);
 
+    },
+
+    initStats() {
+
+        let layerStats = cc.director.getScene().getChildByName("layerStats");
+
+        let pageView = layerStats.getChildByName("pageview").getComponent(cc.PageView);
+
+        // Switch pages
+        let btnWorld = layerStats.getChildByName("btnWorld");
+        let btnCountries = layerStats.getChildByName("btnCountries");
+        let btnTrends = layerStats.getChildByName("btnTrends");
+
+        pageView.setCurrentPageIndex(0);
+        btnWorld.getComponent(cc.Button).interactable = false;
+        btnWorld.getChildByName("Label").color = COLOR_UMBER;
+
+        let allButtons = [btnWorld, btnCountries, btnTrends];
+        let prevButton = btnWorld;
+
+        const switchPage = (btn, index) => {
+
+            pageView.setCurrentPageIndex(index);
+            btn.getComponent(cc.Button).interactable = false;
+            btn.getChildByName("Label").color = COLOR_UMBER;
+
+            if (prevButton != null && prevButton != btn) {
+                
+                prevButton.getComponent(cc.Button).interactable = true;
+                prevButton.getChildByName("Label").color = COLOR_ICE;
+
+            }
+            
+            prevButton = btn;
+
+        };
+
+        btnWorld.on(cc.Node.EventType.TOUCH_END, function(event) {
+            switchPage(btnWorld, 0);
+        });
+        btnCountries.on(cc.Node.EventType.TOUCH_END, function(event) {
+            switchPage(btnCountries, 1);
+        });
+        btnTrends.on(cc.Node.EventType.TOUCH_END, function(event) {
+            switchPage(btnTrends, 2);
+        });
+
+        pageView.node.on('page-turning', function(pv) {
+            let index = pv.getCurrentPageIndex();
+            let btn = allButtons[index];
+            switchPage(btn, index);
+        }, world);        
     },
         
     processResourceSelection(event) {
@@ -1825,6 +2039,7 @@ cc.Class({
 
                 // Initialise policy screen
                 world.initPolicyDesign();
+                world.initStats();
 
             });
         });
@@ -3057,13 +3272,10 @@ cc.Class({
 
         };
 
-
-        let nestedButtons = null;
-
         let antCountries = ["NZL", "AUS", "ZAF", "ARG", "CHL"];
         let startCountry = antCountries[Math.floor(Math.random() * antCountries.length)];
         
-        let buttons = world.showMessageBox(world, 
+        world.showMessageBox(world, 
             world.scenarioData[cc.sys.localStorage.language].popup_1_title, 
             world.scenarioData[cc.sys.localStorage.language].popup_1_description, 
             gd.lang.start_tutorial[cc.sys.localStorage.language], (that) => {

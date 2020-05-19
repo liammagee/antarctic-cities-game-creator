@@ -1295,8 +1295,8 @@ gd.scenarioData = {
 
     "start_specified": 1,
     "start_day": 1,
-    "start_month": 8,
-    "start_year": 2018,
+    "start_month": 1,
+    "start_year": 2020,
     "target_month": 1,
     "target_year": 2070,
 
