@@ -46,24 +46,24 @@ const GAME_STATES = {
 };
 
 // Colours
-const COLOR_LICORICE = new cc.Color(42, 54, 68, 255); // Dark Grey
-const COLOR_ZINC = new cc.Color(123, 133, 143, 255); // Medium Grey
-const COLOR_ICE = new cc.Color(214, 225, 227, 255); // Light Grey
-const COLOR_OAK = new cc.Color(243, 226, 206, 255); // Beige
-const COLOR_UMBER = new cc.Color(154, 136, 124, 255); // Brown
-const COLOR_BLACK = new cc.Color(0, 0, 0, 255); // Black
-const COLOR_WHITE = new cc.Color(255, 255, 255, 255); // White
+const COLOR_LICORICE = new cc.Color(42, 54, 68); // Dark Grey
+const COLOR_ZINC = new cc.Color(123, 133, 143); // Medium Grey
+const COLOR_ICE = new cc.Color(214, 225, 227); // Light Grey
+const COLOR_OAK = new cc.Color(243, 226, 206); // Beige
+const COLOR_UMBER = new cc.Color(154, 136, 124); // Brown
+const COLOR_BLACK = new cc.Color(0, 0, 0); // Black
+const COLOR_WHITE = new cc.Color(255, 255, 255); // White
 
 
 // ANTARCTIC CITIES THEME
 const COLOR_BACKGROUND = COLOR_BLACK; 
 const COLOR_FOREGROUND = COLOR_ICE; 
 const COLOR_HIGHLIGHT = COLOR_OAK; 
-const COLOR_RESOURCE = new cc.Color(108, 180, 244, 255); // Blue with transparency; COLOR_UMBER; 
-const COLOR_POLICY_POINTS = new cc.Color(0, 255, 0, 100); // Green, with transparency
-const COLOR_DESTRUCTION_POINTS = new cc.Color(255, 0, 0, 100); // Red, with transparency
-const COLOR_DESTRUCTION_POINTS_HALF = new cc.Color(255, 0, 0, 100); // Red, with transparency
-const COLOR_BACKGROUND_TRANS = new cc.Color(42, 54, 68, 200); // Black, with transparency
+const COLOR_RESOURCE = new cc.Color(108, 180, 244); // Blue with transparency; COLOR_UMBER; 
+const COLOR_POLICY_POINTS = new cc.Color(0, 255, 0); // Green, with transparency
+const COLOR_DESTRUCTION_POINTS = new cc.Color(255, 0, 0); // Red, with transparency
+const COLOR_DESTRUCTION_POINTS_HALF = new cc.Color(255, 0, 0); // Red, with transparency
+const COLOR_BACKGROUND_TRANS = new cc.Color(42, 54, 68); // Black, with transparency
 
 // DEFAULT LOSS CUTOFFs - Can be modified by narratives below
 const LOSS_TOTAL = 80;

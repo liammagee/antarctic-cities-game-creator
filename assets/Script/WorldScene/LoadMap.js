@@ -1246,10 +1246,10 @@ cc.Class({
             let x_o = 0, yP_o = 0, yL_o = 0, x = 0, yP = 0, yL = 0;
             const colorD =  new cc.Color(COLOR_DESTRUCTION_POINTS.r, 
                                         COLOR_DESTRUCTION_POINTS.g, 
-                                        COLOR_DESTRUCTION_POINTS.b, 255);
+                                        COLOR_DESTRUCTION_POINTS.b);
             const colorP =  new cc.Color(COLOR_POLICY_POINTS.r, 
                                         COLOR_POLICY_POINTS.g, 
-                                        COLOR_POLICY_POINTS.b, 255);
+                                        COLOR_POLICY_POINTS.b);
 
             const graphX = 4;
             const graphY = 0;
