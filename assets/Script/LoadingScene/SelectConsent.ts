@@ -20,33 +20,13 @@ export default class NewClass extends cc.Component {
 
     onLoad () {
 
-        console.log(this.play.enabled);
-        console.log(cc.sys.localStorage.consent);
-        //this.isChecked = (cc.sys.localStorage.consent === true);
-        //cc.log(this.isChecked);
-
-        /*
-        this.node.on('mouseup', function ( event ) {
-
-            cc.log(this.isChecked);
-            cc.sys.localStorage.consent = this.isChecked;
-            this.button.enabled = this.isChecked;
-            cc.log(this);
-            cc.log(event);
-            
-        }, this);
-        */
-
     }
 
     togglePlay (consent: cc.Toggle) {
 
-        cc.log("got here "+consent.isChecked);
         cc.sys.localStorage.consent = consent.isChecked;
         this.play.interactable = consent.isChecked;
         
-        cc.log("got here "+this.play.interactable);
-
     }
 
     playGame (playGame: cc.Button) {

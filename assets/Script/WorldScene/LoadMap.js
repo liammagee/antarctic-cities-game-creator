@@ -106,10 +106,15 @@ cc.Class({
                                   // to a node for the first time
             serializable: true,   // optional, default is true
         },
+        world: {
+            // ATTRIBUTES:
+            default: {},        // The default value will be used only when the component attaching
+                                  // to a node for the first time
+            serializable: true,   // optional, default is true
+        },
 
     },
 
-    world: this,
     _time: 0,
 
     /**
@@ -274,7 +279,8 @@ cc.Class({
     },
 
     initCountries() { 
-        let world = this;
+
+        let world = this.world;
 
         world.countries = Object.values(world.countriesJson).reduce((map, obj) => {  
 
@@ -308,8 +314,8 @@ cc.Class({
                     offsetY: obj.offsetY,
 
                     policy: 0,
-                    previousLoss: gameParams.previousLoss,
-                    loss: gameParams.previousLoss,
+                    previousLoss: world.gameParams.previousLoss,
+                    loss: world.gameParams.previousLoss,
                     neighbours: [],
                     points_shared: 0,
                     points_total: 0,
@@ -456,7 +462,7 @@ cc.Class({
         });
 
         // Add world populations
-        gameParams.populationWorld = Object.keys(world.countries).map(function(c) { 
+        world.gameParams.populationWorld = Object.keys(world.countries).map(function(c) { 
             return world.countries[c].pop_est; 
         }).reduce(function(a, c) {
             return a + parseInt(c);
@@ -469,93 +475,95 @@ cc.Class({
      */
     initGameParams(scenarioData) {
 
+        let world = this.world;
+
         if (cc.sys.localStorage.language === undefined) 
             cc.sys.localStorage.language = 'eng';
         if (cc.sys.localStorage.level === undefined) 
             cc.sys.localStorage.level = 'Easy';
 
-        gameParams = {};
+        world.gameParams = {};
         // Set options here
-        gameParams.level = cc.sys.localStorage.level;
-        gameParams.language = cc.sys.localStorage.language;
-        gameParams.greyscale = cc.sys.localStorage.greyscale;
+        world.gameParams.level = cc.sys.localStorage.level;
+        world.gameParams.language = cc.sys.localStorage.language;
+        world.gameParams.greyscale = cc.sys.localStorage.greyscale;
         // Game play options
-        gameParams.difficultyMultiplier = 1.0;
-        if (gameParams.level === "Medium")
-            gameParams.difficultyMultiplier = 2.0;
-        else if (gameParams.level === "Hard")
-            gameParams.difficultyMultiplier = 3.0;
-        gameParams.state = GAME_STATES.INITIALISED;
-        gameParams.modal = false;
-        gameParams.startDate = new Date(Date.now());
-        gameParams.startDate.setDate(1);
-        gameParams.startDate.setMonth(scenarioData.start_month);
-        gameParams.startDate.setYear(scenarioData.start_year);
-        gameParams.targetDate = new Date(Date.now());
-        gameParams.targetDate.setDate(1);
-        gameParams.targetDate.setMonth(scenarioData.target_month);
-        gameParams.targetDate.setYear(scenarioData.target_year);
-        gameParams.previousDate = gameParams.startDate;
-        gameParams.currentDate = gameParams.startDate;
-        gameParams.counter = 0;
-        gameParams.lastResource = 0;
+        world.gameParams.difficultyMultiplier = 1.0;
+        if (world.gameParams.level === "Medium")
+            world.gameParams.difficultyMultiplier = 2.0;
+        else if (world.gameParams.level === "Hard")
+            world.gameParams.difficultyMultiplier = 3.0;
+        world.gameParams.state = GAME_STATES.INITIALISED;
+        world.gameParams.modal = false;
+        world.gameParams.startDate = new Date(Date.now());
+        world.gameParams.startDate.setDate(1);
+        world.gameParams.startDate.setMonth(scenarioData.start_month);
+        world.gameParams.startDate.setYear(scenarioData.start_year);
+        world.gameParams.targetDate = new Date(Date.now());
+        world.gameParams.targetDate.setDate(1);
+        world.gameParams.targetDate.setMonth(scenarioData.target_month);
+        world.gameParams.targetDate.setYear(scenarioData.target_year);
+        world.gameParams.previousDate = world.gameParams.startDate;
+        world.gameParams.currentDate = world.gameParams.startDate;
+        world.gameParams.counter = 0;
+        world.gameParams.lastResource = 0;
         // First crisis will take twice as long
-        gameParams.lastCrisis = CRISIS_INTERVAL_MULTIPLIER;
-        gameParams.crises = [];
-        gameParams.crisisCountry = null;
-        gameParams.crisisCount = 0;
-        gameParams.policies = {};
-        gameParams.policy = 0;
-        gameParams.countriedAffected = 0;
-        gameParams.populationAware = 0;
-        gameParams.populationPrepared = 0;
-        gameParams.populationAwarePercent = 0;
-        gameParams.populationPreparedPercent = 0;
-        gameParams.resources = scenarioData.starting_resources;
-        gameParams.alertResources = false;
-        gameParams.alertCrisis = false;
-        gameParams.resourcesAdded = false;
-        gameParams.previousLoss = scenarioData.threat_details.starting_conditions.starting_loss;
-        gameParams.rateOfLoss = scenarioData.threat_details.advanced_stats.loss_increase_speed;
-        gameParams.minimumLoss = scenarioData.threat_details.advanced_stats.minimum_loss_increase;
-        gameParams.totalLoss = 0;
-        gameParams.scenarioName = scenarioData[cc.sys.localStorage.language].name;
-        gameParams.messagesNegative = scenarioData[cc.sys.localStorage.language].messages.negative;
-        gameParams.messagesPositive = scenarioData[cc.sys.localStorage.language].messages.positive;
-        gameParams.messageOverride = null;
-        gameParams.tutorialMode = false;
-        gameParams.tutorialHints = [];
-        gameParams.stats = {};
+        world.gameParams.lastCrisis = CRISIS_INTERVAL_MULTIPLIER;
+        world.gameParams.crises = [];
+        world.gameParams.crisisCountry = null;
+        world.gameParams.crisisCount = 0;
+        world.gameParams.policies = {};
+        world.gameParams.policy = 0;
+        world.gameParams.countriedAffected = 0;
+        world.gameParams.populationAware = 0;
+        world.gameParams.populationPrepared = 0;
+        world.gameParams.populationAwarePercent = 0;
+        world.gameParams.populationPreparedPercent = 0;
+        world.gameParams.resources = scenarioData.starting_resources;
+        world.gameParams.alertResources = false;
+        world.gameParams.alertCrisis = false;
+        world.gameParams.resourcesAdded = false;
+        world.gameParams.previousLoss = scenarioData.threat_details.starting_conditions.starting_loss;
+        world.gameParams.rateOfLoss = scenarioData.threat_details.advanced_stats.loss_increase_speed;
+        world.gameParams.minimumLoss = scenarioData.threat_details.advanced_stats.minimum_loss_increase;
+        world.gameParams.totalLoss = 0;
+        world.gameParams.scenarioName = scenarioData[cc.sys.localStorage.language].name;
+        world.gameParams.messagesNegative = scenarioData[cc.sys.localStorage.language].messages.negative;
+        world.gameParams.messagesPositive = scenarioData[cc.sys.localStorage.language].messages.positive;
+        world.gameParams.messageOverride = null;
+        world.gameParams.tutorialMode = false;
+        world.gameParams.tutorialHints = [];
+        world.gameParams.stats = {};
 
         // Shader options
-        gameParams.shader = {};
+        world.gameParams.shader = {};
         if (cc.sys.isMobile) {
-            gameParams.shader.u_cellSize = 1.0;
-            gameParams.shader.u_randFactor = 0.5;
-            gameParams.shader.u_randAlpha = 0.3;
-            gameParams.shader.u_sizePower = 4.0;
-            gameParams.shader.u_sizeMultiplier = 1.0;
-            gameParams.shader.u_stepMin = 0.9;
-            gameParams.shader.u_stepMax = 1.0;
-            gameParams.shader.u_borderRadius = 10.0;
+            world.gameParams.shader.u_cellSize = 1.0;
+            world.gameParams.shader.u_randFactor = 0.5;
+            world.gameParams.shader.u_randAlpha = 0.3;
+            world.gameParams.shader.u_sizePower = 4.0;
+            world.gameParams.shader.u_sizeMultiplier = 1.0;
+            world.gameParams.shader.u_stepMin = 0.9;
+            world.gameParams.shader.u_stepMax = 1.0;
+            world.gameParams.shader.u_borderRadius = 10.0;
         }
         else {
-            gameParams.shader.u_cellSize = 10.0;
-            gameParams.shader.u_randFactor = 0.5;
-            gameParams.shader.u_randAlpha = 0.3;
-            gameParams.shader.u_sizePower = 4.0;
-            gameParams.shader.u_sizeMultiplier = 1.0;
-            gameParams.shader.u_stepMin = 0.9;
-            gameParams.shader.u_stepMax = 1.0;
-            gameParams.shader.u_borderRadius = 10.0;
+            world.gameParams.shader.u_cellSize = 10.0;
+            world.gameParams.shader.u_randFactor = 0.5;
+            world.gameParams.shader.u_randAlpha = 0.3;
+            world.gameParams.shader.u_sizePower = 4.0;
+            world.gameParams.shader.u_sizeMultiplier = 1.0;
+            world.gameParams.shader.u_stepMin = 0.9;
+            world.gameParams.shader.u_stepMax = 1.0;
+            world.gameParams.shader.u_borderRadius = 10.0;
         }
 
         // Obtain automation setting from parent
         if (world.automateID > -1) {
 
-            gameParams.automateMode = true;
-            gameParams.automateScript = automateScripts[world.automateID - 1];
-            console.log("Running " + gameParams.automateScript.name);
+            world.gameParams.automateMode = true;
+            world.gameParams.automateScript = automateScripts[world.automateID - 1];
+            console.log("Running " + world.gameParams.automateScript.name);
 
         }
 
@@ -569,10 +577,12 @@ cc.Class({
      */
     updateTimeVars(interval) {
 
-        gameParams.timeInterval = interval;
-        gameParams.tutorialInterval = gameParams.timeInterval * TUTORIAL_INTERVAL_MULTIPLIER;
-        gameParams.resourceInterval = gameParams.timeInterval * RESOURCE_INTERVAL_MULTIPLIER; 
-        gameParams.crisisInterval = gameParams.timeInterval * CRISIS_INTERVAL_MULTIPLIER;
+        let world = this.world;
+
+        world.gameParams.timeInterval = interval;
+        world.gameParams.tutorialInterval = world.gameParams.timeInterval * TUTORIAL_INTERVAL_MULTIPLIER;
+        world.gameParams.resourceInterval = world.gameParams.timeInterval * RESOURCE_INTERVAL_MULTIPLIER; 
+        world.gameParams.crisisInterval = world.gameParams.timeInterval * CRISIS_INTERVAL_MULTIPLIER;
 
     },
 
@@ -581,40 +591,42 @@ cc.Class({
      */
     calculatePolicyConnections() {
 
-        gameParams.policyOptions = {};
+        let world = this.world;
+
+        world.gameParams.policyOptions = {};
         let policyLen = 0;
     
         Object.keys(RESOURCES).forEach(key => {
     
             RESOURCES[key].policyOptions.forEach(pol => {
     
-                gameParams.policyOptions[pol.id] = pol;
+                world.gameParams.policyOptions[pol.id] = pol;
                 if (policyLen < pol.id)
                     policyLen = pol.id;
     
             });
         });
         
-        gameParams.policyRelations = {};
+        world.gameParams.policyRelations = {};
         
         for (let i = 0; i < policyLen; i++){
     
-            const source = gameParams.policyOptions[i+1];
-            gameParams.policyRelations[source.id] = {};
+            const source = world.gameParams.policyOptions[i+1];
+            world.gameParams.policyRelations[source.id] = {};
     
             for (let j = i + 1; j < policyLen; j++){
     
-                const target = gameParams.policyOptions[j+1];
-                if (gameParams.policyRelations[target.id] === undefined)
-                    gameParams.policyRelations[target.id] = {};
+                const target = world.gameParams.policyOptions[j+1];
+                if (world.gameParams.policyRelations[target.id] === undefined)
+                    world.gameParams.policyRelations[target.id] = {};
                 
                 const val = RESOURCE_MATRIX[j][i];
                 const rel = RESOURCE_RELATIONS[j][i];
-                gameParams.policyRelations[source.id][target.id] = val;
+                world.gameParams.policyRelations[source.id][target.id] = val;
                 
                 if (rel == 1) {
     
-                    gameParams.policyRelations[target.id][source.id] = val;
+                    world.gameParams.policyRelations[target.id][source.id] = val;
     
                 }
     
@@ -627,9 +639,9 @@ cc.Class({
     /**
      * Sets up game parameters at the start of play
      */
-    startGameParams() {
-        
-        gameParams.state = GAME_STATES.STARTED;
+    startGameParams(world) {
+
+        world.gameParams.state = GAME_STATES.STARTED;
 
     },
 
@@ -645,8 +657,10 @@ cc.Class({
      */
     showMessageBox(parent, title, message, prompt1, callback1, prompt2, callback2) {
 
-        gameParams.modal = true;
-        gameParams.state = GAME_STATES.PAUSED;
+        let world = this.world;
+
+        world.gameParams.modal = true;
+        world.gameParams.state = GAME_STATES.PAUSED;
 
         world.messageBox.zIndex = 104;
         world.messageBox.opacity = 255;
@@ -712,7 +726,7 @@ cc.Class({
             btn1.node.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
-            gameParams.modal = false;
+            world.gameParams.modal = false;
             callback1();
             event.stopPropagation();
 
@@ -726,7 +740,7 @@ cc.Class({
             btn1.node.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
-            gameParams.modal = false;
+            world.gameParams.modal = false;
             callback2();
             event.stopPropagation();
 
@@ -756,8 +770,10 @@ cc.Class({
      */
     showQuizBox(parent, title, message, wrongAnswer, rightAnswer) {
 
-        gameParams.modal = true;
-        gameParams.state = GAME_STATES.PAUSED;
+        let world = this.world;
+
+        world.gameParams.modal = true;
+        world.gameParams.state = GAME_STATES.PAUSED;
 
         world.quizBox.opacity = 255;
         world.quizBox.zIndex = 103;
@@ -786,15 +802,15 @@ cc.Class({
             btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
-            gameParams.modal = false;
+            world.gameParams.modal = false;
             event.stopPropagation();
 
             world.showMessageBox(parent, "CRISIS RESPONSE", "Great response to this crisis!", "OK!", function() {
                 
                 const res = Math.floor(1 + Math.random() * 3);
-                gameParams.resources += res;
+                world.gameParams.resources += res;
 
-                gameParams.state = GAME_STATES.STARTED;
+                world.gameParams.state = GAME_STATES.STARTED;
 
             });
 
@@ -807,18 +823,18 @@ cc.Class({
             btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
-            gameParams.modal = false;
+            world.gameParams.modal = false;
             event.stopPropagation();
 
             world.showMessageBox(parent, "CRISIS RESPONSE", "Good try, but this won't be enough to preserve the future of Antarctica!", "OK!", function() {
                 
                 const res = Math.floor(1 + Math.random() * 3);
-                if (gameParams.resources - res > 0)
-                    gameParams.resources -= res;
+                if (world.gameParams.resources - res > 0)
+                    world.gameParams.resources -= res;
                 else
-                    gameParams.resources = 0;
+                    world.gameParams.resources = 0;
                 
-                gameParams.state = GAME_STATES.STARTED;
+                world.gameParams.state = GAME_STATES.STARTED;
 
 
             });
@@ -844,8 +860,10 @@ cc.Class({
      */
     showSettingsBox(parent) {
 
-        gameParams.modal = true;
-        gameParams.state = GAME_STATES.PAUSED;
+        let world = this.world;
+
+        world.gameParams.modal = true;
+        world.gameParams.state = GAME_STATES.PAUSED;
 
         world.settingsBox.opacity = 255;
         world.settingsBox.zIndex = 106;
@@ -864,7 +882,7 @@ cc.Class({
             let gsChecked = world.settingsBox.getChildByName("toggleContainer").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
 
             cc.sys.localStorage.greyscale = gsChecked;
-            gameParams.greyscale = gsChecked;
+            world.gameParams.greyscale = gsChecked;
 
             if (gsChecked) {
                 world.backgroundGreyscale.opacity = (255);
@@ -886,7 +904,7 @@ cc.Class({
             
             world.settingsBox.opacity = 0;
             world.settingsBox.zIndex = -1;
-            gameParams.state = GAME_STATES.STARTED;
+            world.gameParams.state = GAME_STATES.STARTED;
 
         };
         btn1.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
@@ -895,11 +913,11 @@ cc.Class({
 
             btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
-            gameParams.modal = false;
+            world.gameParams.modal = false;
             event.stopPropagation();
             world.settingsBox.opacity = 0;
             world.settingsBox.zIndex = -1;
-            gameParams.state = GAME_STATES.STARTED;
+            world.gameParams.state = GAME_STATES.STARTED;
             
         };
         btn2.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
@@ -915,6 +933,8 @@ cc.Class({
      */
     postResultsToServer() {
 
+        let world = this.world;
+
         // Test posting data
         const xhr = cc.loader.getXMLHttpRequest();
 
@@ -923,7 +943,7 @@ cc.Class({
 
         // Set Content-type "text/plain;charset=UTF-8" to post plain text
         xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
-        const gameLog = Object.assign({}, gameParams, { 
+        const gameLog = Object.assign({}, world.gameParams, { 
 
             policyOptions: undefined,
             policyRelations: undefined,
@@ -982,19 +1002,21 @@ cc.Class({
      */
     gameOver(parent, message, prompt) {
         
+        let world = this.world;
+
         world.postResultsToServer();
 
         // parent.pauseAllActions(); 
-        window.clearTimeout(gameParams.timeoutID );
-        gameParams.state = GAME_STATES.PAUSED;
+        window.clearTimeout(world.gameParams.timeoutID );
+        world.gameParams.state = GAME_STATES.PAUSED;
         
         world.showMessageBox(parent, "Game Over", message, prompt, function() {
 
             initGameParams(world.scenarioData);
-            gameParams.state = GAME_STATES.GAME_OVER;
-            gameParams.startCountry = null;
-            gameParams.policies = {};
-            world.tweetLabel.string = (gameParams.scenarioName);
+            world.gameParams.state = GAME_STATES.GAME_OVER;
+            world.gameParams.startCountry = null;
+            world.gameParams.policies = {};
+            world.tweetLabel.string = (world.gameParams.scenarioName);
 
             cc.director.loadScene("SelectOptions");
 
@@ -1034,6 +1056,8 @@ cc.Class({
 
     initControls()  {
 
+        let world = this.world;
+
         // Convenience variables
         world.btnQuit = world.topBar.getChildByName("btnQuit");
         world.btnSettings = world.topBar.getChildByName("btnSettings");
@@ -1054,46 +1078,46 @@ cc.Class({
 
         // Handlers
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnQuit"), function() {
-            gameParams.state = GAME_STATES.PAUSED;
+            world.gameParams.state = GAME_STATES.PAUSED;
 
             world.showMessageBox(world.node.parent, "Quit Game", "", 
                 "Quit Game", () => {
                 
                     world.postResultsToServer();
 
-                    gameParams.state = GAME_STATES.GAME_OVER;
+                    world.gameParams.state = GAME_STATES.GAME_OVER;
                     // cc.director.loadScene("LoadingScene");
                     cc.director.loadScene("SelectOptions");
 
                 }, 
                 "Return to Game", () => {
 
-                    gameParams.state = GAME_STATES.STARTED;
+                    world.gameParams.state = GAME_STATES.STARTED;
 
                 });            
         });
         world.topBar.getChildByName("btnSettings").on(cc.Node.EventType.TOUCH_END, function() {
 
-            gameParams.state = GAME_STATES.PAUSED;
+            world.gameParams.state = GAME_STATES.PAUSED;
 
             world.showSettingsBox(world.node.parentπ);
 
         }, this);
 
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnSound"), function() {
-            gameParams.state = GAME_STATES.PAUSED;
+            world.gameParams.state = GAME_STATES.PAUSED;
 
             world.showMessageBox(world.node.parent, "Sound", "Not yet implemented", 
                 "OK", () => {
                 
-                    gameParams.state = GAME_STATES.STARTED;
+                    world.gameParams.state = GAME_STATES.STARTED;
 
                 });
 
         });
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnPause"), function() {
 
-            gameParams.state = GAME_STATES.PAUSED;
+            world.gameParams.state = GAME_STATES.PAUSED;
             world.btnPause.getComponent(cc.Button).interactable = false;
             world.btnPlay.getComponent(cc.Button).interactable = true;
             world.btnFF.getComponent(cc.Button).interactable = true;
@@ -1103,7 +1127,7 @@ cc.Class({
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnPlay"), function() {
             
             world.updateTimeVars(MONTH_INTERVAL);
-            gameParams.state = GAME_STATES.STARTED;
+            world.gameParams.state = GAME_STATES.STARTED;
             world.btnPause.getComponent(cc.Button).interactable = true;
             world.btnPlay.getComponent(cc.Button).interactable = false;
             world.btnFF.getComponent(cc.Button).interactable = true;
@@ -1113,7 +1137,7 @@ cc.Class({
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnFF"), function() {
 
             world.updateTimeVars(MONTH_INTERVAL_FF);
-            gameParams.state = GAME_STATES.STARTED;
+            world.gameParams.state = GAME_STATES.STARTED;
             world.btnPause.getComponent(cc.Button).interactable = true;
             world.btnPlay.getComponent(cc.Button).interactable = true;
             world.btnFF.getComponent(cc.Button).interactable = false;
@@ -1133,7 +1157,7 @@ cc.Class({
         // Add handling for bottom bar buttons
         btnDesignPolicy.on(cc.Node.EventType.TOUCH_END, function() {
             
-            gameParams.state = GAME_STATES.PAUSED;
+            world.gameParams.state = GAME_STATES.PAUSED;
             designPolicy.zIndex = 105;
             resourceScore.zIndex = 106;
             let layerDesignPolicy = cc.director.getScene().getChildByName("layerDesignPolicy");
@@ -1154,14 +1178,14 @@ cc.Class({
         });
         let btnDesignPolicyQuit = designPolicy.getChildByName("btnDesignPolicyQuit");
         btnDesignPolicyQuit.on(cc.Node.EventType.TOUCH_END, function() {
-            gameParams.state = GAME_STATES.STARTED;
+            world.gameParams.state = GAME_STATES.STARTED;
             designPolicy.zIndex = -1;
             resourceScore.zIndex = 101;
         }, btnDesignPolicyQuit);
 
         btnStats.on(cc.Node.EventType.TOUCH_END, function() {
             
-            gameParams.state = GAME_STATES.PAUSED;
+            world.gameParams.state = GAME_STATES.PAUSED;
             stats.zIndex = 105;
             let page1 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_1");
             let page2 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_2");
@@ -1181,12 +1205,12 @@ cc.Class({
             const makeString = function(num) { return (Math.round(num * 10) / 10).toString() + '%'; };
 
             // World
-            page1.getChildByName("lblYear").getComponent(cc.Label).string = gd.lang.stats_year[cc.sys.localStorage.language] + gameParams.currentDate.getFullYear();
-            page1.getChildByName("lblYearMessage").getComponent(cc.Label).string = gd.lang.stats_year_message_a[cc.sys.localStorage.language] + (gameParams.targetDate.getFullYear() - gameParams.currentDate.getFullYear()) + gd.lang.stats_year_message_b[cc.sys.localStorage.language];
+            page1.getChildByName("lblYear").getComponent(cc.Label).string = gd.lang.stats_year[cc.sys.localStorage.language] + world.gameParams.currentDate.getFullYear();
+            page1.getChildByName("lblYearMessage").getComponent(cc.Label).string = gd.lang.stats_year_message_a[cc.sys.localStorage.language] + (world.gameParams.targetDate.getFullYear() - world.gameParams.currentDate.getFullYear()) + gd.lang.stats_year_message_b[cc.sys.localStorage.language];
             page1.getChildByName("lblLoss").getComponent(cc.Label).string = gd.lang.stats_loss[cc.sys.localStorage.language];
-            page1.getChildByName("lblLossMessage").getComponent(cc.Label).string = gd.lang.stats_loss_message_a[cc.sys.localStorage.language] + gameParams.startDate.getFullYear() + gd.lang.stats_loss_message_b[cc.sys.localStorage.language] + makeString(gameParams.totalLoss) + ".";
-            page1.getChildByName("lblPreparedness").getComponent(cc.Label).string = gd.lang.stats_preparedness[cc.sys.localStorage.language] + makeString(gameParams.populationPreparedPercent) + " / " + Math.round(gameParams.populationPrepared / 1000000) + "M";
-            let pd = gd.lang.stats_preparedness_message_a[cc.sys.localStorage.language] + makeString(gameParams.populationPreparedPercent) + gd.lang.stats_preparedness_message_b[cc.sys.localStorage.language];
+            page1.getChildByName("lblLossMessage").getComponent(cc.Label).string = gd.lang.stats_loss_message_a[cc.sys.localStorage.language] + world.gameParams.startDate.getFullYear() + gd.lang.stats_loss_message_b[cc.sys.localStorage.language] + makeString(world.gameParams.totalLoss) + ".";
+            page1.getChildByName("lblPreparedness").getComponent(cc.Label).string = gd.lang.stats_preparedness[cc.sys.localStorage.language] + makeString(world.gameParams.populationPreparedPercent) + " / " + Math.round(world.gameParams.populationPrepared / 1000000) + "M";
+            let pd = gd.lang.stats_preparedness_message_a[cc.sys.localStorage.language] + makeString(world.gameParams.populationPreparedPercent) + gd.lang.stats_preparedness_message_b[cc.sys.localStorage.language];
             page1.getChildByName("lblPreparednessMessage").getComponent(cc.Label).string = pd;
 
             // Countries
@@ -1261,7 +1285,7 @@ cc.Class({
 
             const graphX = 4;
             const graphY = 0;
-            const years = gameParams.targetDate.getFullYear() - gameParams.startDate.getFullYear();
+            const years = world.gameParams.targetDate.getFullYear() - world.gameParams.startDate.getFullYear();
             let scaleFactor = 0.9;
             const graphIncrementX = page3.width * scaleFactor / years;
             const graphIncrementY = page3.height * scaleFactor / 100;
@@ -1270,11 +1294,11 @@ cc.Class({
             drawSegment(new cc.Vec2(graphX, graphOffset + lineOffset), new cc.Vec2(graphX + page3.width * scaleFactor, graphOffset + lineOffset), 1, COLOR_ICE);
             drawSegment(new cc.Vec2(graphX, graphOffset + lineOffset), new cc.Vec2(graphX, graphOffset + page3.height * scaleFactor), 1, COLOR_ICE);
     
-            for (let i = gameParams.startDate.getFullYear(); i < gameParams.targetDate.getFullYear(); i++) {
+            for (let i = world.gameParams.startDate.getFullYear(); i < world.gameParams.targetDate.getFullYear(); i++) {
     
-                const index = i - gameParams.startDate.getFullYear();
+                const index = i - world.gameParams.startDate.getFullYear();
 
-                const stats = gameParams.stats[i];
+                const stats = world.gameParams.stats[i];
 
                 if (stats === undefined)
                     continue;
@@ -1304,7 +1328,7 @@ cc.Class({
     
             let lblDestructionScoreNode = new cc.Node();
             let lblDestructionScore = lblDestructionScoreNode.addComponent(cc.Label);
-            lblDestructionScore.string = makeString(gameParams.totalLoss);
+            lblDestructionScore.string = makeString(world.gameParams.totalLoss);
             lblDestructionScore.font = world.titleFont;
             lblDestructionScore.fontSize = 28;
             lblDestructionScoreNode.color = colorD;
@@ -1314,7 +1338,7 @@ cc.Class({
             lblDestructionScoreNode.zIndex = 106;
             let lblPolicyScoreNode = new cc.Node();
             let lblPolicyScore = lblPolicyScoreNode.addComponent(cc.Label);
-            lblPolicyScore.string = makeString(gameParams.populationPreparedPercent);
+            lblPolicyScore.string = makeString(world.gameParams.populationPreparedPercent);
             lblPolicyScore.font = world.titleFont;
             lblPolicyScore.fontSize = 28;
             lblPolicyScoreNode.color = colorP;
@@ -1327,7 +1351,7 @@ cc.Class({
         let btnStatsQuit = stats.getChildByName("btnStatsQuit");
         btnStatsQuit.on(cc.Node.EventType.TOUCH_END, function() {
             
-            gameParams.state = GAME_STATES.STARTED;
+            world.gameParams.state = GAME_STATES.STARTED;
             stats.zIndex = -1;
 
         }, btnStatsQuit);
@@ -1338,6 +1362,8 @@ cc.Class({
     },
 
     initPolicyDesign() {
+
+        let world = this.world;
 
         let layerDesignPolicy = cc.director.getScene().getChildByName("layerDesignPolicy");
         let pageView = layerDesignPolicy.getChildByName("pageview").getComponent(cc.PageView);
@@ -1361,10 +1387,11 @@ cc.Class({
         let allButtons = [btnEconomy, btnPolitics, btnCulture, btnEcology];
         let prevButton = btnEconomy;
         let policyButtons = [];
+        let policySelected = null;
 
         const costCalculation = (policySelected) => {
             
-            let policyLevel = gameParams.policies[policySelected.id];
+            let policyLevel = world.gameParams.policies[policySelected.id];
             let cost = policySelected.cost_1;
 
             if (policyLevel !== undefined) {
@@ -1460,35 +1487,32 @@ cc.Class({
 
             const cost = costCalculation(policySelected);
 
-            if (gameParams.resources - cost >= 0 && 
-                gameParams.policies[policySelected.id] === undefined) {
+            if (world.gameParams.resources - cost >= 0 && 
+                world.gameParams.policies[policySelected.id] === undefined) {
 
-                gameParams.resources -= cost;  
-                gameParams.policies[policySelected.id] = 1;
-                policySelectedButton.enabled = false;
-                resourceScoreLabel.string = (gameParams.resources.toString());
+                world.gameParams.resources -= cost;  
+                world.gameParams.policies[policySelected.id] = 1;
+                resourceScoreLabel.string = (world.gameParams.resources.toString());
                 levelButtons[policySelected.id * 100 + 1].getComponent(cc.Sprite).spriteFrame = world.dotOff;
                 levelButtons[policySelected.id * 100 + 1].color = COLOR_UMBER;
 
             }
-            else if (gameParams.resources - cost >= 0 && 
-                gameParams.policies[policySelected.id] === 1) {
+            else if (world.gameParams.resources - cost >= 0 && 
+                world.gameParams.policies[policySelected.id] === 1) {
 
-                gameParams.resources -= cost;  
-                gameParams.policies[policySelected.id] = 2;
-                policySelectedButton.enabled = false;
-                resourceScoreLabel.string = (gameParams.resources.toString());
+                world.gameParams.resources -= cost;  
+                world.gameParams.policies[policySelected.id] = 2;
+                resourceScoreLabel.string = (world.gameParams.resources.toString());
                 levelButtons[policySelected.id * 100 + 2].getComponent(cc.Sprite).spriteFrame = world.dotOff;
                 levelButtons[policySelected.id * 100 + 2].color = COLOR_UMBER;
 
             }
-            else if (gameParams.resources - cost >= 0 && 
-                gameParams.policies[policySelected.id] == 2) {
+            else if (world.gameParams.resources - cost >= 0 && 
+                world.gameParams.policies[policySelected.id] == 2) {
 
-                gameParams.resources -= cost;  
-                gameParams.policies[policySelected.id] = 3;
-                policySelectedButton.enabled = false;
-                resourceScoreLabel.string = (gameParams.resources.toString());
+                world.gameParams.resources -= cost;  
+                world.gameParams.policies[policySelected.id] = 3;
+                resourceScoreLabel.string = (world.gameParams.resources.toString());
                 levelButtons[policySelected.id * 100 + 3].getComponent(cc.Sprite).spriteFrame = world.dotOff;
                 levelButtons[policySelected.id * 100 + 3].color = COLOR_UMBER;
 
@@ -1497,13 +1521,13 @@ cc.Class({
             let newCost = costCalculation(policySelected);
             policyCostLabel.getComponent(cc.Label).string = (gd.lang.policy_platform_cost[cc.sys.localStorage.language] + newCost.toString());
 
-            if (gameParams.policies[policySelected.id] == 3) {
+            if (world.gameParams.policies[policySelected.id] == 3) {
 
                 btnPolicyInvest.getComponent(cc.Button).interactable = false;
                 btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = (gd.lang.policy_platform_completed[cc.sys.localStorage.language]);
 
             }
-            else if (newCost <= gameParams.resources) {
+            else if (newCost <= world.gameParams.resources) {
 
                 btnPolicyInvest.getComponent(cc.Button).interactable = true;
                 btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = (gd.lang.policy_platform_invest[cc.sys.localStorage.language]);
@@ -1565,7 +1589,7 @@ cc.Class({
                 optNode.option = opt;
                 optNode.enabled = true;
 
-                if (gameParams.policies[opt.id] !== undefined) {
+                if (world.gameParams.policies[opt.id] !== undefined) {
                     optNode.enabled = false;
                 }
 
@@ -1591,13 +1615,13 @@ cc.Class({
                     const cost = costCalculation(policySelected);
                     policyCostLabel.getComponent(cc.Label).string = gd.lang.policy_platform_cost[cc.sys.localStorage.language] + cost.toString();
 
-                    if (gameParams.policies[opt.id] == 3) {
+                    if (world.gameParams.policies[opt.id] == 3) {
 
                         btnPolicyInvest.getComponent(cc.Button).interactable = false;
                         btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = gd.lang.policy_platform_completed[cc.sys.localStorage.language];
 
                     }
-                    else if (cost <= gameParams.resources) {
+                    else if (cost <= world.gameParams.resources) {
 
                         btnPolicyInvest.getComponent(cc.Button).interactable = true;
                         btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = gd.lang.policy_platform_invest[cc.sys.localStorage.language];
@@ -1609,8 +1633,6 @@ cc.Class({
                         btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = gd.lang.policy_platform_more_resources[cc.sys.localStorage.language];
 
                     }
-
-                    policySelectedButton = optNode;
 
                     policyLabel.opacity = 255;
                     policyDescription.opacity = 255;
@@ -1647,28 +1669,28 @@ cc.Class({
                 btnLvl3.spriteFrame = world.dotOff;
                 btnLvl3.materials = [world.defaultMaterial];
 
-                if (gameParams.policies[opt.id] === undefined) {
+                if (world.gameParams.policies[opt.id] === undefined) {
                     
                     btnLvl1.spriteFrame = world.dotOff;
                     btnLvl2.spriteFrame = world.dotOff;
                     btnLvl3.spriteFrame = world.dotOff;
 
                 }
-                else if (gameParams.policies[opt.id] === 1) {
+                else if (world.gameParams.policies[opt.id] === 1) {
                     
                     btnLvl1.spriteFrame = world.dotOn;
                     btnLvl2.spriteFrame = world.dotOff;
                     btnLvl3.spriteFrame = world.dotOff;
 
                 }
-                else if (gameParams.policies[opt.id] === 2) {
+                else if (world.gameParams.policies[opt.id] === 2) {
                     
                     btnLvl1.spriteFrame = world.dotOn;
                     btnLvl2.spriteFrame = world.dotOn;
                     btnLvl3.spriteFrame = world.dotOff;
 
                 }
-                else if (gameParams.policies[opt.id] === 3) {
+                else if (world.gameParams.policies[opt.id] === 3) {
                     
                     btnLvl1.spriteFrame = world.dotOn;
                     btnLvl2.spriteFrame = world.dotOn;
@@ -1718,6 +1740,8 @@ cc.Class({
     },
 
     initStats() {
+
+        let world = this.world;
 
         let layerStats = cc.director.getScene().getChildByName("layerStats");
 
@@ -1770,34 +1794,36 @@ cc.Class({
     },
         
     processResourceSelection(event) {
-            
+        
+        let world = this.world;
+
         // Do nothing if game is paused
-        if (gameParams.state === GAME_STATES.PAUSED)
+        if (world.gameParams.state === GAME_STATES.PAUSED)
             return;
 
         const res = Math.floor(1 + Math.random() * 3);
-        gameParams.resources += res;
+        world.gameParams.resources += res;
 
         event.target.destroy();
 
-        if (!gameParams.resourcesAdded) {
+        if (!world.gameParams.resourcesAdded) {
             
-            gameParams.state = GAME_STATES.PAUSED;
-            gameParams.resourcesAdded = true;
+            world.gameParams.state = GAME_STATES.PAUSED;
+            world.gameParams.resourcesAdded = true;
             
-            if (gameParams.tutorialMode) {
+            if (world.gameParams.tutorialMode) {
                 
                 world.showMessageBox(world, "HINT:", TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language], "OK!", function() {
                     
-                    gameParams.tutorialHints.push(TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language]);
-                    gameParams.state = GAME_STATES.STARTED;
+                    world.gameParams.tutorialHints.push(TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language]);
+                    world.gameParams.state = GAME_STATES.STARTED;
 
                 });
 
             }
             else {
                 
-                gameParams.state = GAME_STATES.STARTED;
+                world.gameParams.state = GAME_STATES.STARTED;
 
             }
         }
@@ -1806,20 +1832,22 @@ cc.Class({
 
     processCrisisSelection(event) {
 
+        let world = this.world;
+
         // Do nothing if game is paused
-        if (gameParams.state === GAME_STATES.PAUSED)
+        if (world.gameParams.state === GAME_STATES.PAUSED)
             return;
 
-        gameParams.crisisCountry = null;
+        world.gameParams.crisisCountry = null;
         let crisis = null;
 
-        for (let i = 0; i < gameParams.crises.length; i++) {
+        for (let i = 0; i < world.gameParams.crises.length; i++) {
 
-            if (gameParams.crises[i].id == event.target.crisisId) {
+            if (world.gameParams.crises[i].id == event.target.crisisId) {
 
-                const crisisInCountry = gameParams.crises[i];
+                const crisisInCountry = world.gameParams.crises[i];
                 crisis = CRISES[crisisInCountry.crisis];
-                gameParams.crises.splice(i, 1);
+                world.gameParams.crises.splice(i, 1);
                 break;
 
             }
@@ -1827,16 +1855,16 @@ cc.Class({
 
         event.target.destroy();
         
-        if (!gameParams.alertCrisis && gameParams.tutorialMode) {
+        if (!world.gameParams.alertCrisis && world.gameParams.tutorialMode) {
 
-            gameParams.state = GAME_STATES.PAUSED;
-            gameParams.alertCrisis = true;
+            world.gameParams.state = GAME_STATES.PAUSED;
+            world.gameParams.alertCrisis = true;
             
             world.showMessageBox(world, 
                 gd.lang.crisis_title[cc.sys.localStorage.language], 
                 gd.lang.crisis_message[cc.sys.localStorage.language] + crisis[cc.sys.localStorage.language] + "!", "OK!", function() {
 
-                gameParams.state = GAME_STATES.STARTED;
+                world.gameParams.state = GAME_STATES.STARTED;
 
             });
 
@@ -1865,11 +1893,11 @@ cc.Class({
      * Update month / year in the interface
      * @param {*} world 
      */
-    refreshDate() {
+    refreshDate(world) {
 
-        // world.topBar.getChildByName("lblDay").getComponent(cc.Label).string = (gameParams.currentDate.getDate()).toString();
-        world.topBar.getChildByName("lblMonth").getComponent(cc.Label).string = (gameParams.currentDate.getMonth() + 1).toString();
-        world.topBar.getChildByName("lblYear").getComponent(cc.Label).string = (gameParams.currentDate.getFullYear()).toString();
+        // world.topBar.getChildByName("lblDay").getComponent(cc.Label).string = (world.gameParams.currentDate.getDate()).toString();
+        world.topBar.getChildByName("lblMonth").getComponent(cc.Label).string = (world.gameParams.currentDate.getMonth() + 1).toString();
+        world.topBar.getChildByName("lblYear").getComponent(cc.Label).string = (world.gameParams.currentDate.getFullYear()).toString();
 
     },
 
@@ -1878,7 +1906,9 @@ cc.Class({
      */
     printCountryStats() {
 
-        const country = world.countries[gameParams.currentCountry];
+        let world = this.world;
+
+        const country = world.countries[world.gameParams.currentCountry];
         world.countryLabel.string = (country.name);
 
         const lossPercent = Math.floor(country.loss);
@@ -1903,10 +1933,12 @@ cc.Class({
      */
     printWorldStats() {
 
+        let world = this.world;
+
         world.countryLabel.string = (gd.lang.world_label[cc.sys.localStorage.language]);
 
-        const lossPercent = Math.round(gameParams.totalLoss);
-        const preparedPercent = Math.round(gameParams.populationPreparedPercent);
+        const lossPercent = Math.round(world.gameParams.totalLoss);
+        const preparedPercent = Math.round(world.gameParams.populationPreparedPercent);
 
         world.countryLoss.string = (lossPercent + "%" );
         world.countryAwarePrepared.string = (preparedPercent + "%");
@@ -1918,14 +1950,16 @@ cc.Class({
 
     generateResourceDistribution() {
 
+        let world = this.world;
+
         let dists = [];
         let total = 0;
 
         for (let i = 0; i < 16; i++) {
 
             let weight = 1;
-            if (gameParams.policies[i + 1] !== undefined) 
-                weight += gameParams.policies[i + 1];
+            if (world.gameParams.policies[i + 1] !== undefined) 
+                weight += world.gameParams.policies[i + 1];
             
             total += weight;
             dists.push(weight);
@@ -1944,7 +1978,9 @@ cc.Class({
 
     selectCountry(event, location) {
 
-        if (gameParams.state !== GAME_STATES.PREPARED && gameParams.state !== GAME_STATES.STARTED && gameParams.state !== GAME_STATES.PAUSED)
+        let world = this.world;
+
+        if (world.gameParams.state !== GAME_STATES.PREPARED && world.gameParams.state !== GAME_STATES.STARTED && world.gameParams.state !== GAME_STATES.PAUSED)
             return;
         
         const target = event.getCurrentTarget();
@@ -1991,25 +2027,25 @@ cc.Class({
         // Pick the match with the closest centroid ID
         if (selectedCountry != null) {
 
-            if (gameParams.currentCountry != null) {
+            if (world.gameParams.currentCountry != null) {
                 
-                world.countries[gameParams.currentCountry].selected = false;
+                world.countries[world.gameParams.currentCountry].selected = false;
 
             }
-            gameParams.currentCountry = selectedCountry;
+            world.gameParams.currentCountry = selectedCountry;
 
-            if (gameParams.currentCountry != null)
-                world.countries[gameParams.currentCountry].selected = true;
-            currentCountry = selectedCountry;
+            if (world.gameParams.currentCountry != null)
+                world.countries[world.gameParams.currentCountry].selected = true;
+            world.gameParams.currentCountry = selectedCountry;
             
             world.printCountryStats();
 
         }
         else {
             
-            if (gameParams.currentCountry != null)
-                world.countries[gameParams.currentCountry].selected = false;
-            gameParams.currentCountry = null;
+            if (world.gameParams.currentCountry != null)
+                world.countries[world.gameParams.currentCountry].selected = false;
+            world.gameParams.currentCountry = null;
 
             world.printWorldStats();
 
@@ -2018,8 +2054,9 @@ cc.Class({
         return true;
     },
 
-
     generateWeightedPolicyIndex(r) {
+        
+        let world = this.world;
 
         let dists = world.generateResourceDistribution();
         let counter = 0;
@@ -2047,6 +2084,8 @@ cc.Class({
      * Generate a policy icon, based on a weighted average of existing policies.
      */
     generatePolicyIcon() {
+
+        let world = this.world;
 
         let policyIndex = world.generateWeightedPolicyIndex(Math.random());
         let icon = "";
@@ -2109,6 +2148,8 @@ cc.Class({
     // Add chance of new resource
     addResource() {
 
+        let world = this.world;
+
         const btnRes = new cc.Node('Resource');
         const sp = btnRes.addComponent(cc.Sprite);
         const policyIcon = world.generatePolicyIcon();
@@ -2119,19 +2160,19 @@ cc.Class({
         const pt = countryRand.centroid;
         btnRes.setPosition( pt.x, (world.node.height - (2 * Y_OFFSET) ) - pt.y + RESOURCE_SIZE_H / 2 );
         btnRes.setContentSize(cc.size(RESOURCE_SIZE_W, RESOURCE_SIZE_H));
-        btnRes.placedAt = gameParams.counter;
+        btnRes.placedAt = world.gameParams.counter;
         btnRes.setAnchorPoint(0.5, 0.0);
         btnRes.parent = cc.director.getScene();
         btnRes.zIndex = 102;
         world.buttons.push(btnRes);
 
-        btnRes.on(cc.Node.EventType.TOUCH_END, world.processResourceSelection, btnRes);
+        btnRes.on(cc.Node.EventType.TOUCH_END, world.processResourceSelection, this);
 
         /*
-        if (gameParams.automateMode) {
+        if (world.gameParams.automateMode) {
             
             const r = Math.random();
-            if (r < parseFloat(gameParams.automateScript.resourcesProb)) {
+            if (r < parseFloat(world.gameParams.automateScript.resourcesProb)) {
 
                 fireClickOnTarget(btnRes);
 
@@ -2140,18 +2181,18 @@ cc.Class({
         }
         */
 
-        if (!gameParams.alertResources) {
+        if (!world.gameParams.alertResources) {
 
-            if (gameParams.tutorialMode) {
+            if (world.gameParams.tutorialMode) {
                 
-                gameParams.state = GAME_STATES.PAUSED;
-                gameParams.alertResources = true;
+                world.gameParams.state = GAME_STATES.PAUSED;
+                world.gameParams.alertResources = true;
 
                 world.showMessageBox(world, "HINT:", TUTORIAL_MESSAGES.FIRST_RESOURCE_SHOWN[cc.sys.localStorage.language], "OK!", function(that) {
                 
-                    gameParams.tutorialHints.push(TUTORIAL_MESSAGES.FIRST_RESOURCE_SHOWN[cc.sys.localStorage.language]);
-                    //gameParams.state = GAME_STATES.STARTED;
-                    gameParams.state = GAME_STATES.PAUSED_TUTORIAL;
+                    world.gameParams.tutorialHints.push(TUTORIAL_MESSAGES.FIRST_RESOURCE_SHOWN[cc.sys.localStorage.language]);
+                    //world.gameParams.state = GAME_STATES.STARTED;
+                    world.gameParams.state = GAME_STATES.PAUSED_TUTORIAL;
 
                 });
 
@@ -2159,7 +2200,7 @@ cc.Class({
 
         }
 
-        gameParams.lastResource = gameParams.counter;
+        world.gameParams.lastResource = world.gameParams.counter;
 
     },
                             
@@ -2168,6 +2209,8 @@ cc.Class({
      */ 
     crisisProbDistribution() {
         
+        let world = this.world;
+
         const probs = [];
         const crisisKeys = Object.keys(CRISES);
         const countryKeys = Object.keys(world.countries);
@@ -2180,8 +2223,8 @@ cc.Class({
             countryKeys.forEach(yk => {
             
                 const country = world.countries[yk];
-                const lossProp = country.loss / gameParams.totalLoss;
-                const preparedProp = country.pop_prepared_percent / gameParams.populationPreparedPercent;
+                const lossProp = country.loss / world.gameParams.totalLoss;
+                const preparedProp = country.pop_prepared_percent / world.gameParams.populationPreparedPercent;
                 
                 let totalInfluence = 1.0;
                 totalInfluence += lossProp * crisis.influence_of_environmental_loss;
@@ -2213,6 +2256,8 @@ cc.Class({
 
     crisisProbLocation(r) {
 
+        let world = this.world;
+
         const probs = world.crisisProbDistribution();
         const crisisKeys = Object.keys(CRISES);
         const countryKeys = Object.keys(world.countries);
@@ -2230,7 +2275,7 @@ cc.Class({
                 crisisCountry.crisis = crisisKeys[crisisID];
                 crisisCountry.country = countryKeys[countryID];
                 crisisCountry.id = i;
-                crisisCountry.counter = gameParams.counter;
+                crisisCountry.counter = world.gameParams.counter;
                 break;
 
             }
@@ -2246,11 +2291,13 @@ cc.Class({
      */
     addCrisis() {
 
+        let world = this.world;
+
         const r2 = Math.random();
         const crisisInCountry = world.crisisProbLocation(r2);
-        gameParams.crisisCountry = crisisInCountry;
-        gameParams.crises.push(crisisInCountry);
-        gameParams.crisisCount++;
+        world.gameParams.crisisCountry = crisisInCountry;
+        world.gameParams.crises.push(crisisInCountry);
+        world.gameParams.crisisCount++;
         const crisis = CRISES[crisisInCountry.crisis];
         const country = world.countries[crisisInCountry.country];
 
@@ -2263,7 +2310,7 @@ cc.Class({
         btnCrisis.setPosition(pt.x, (world.node.height - (2 * Y_OFFSET) ) - pt.y + RESOURCE_SIZE_H / 2 );
         btnCrisis.setContentSize(cc.size(RESOURCE_SIZE_W, RESOURCE_SIZE_H));
         // btnCrisis.setColor(COLOR_DESTRUCTION_POINTS);
-        btnCrisis.placedAt = gameParams.counter;
+        btnCrisis.placedAt = world.gameParams.counter;
         btnCrisis.setAnchorPoint(0.5, 0.0);
         btnCrisis.crisisId = crisisInCountry.id;
         btnCrisis.name = "crisis" + crisisInCountry.id;
@@ -2271,7 +2318,7 @@ cc.Class({
         btnCrisis.zIndex = 102;
         world.buttons.push(btnCrisis);
 
-        btnCrisis.on(cc.Node.EventType.TOUCH_END, world.processCrisisSelection, btnCrisis);
+        btnCrisis.on(cc.Node.EventType.TOUCH_END, world.processCrisisSelection, this);
 
         // After the third crisis, add notifications to the news feed
         let message = gd.lang.crisis_prefix[cc.sys.localStorage.language] + 
@@ -2282,21 +2329,21 @@ cc.Class({
         // btnCrisis.setTitleColor(COLOR_LICORICE);
         // btnCrisis.setTitleText(crisis.name);
 
-        if (gameParams.crisisCount < 4) {
+        if (world.gameParams.crisisCount < 4) {
 
-            gameParams.state = GAME_STATES.PAUSED;
+            world.gameParams.state = GAME_STATES.PAUSED;
             message += gd.lang.crisis_explanation[cc.sys.localStorage.language];
 
             let buttons = world.showMessageBox(world, gd.lang.crisis_alert[cc.sys.localStorage.language], message, "OK!", (that) => {
 
-                if (gameParams.tutorialMode)
-                    gameParams.state = GAME_STATES.PAUSED_TUTORIAL;
+                if (world.gameParams.tutorialMode)
+                    world.gameParams.state = GAME_STATES.PAUSED_TUTORIAL;
                 else
-                    gameParams.state = GAME_STATES.STARTED;
+                    world.gameParams.state = GAME_STATES.STARTED;
 
             });
 
-            if (gameParams.automateMode) {
+            if (world.gameParams.automateMode) {
 
                 fireClickOnTarget(buttons[0]);
 
@@ -2305,12 +2352,12 @@ cc.Class({
         }
         else {
             
-            // if (gameParams.messageOverride == null)
-            //     gameParams.messageOverride = message;
+            // if (world.gameParams.messageOverride == null)
+            //     world.gameParams.messageOverride = message;
 
         }
         
-        gameParams.lastCrisis = gameParams.counter;
+        world.gameParams.lastCrisis = world.gameParams.counter;
 
     },
 
@@ -2319,12 +2366,14 @@ cc.Class({
      */
     addTutorial() {
 
-        if (gameParams.tutorialHints.length < 2 || gameParams.tutorialHints.length >= 6)
+        let world = this.world;
+
+        if (world.gameParams.tutorialHints.length < 2 || world.gameParams.tutorialHints.length >= 6)
             return;
 
-        gameParams.state = GAME_STATES.PAUSED;
+        world.gameParams.state = GAME_STATES.PAUSED;
         let message = null;
-        switch(gameParams.tutorialHints.length) {
+        switch(world.gameParams.tutorialHints.length) {
             case 2:
             default:
                 message = TUTORIAL_MESSAGES.RANDOM_1[cc.sys.localStorage.language];
@@ -2342,14 +2391,16 @@ cc.Class({
 
         world.showMessageBox(world, "HINT:", message, "OK", function() {
             
-            gameParams.tutorialHints.push(message);
-            gameParams.state = GAME_STATES.STARTED;
+            world.gameParams.tutorialHints.push(message);
+            world.gameParams.state = GAME_STATES.STARTED;
 
         });
 
     },
 
     sigmoidalPercent(percent, inflectionPoint) {
+
+        let world = this.world;
 
         if (inflectionPoint === undefined)
             inflectionPoint = 50;
@@ -2367,10 +2418,12 @@ cc.Class({
     // Evaluates loss
     evaluateLoss(country) {
 
+        let world = this.world;
+
         const lossCurrent = country.loss;
 
         // Add random amount to default rate of loss
-        const rateOfLoss = gameParams.rateOfLoss * (0.5 + Math.random());
+        const rateOfLoss = world.gameParams.rateOfLoss * (0.5 + Math.random());
         const rateOfLossMonthly = rateOfLoss;
         let rateOfLossFactor = 1 + rateOfLossMonthly;
 
@@ -2378,13 +2431,13 @@ cc.Class({
         const preparednessFactor = 1 + 0.1 * country.pop_prepared_percent / 100.0;
         rateOfLossFactor /= preparednessFactor;
 
-        //let crisis = CRISES[gameParams.crises[0].crisis];
-        gameParams.crises.forEach(crisisInCountry => {
+        //let crisis = CRISES[world.gameParams.crises[0].crisis];
+        world.gameParams.crises.forEach(crisisInCountry => {
             
             const crisis = CRISES[crisisInCountry.crisis];
             // Add effects of country / global loss ratio to crisis effect
             // Take the square root of the ratio of country to world loss, and multiply this by the crisis effect
-            rateOfLossFactor *= (1 + crisis.effect_on_environmental_loss * (Math.pow(lossCurrent / gameParams.totalLoss, 0.5)));
+            rateOfLossFactor *= (1 + crisis.effect_on_environmental_loss * (Math.pow(lossCurrent / world.gameParams.totalLoss, 0.5)));
             
         });
 
@@ -2406,6 +2459,8 @@ cc.Class({
      */
     transmitFrom(country) {
         
+        let world = this.world;
+
         const neighbours = country.neighbours;
         const sharedBorder = country.shared_border_percentage;
         const transmissionLand = world.scenarioData.threat_details.transmission.transmission_land;
@@ -2416,7 +2471,7 @@ cc.Class({
         const likelihoodOfTransmission = country.affected_chance; //infectivityIncreaseSpeed / 100.0;
 
         const popCountry = country.pop_est;
-        const popWorld = gameParams.populationWorld;
+        const popWorld = world.gameParams.populationWorld;
         const popFactor = Math.log(popCountry) / Math.log(popWorld);
         
         const income = country.income_grp;
@@ -2499,6 +2554,8 @@ cc.Class({
 
     infectWithin(country) {
         
+        let world = this.world;
+
         if (country.affected_chance == 0)
             return;
 
@@ -2511,8 +2568,8 @@ cc.Class({
 
         let infectivityRate = infectivityIncreaseSpeed;
 
-        Object.keys(gameParams.policies).forEach(strategy => {
-            const level = gameParams.policies[strategy];
+        Object.keys(world.gameParams.policies).forEach(strategy => {
+            const level = world.gameParams.policies[strategy];
             switch(strategy.id) {
                 case 1:
                     // Increase infectivity when reducing inequality for low income countries
@@ -2590,15 +2647,17 @@ cc.Class({
 
     calculatePolicyBalanceOnPreparedness() {
 
-        const strategyCount = Object.values(gameParams.policies).reduce((accum, level) => accum + level, 0);
+        let world = this.world;
+
+        const strategyCount = Object.values(world.gameParams.policies).reduce((accum, level) => accum + level, 0);
         if (strategyCount == 0)
             return 1.0;
 
         const domainMean = strategyCount / 4;
         let ecn = 0, pol = 0, cul = 0, eco = 0;
-        Object.keys(gameParams.policies).forEach(policyID => {
-            const policy = gameParams.policyOptions[policyID]
-            const level = gameParams.policies[policyID];
+        Object.keys(world.gameParams.policies).forEach(policyID => {
+            const policy = world.gameParams.policyOptions[policyID]
+            const level = world.gameParams.policies[policyID];
             switch (policy.domain) {
                 case 1:
                     ecn += level;
@@ -2626,11 +2685,13 @@ cc.Class({
 
     calculateSinglePolicyImpactOnPreparedness(country, index) {
 
+        let world = this.world;
+
         let severityEffect = 1.0;
 
-        const policyID = parseInt(Object.keys(gameParams.policies)[index]);
-        const policy = gameParams.policyOptions[policyID];
-        const level = gameParams.policies[policyID];
+        const policyID = parseInt(Object.keys(world.gameParams.policies)[index]);
+        const policy = world.gameParams.policyOptions[policyID];
+        const level = world.gameParams.policies[policyID];
 
         // Generate a natural log, so that level 1 = 1; level 2 = 1.31; level 3 = 1.55
         const levelMultiplier = Math.log(level + 1.718);
@@ -2696,16 +2757,16 @@ cc.Class({
         }
 
         // Calculate impact of other strategies
-        for (let j = index + 1; j < Object.keys(gameParams.policies).length; j++) {
+        for (let j = index + 1; j < Object.keys(world.gameParams.policies).length; j++) {
             // if (i == j)
             //     continue;
 
-            const otherPolicyID = parseInt(Object.keys(gameParams.policies)[j]);
-            const otherLevel = gameParams.policies[otherPolicyID];
+            const otherPolicyID = parseInt(Object.keys(world.gameParams.policies)[j]);
+            const otherLevel = world.gameParams.policies[otherPolicyID];
             // Generate a natural log, so that level 1 = 1; level 2 = 1.31; level 3 = 1.55
             const otherLevelMultiplier = Math.log(otherLevel + 1.718);
 
-            const relation = gameParams.policyRelations[policyID][otherPolicyID];
+            const relation = world.gameParams.policyRelations[policyID][otherPolicyID];
             
             if (typeof(relation) !== "undefined") {
             
@@ -2721,9 +2782,11 @@ cc.Class({
 
     calculatePolicyImpactOnPreparedness(country) {
         
+        let world = this.world;
+
         let severityEffect = 1.0;
 
-        for (let i = 0; i < Object.keys(gameParams.policies).length; i++) {
+        for (let i = 0; i < Object.keys(world.gameParams.policies).length; i++) {
 
             severityEffect *= world.calculateSinglePolicyImpactOnPreparedness(country, i);
 
@@ -2737,6 +2800,8 @@ cc.Class({
     },
 
     registerPreparednessWithin(country) {
+
+        let world = this.world;
 
         if (country.affected_chance == 0)
             return;
@@ -2789,20 +2854,22 @@ cc.Class({
 
     doSim() {
 
-        if (gameParams.startCountry === null || gameParams.state !== GAME_STATES.PREPARED)
+        let world = this.world;
+
+        if (world.gameParams.startCountry === null || world.gameParams.state !== GAME_STATES.PREPARED)
             return;
 
         let buttons = [];
 
-        const country = world.countries[gameParams.startCountry];
+        const country = world.countries[world.gameParams.startCountry];
         country.policy = 1.0;
         country.affected_chance = 1.0;
 
         // Shuffle from https://gist.github.com/guilhermepontes/17ae0cc71fa2b13ea8c20c94c5c35dc4
         world.shuffleArray = a => a.sort(() => Math.random() - 0.5);
 
-        world.startGameParams();
-        world.refreshDate();
+        world.startGameParams(world);
+        world.refreshDate(world);
         world.buttons = [];
 
     
@@ -2811,26 +2878,26 @@ cc.Class({
          */
         const updateTime = () => {
 
-            if (gameParams.state !== GAME_STATES.STARTED) {
+            if (world.gameParams.state !== GAME_STATES.STARTED) {
 
                 // Refresh the timeout
-                gameParams.timeoutID = setTimeout(updateTime, 20);
+                world.gameParams.timeoutID = setTimeout(updateTime, 20);
                 return;
 
             }
 
-            gameParams.counter++;
+            world.gameParams.counter++;
             
 
             // Handle automation here
-            if (gameParams.automateMode) {
+            if (world.gameParams.automateMode) {
 
                 // Select resources
-                for (let i = 0 ; i < gameParams.automateScript.policyEvents.length; i++) {
+                for (let i = 0 ; i < world.gameParams.automateScript.policyEvents.length; i++) {
 
-                    let pe = gameParams.automateScript.policyEvents[i];
+                    let pe = world.gameParams.automateScript.policyEvents[i];
                     
-                    if (gameParams.counter == pe.counter / MONTH_INTERVAL) {
+                    if (world.gameParams.counter == pe.counter / MONTH_INTERVAL) {
 
                         fireClickOnTarget(world.btnDevelopPolicy, function() {
                             
@@ -2858,11 +2925,11 @@ cc.Class({
                 };
 
                 // Select crisis
-                for (let i = 0; i < gameParams.crises.length; i++) {
+                for (let i = 0; i < world.gameParams.crises.length; i++) {
 
-                    let crisisInCountry = gameParams.crises[i];
+                    let crisisInCountry = world.gameParams.crises[i];
                     
-                    if (gameParams.counter == crisisInCountry.counter + gameParams.automateScript.crisisDuration) {
+                    if (world.gameParams.counter == crisisInCountry.counter + world.gameParams.automateScript.crisisDuration) {
                         
                         let target = world.worldBackground.getChildByName("crisis"+crisisInCountry.id);
                         fireClickOnTarget(target);
@@ -2873,21 +2940,21 @@ cc.Class({
 
             }
 
-            if (gameParams.counter % gameParams.timeInterval == 0) {
+            if (world.gameParams.counter % world.gameParams.timeInterval == 0) {
 
-                gameParams.currentDate = new Date(gameParams.currentDate.valueOf());
-                gameParams.currentDate.setDate(gameParams.currentDate.getDate() + 30.417);
+                world.gameParams.currentDate = new Date(world.gameParams.currentDate.valueOf());
+                world.gameParams.currentDate.setDate(world.gameParams.currentDate.getDate() + 30.417);
 
                 // Show message box for each new decade
-                const currentYear = gameParams.currentDate.getFullYear();
-                const previousYear = gameParams.previousDate.getFullYear();
+                const currentYear = world.gameParams.currentDate.getFullYear();
+                const previousYear = world.gameParams.previousDate.getFullYear();
                 
                 // Change of year
                 if (currentYear > previousYear) {
 
-                    gameParams.stats[previousYear] = {
-                        loss: gameParams.totalLoss,
-                        prepared: gameParams.populationPreparedPercent
+                    world.gameParams.stats[previousYear] = {
+                        loss: world.gameParams.totalLoss,
+                        prepared: world.gameParams.populationPreparedPercent
                     };
 
                     // Change of decade
@@ -2905,7 +2972,7 @@ cc.Class({
                             
                                 const n = narratives[i];
                             
-                                if (gameParams.totalLoss > n.loss) {
+                                if (world.gameParams.totalLoss > n.loss) {
                                     
                                     let index = Math.floor(Math.random() * n[cc.sys.localStorage.language].length);
                                     message = n[cc.sys.localStorage.language][index];
@@ -2921,14 +2988,14 @@ cc.Class({
                         
                     if (showDialog) {
 
-                        gameParams.state = GAME_STATES.PAUSED;
+                        world.gameParams.state = GAME_STATES.PAUSED;
                         let buttons = world.showMessageBox(world, 
                             gd.lang.bulletin[cc.sys.localStorage.language] + currentYear, 
                             message, "OK", function() {
-                                gameParams.state = GAME_STATES.STARTED;
+                                world.gameParams.state = GAME_STATES.STARTED;
                             });
 
-                        if (gameParams.automateMode) {
+                        if (world.gameParams.automateMode) {
 
                             world.fireClickOnTarget(buttons[0]);
 
@@ -2938,7 +3005,7 @@ cc.Class({
 
                 }
 
-                gameParams.previousDate = gameParams.currentDate;
+                world.gameParams.previousDate = world.gameParams.currentDate;
 
 
                 // Add policy robustness and loss
@@ -2980,19 +3047,19 @@ cc.Class({
                 });
 
                 totalPolicy /= Object.keys(world.countries).length;
-                gameParams.policy = totalPolicy;
+                world.gameParams.policy = totalPolicy;
 
                 totalLoss /= Object.keys(world.countries).length;
-                gameParams.previousLoss = totalLoss;
-                gameParams.totalLoss = totalLoss;
+                world.gameParams.previousLoss = totalLoss;
+                world.gameParams.totalLoss = totalLoss;
 
-                gameParams.countriedAffected = countriedAffected;
-                gameParams.populationAware = populationAware;
-                gameParams.populationPrepared = populationPrepared;
-                gameParams.populationAwarePercent = 100 * gameParams.populationAware / gameParams.populationWorld;
-                gameParams.populationPreparedPercent = 100 * gameParams.populationPrepared / gameParams.populationWorld;
+                world.gameParams.countriedAffected = countriedAffected;
+                world.gameParams.populationAware = populationAware;
+                world.gameParams.populationPrepared = populationPrepared;
+                world.gameParams.populationAwarePercent = 100 * world.gameParams.populationAware / world.gameParams.populationWorld;
+                world.gameParams.populationPreparedPercent = 100 * world.gameParams.populationPrepared / world.gameParams.populationWorld;
 
-                if (gameParams.currentCountry != null) {
+                if (world.gameParams.currentCountry != null) {
 
                     world.printCountryStats();
 
@@ -3007,17 +3074,17 @@ cc.Class({
 
 
             // Various events
-            let ci = gameParams.crisisInterval;
-            Object.keys(gameParams.policies).forEach(policyID => {
+            let ci = world.gameParams.crisisInterval;
+            Object.keys(world.gameParams.policies).forEach(policyID => {
 
-                const policy = gameParams.policyOptions[policyID];
-                const policyLevel = gameParams.policies[policyID];
+                const policy = world.gameParams.policyOptions[policyID];
+                const policyLevel = world.gameParams.policies[policyID];
                 ci /= 1 + (policy.effect_on_crises * Math.log(policyLevel + 1.718));
                 
             });         
 
             // Check enough time has elapsed to generate a new resource with some probability (1 / RESOURCE_CHANCE)
-            if (gameParams.counter - gameParams.lastCrisis >= ci  && Math.random() < CRISIS_CHANCE) {
+            if (world.gameParams.counter - world.gameParams.lastCrisis >= ci  && Math.random() < CRISIS_CHANCE) {
 
                 world.addCrisis();
 
@@ -3031,16 +3098,16 @@ cc.Class({
                 effect = 1.0 / effect;
                 // Multiply by difficulty
                 if (effect > 1.0)
-                    effect = Math.pow(effect, gameParams.difficultyMultiplier);
+                    effect = Math.pow(effect, world.gameParams.difficultyMultiplier);
                 else 
-                    effect = Math.pow(effect, 1.0 / gameParams.difficultyMultiplier);
+                    effect = Math.pow(effect, 1.0 / world.gameParams.difficultyMultiplier);
 
                 return effect;
 
             };
 
-            let ri = gameParams.resourceInterval;
-            gameParams.crises.forEach(crisisInCountry => {
+            let ri = world.gameParams.resourceInterval;
+            world.gameParams.crises.forEach(crisisInCountry => {
                 
                 let crisis = CRISES[crisisInCountry.crisis];
                 let crisisEffect = crisis.effect_on_resources;
@@ -3053,24 +3120,24 @@ cc.Class({
                 
             }); 
 
-            Object.keys(gameParams.policies).forEach(policyID => {
+            Object.keys(world.gameParams.policies).forEach(policyID => {
 
-                let policy = gameParams.policyOptions[policyID];
-                let policyLevel = gameParams.policies[policyID];
+                let policy = world.gameParams.policyOptions[policyID];
+                let policyLevel = world.gameParams.policies[policyID];
 
                 ri *= adjustEffect(policy.effect_on_resources * Math.log(policyLevel + 1.718));
                 
             }); 
 
             // Check enough time has elapsed to generate a new resource with some probability (1 / RESOURCE_CHANCE)
-            if (gameParams.counter - gameParams.lastResource >= ri) {
+            if (world.gameParams.counter - world.gameParams.lastResource >= ri) {
 
                 world.addResource();
-                gameParams.resourceInterval *= 1.1;
+                world.gameParams.resourceInterval *= 1.1;
 
             }
             
-            if (gameParams.tutorialMode && gameParams.counter % gameParams.tutorialInterval == 0) {
+            if (world.gameParams.tutorialMode && world.gameParams.counter % world.gameParams.tutorialInterval == 0) {
                 
                 world.addTutorial();
 
@@ -3081,7 +3148,7 @@ cc.Class({
             for (let i = 0; i < world.buttons.length; i++) {
 
                 const button = world.buttons[i];
-                if (gameParams.counter > button.placedAt + RESOURCE_DURATION) 
+                if (world.gameParams.counter > button.placedAt + RESOURCE_DURATION) 
                     button.removeFromParent();
                 else 
                     newButtons.push(button);
@@ -3090,11 +3157,11 @@ cc.Class({
             world.buttons = newButtons;
             
             // Update labels
-            world.resourceScoreLabel.string = gameParams.resources;
-            world.refreshDate();
+            world.resourceScoreLabel.string = world.gameParams.resources;
+            world.refreshDate(world);
 
             // Game over                        
-            if (gameParams.totalLoss >= 100) {
+            if (world.gameParams.totalLoss >= 100) {
 
                 // Sort narratives by loss for comparison
                 const narratives = Object.values(NARRATIVES.n2070).sort((o1, o2) => {return o2.loss - o1.loss});
@@ -3104,7 +3171,7 @@ cc.Class({
                 world.gameOver(world, message, "OK");
 
             }
-            else if (gameParams.currentDate >= gameParams.targetDate) {
+            else if (world.gameParams.currentDate >= world.gameParams.targetDate) {
 
                 let message = "";
                 // Sort narratives by loss for comparison
@@ -3113,7 +3180,7 @@ cc.Class({
                 for (let i = 0; i < narratives.length; i++) {
 
                     const n = narratives[i];
-                    if (gameParams.totalLoss > n.loss) {
+                    if (world.gameParams.totalLoss > n.loss) {
 
                         const index = Math.floor(Math.random() * n[cc.sys.localStorage.language].length);
                         message = n[cc.sys.localStorage.language][index];
@@ -3128,7 +3195,7 @@ cc.Class({
             }
 
             // Refresh the timeout
-            gameParams.timeoutID = setTimeout(updateTime, 20);
+            world.gameParams.timeoutID = setTimeout(updateTime, 20);
 
         }; 
 
@@ -3146,18 +3213,17 @@ cc.Class({
         
         let Y_OFFSET = 55;
         this._time = 0;
-        world = this;
+        let world = this.world = this;
         world.messageBox.opacity = 0;
         
-        scenarioData = gd.scenarioData;
-        automateScripts = gd.automateScripts;
-        world.scenarioData = scenarioData;
+        world.scenarioData = gd.scenarioData;
+        world.automateScripts = gd.automateScripts;
         world.automateID = -1;
         if (typeof(automateID) !== "undefined")
             world.automateID = automateID;
         world.mouse = { x: 0, y: 0 };
 
-        this.initGameParams(scenarioData);     
+        this.initGameParams(world.scenarioData);     
 
         cc.loader.loadRes( 'singleColor', cc.SpriteFrame, function( err, asset) {
             world.singleColor = asset;
@@ -3198,8 +3264,8 @@ cc.Class({
             })
 
         });
-        var url = cc.url.raw('resources/scripts/json-equal-greyscale.json');
-        cc.loader.load( url, function( err, res) {
+        var url = 'scripts/json-equal-greyscale';
+        cc.loader.loadRes( url, function( err, res) {
 
             if (err == null) {
                 world.countriesJson = res.json;
@@ -3259,13 +3325,9 @@ cc.Class({
                                                 
         });
 
-    },
-
-    start () {
-
         const beginSim = () => {
 
-            gameParams.state = GAME_STATES.PREPARED;
+            world.gameParams.state = GAME_STATES.PREPARED;
 
             world.btnPause.getComponent(cc.Button).interactable = true;
             world.btnPlay.getComponent(cc.Button).interactable = false;
@@ -3277,20 +3339,20 @@ cc.Class({
 
         let antCountries = ["NZL", "AUS", "ZAF", "ARG", "CHL"];
         let startCountry = antCountries[Math.floor(Math.random() * antCountries.length)];
-        
+
         world.showMessageBox(world, 
             world.scenarioData[cc.sys.localStorage.language].popup_1_title, 
             world.scenarioData[cc.sys.localStorage.language].popup_1_description, 
             gd.lang.start_tutorial[cc.sys.localStorage.language], (that) => {
 
-                gameParams.tutorialMode = true;
-                gameParams.startCountry = startCountry;
-                // gameParams.startCountry = keys[Math.floor(Math.random() * keys.length)]
-                gameParams.statsCountry = startCountry;
-                gameParams.currentCountry = startCountry;
-                const countryName = world.countries[gameParams.startCountry].name;
+                world.gameParams.tutorialMode = true;
+                world.gameParams.startCountry = startCountry;
+                // world.gameParams.startCountry = keys[Math.floor(Math.random() * keys.length)]
+                world.gameParams.statsCountry = startCountry;
+                world.gameParams.currentCountry = startCountry;
+                const countryName = world.countries[world.gameParams.startCountry].name;
                 
-                nestedButtons = world.showMessageBox(world, 
+                world.showMessageBox(world, 
                     gd.lang.start_prepare[cc.sys.localStorage.language], 
                     gd.lang.start_mission_a[cc.sys.localStorage.language]  + 
                     countryName + 
@@ -3305,14 +3367,14 @@ cc.Class({
             },
             gd.lang.start_tutorial_skip[cc.sys.localStorage.language], (that) => {
 
-                gameParams.tutorialMode = false;
-                gameParams.startCountry = startCountry;
-                // gameParams.startCountry = keys[Math.floor(Math.random() * keys.length)]
-                gameParams.statsCountry = startCountry;
-                gameParams.currentCountry = startCountry;
-                const countryName = world.countries[gameParams.startCountry].name;
+                world.gameParams.tutorialMode = false;
+                world.gameParams.startCountry = startCountry;
+                // world.gameParams.startCountry = keys[Math.floor(Math.random() * keys.length)]
+                world.gameParams.statsCountry = startCountry;
+                world.gameParams.currentCountry = startCountry;
+                const countryName = world.countries[world.gameParams.startCountry].name;
 
-                nestedButtons = world.showMessageBox(world, 
+                world.showMessageBox(world, 
                     gd.lang.start_prepare[cc.sys.localStorage.language], 
                     gd.lang.start_mission_a[cc.sys.localStorage.language]  + 
                     countryName + 
@@ -3324,10 +3386,17 @@ cc.Class({
 
                     });
             }
-        );
+        );        
+    },
+
+    start () {
+
+
     },
 
     update (dt) {
+
+        let world = this.world;
 
         this._time += dt;
         if (world.countryNodes !== undefined) {
@@ -3350,5 +3419,5 @@ cc.Class({
         }
         
     }
-    
+
 });

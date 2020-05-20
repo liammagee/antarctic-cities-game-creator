@@ -25,10 +25,10 @@ export default class NewClass extends cc.Component {
     }
 
     tweetRendered() {
-
         
-        let world = cc.director.getScene().getChildByName('layout');
-        let tweetLabel = world.getChildByName("topBar").getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet");
+        let world = cc.director.getScene().getChildByName('layout').getComponent("LoadMap");
+        let tweetLabel = world.node.getChildByName("topBar").getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet");
+        let gameParams = world.gameParams;
         let message = gameParams.scenarioName, 
                     messageIndex = -1;
         if (gameParams.messageOverride != null) {
