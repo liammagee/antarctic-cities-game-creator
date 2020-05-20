@@ -23,10 +23,10 @@ export default class NewClass extends cc.Component {
         this.node.on('mouseup', function ( event ) {
 
             if (this.name === 'chbEnglish') {
-                cc.sys.localStorage.level = 'easy';
+                cc.sys.localStorage.language = 'eng';
             }
             else {
-                cc.sys.localStorage.level = 'esp';
+                cc.sys.localStorage.language = 'esp';
             }
 
         }, this);

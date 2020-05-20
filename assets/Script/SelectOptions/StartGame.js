@@ -39,7 +39,6 @@ cc.Class({
 
         this.node.on('mouseup', function ( event ) {
 
-            console.log("got here");
             cc.director.loadScene("LoadingScene");
 
         });

@@ -69,7 +69,6 @@ const COLOR_BACKGROUND_TRANS = new cc.Color(42, 54, 68); // Black, with transpar
 const LOSS_TOTAL = 80;
 const LOSS_PARTIAL = 80;
 
-
 // RESOURCES
 const res = {
     resource_economy_1: "icons/ICON_RESOURCE_ECONOMY_1",

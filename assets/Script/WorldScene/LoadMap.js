@@ -848,13 +848,16 @@ cc.Class({
         gameParams.state = GAME_STATES.PAUSED;
 
         world.settingsBox.opacity = 255;
-        world.settingsBox.zIndex = 104;
+        world.settingsBox.zIndex = 106;
 
         let btn1 = world.settingsBox.getChildByName("apply");
         let btn2 = world.settingsBox.getChildByName("cancel");
         let gs = (cc.sys.localStorage.greyscale == 'true')
         world.settingsBox.getChildByName("toggleContainer").getChildByName("toggle1").getComponent(cc.Toggle).isChecked = gs;
         world.settingsBox.getChildByName("toggleContainer").getChildByName("toggle2").getComponent(cc.Toggle).isChecked = !gs;
+        let eng = (cc.sys.localStorage.language == 'eng')
+        world.settingsBox.getChildByName("toggleLanguage").getChildByName("toggle1").getComponent(cc.Toggle).isChecked = eng;
+        world.settingsBox.getChildByName("toggleLanguage").getChildByName("toggle2").getComponent(cc.Toggle).isChecked = !eng;
 
         let btn1Func = function(event) {
 
@@ -871,21 +874,33 @@ cc.Class({
                 world.backgroundGreyscale.opacity = (0);
                 world.backgroundColour.opacity = (255);
             }
+
+            let engChecked = world.settingsBox.getChildByName("toggleContainer").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
+            if (engChecked) {
+                cc.sys.localStorage.language = 'eng';
+            }
+            else {
+                cc.sys.localStorage.language = 'esp';
+            }
+            // Trigger game-wide language update
             
-            gameParams.state = GAME_STATES.STARTED;
             world.settingsBox.opacity = 0;
+            world.settingsBox.zIndex = -1;
+            gameParams.state = GAME_STATES.STARTED;
+
         };
         btn1.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
         
         let btn2Func = function(event) {
 
-            world.settingsBox.opacity = 0;
             btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             gameParams.modal = false;
             event.stopPropagation();
+            world.settingsBox.opacity = 0;
+            world.settingsBox.zIndex = -1;
             gameParams.state = GAME_STATES.STARTED;
-
+            
         };
         btn2.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
 
@@ -983,8 +998,8 @@ cc.Class({
             // world.tweetLabel.attr({ x: world.tweetBackground.width / 2, width: world.tweetBackground.width });
             // world.tweetAlertLabel.attr({ x: world.tweetLabel.x });
 
-            cc.director.runScene(new SelectOptionsScene());
-            //cc.director.runScene(new LoadingScene());
+            cc.director.loadScene("SelectOptions");
+            //cc.director.loadScene("LoadingScene");
 
         });
 
@@ -1050,8 +1065,8 @@ cc.Class({
                     world.postResultsToServer();
 
                     gameParams.state = GAME_STATES.GAME_OVER;
-                    // cc.director.runScene(new LoadingScene());
-                    cc.director.runScene(new SelectOptionsScene());
+                    // cc.director.loadScene("LoadingScene");
+                    cc.director.loadScene("SelectOptions");
 
                 }, 
                 "Return to Game", () => {
@@ -1232,10 +1247,6 @@ cc.Class({
                 cnpn.parent = content;
                 
             });
-            // console.log(txtCountry);
-            // page2.getChildByName("scrollview").getChildByName("view").getChildByName("content").getChildByName("itemCountry").getComponent(cc.Label).string = txtCountry;
-            // page2.getChildByName("scrollview").getChildByName("view").getChildByName("content").getChildByName("itemLoss").getComponent(cc.Label).string = txtLoss;
-            // page2.getChildByName("scrollview").getChildByName("view").getChildByName("content").getChildByName("itemPreparedness").getComponent(cc.Label).string = txtPreparedness;
 
             // Trends
             let drawNode = page3.getChildByName("graph");
