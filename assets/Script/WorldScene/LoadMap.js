@@ -995,11 +995,8 @@ cc.Class({
             gameParams.startCountry = null;
             gameParams.policies = {};
             world.tweetLabel.string = (gameParams.scenarioName);
-            // world.tweetLabel.attr({ x: world.tweetBackground.width / 2, width: world.tweetBackground.width });
-            // world.tweetAlertLabel.attr({ x: world.tweetLabel.x });
 
             cc.director.loadScene("SelectOptions");
-            //cc.director.loadScene("LoadingScene");
 
         });
 
@@ -2021,127 +2018,6 @@ cc.Class({
         return true;
     },
 
-    // LIFE-CYCLE CALLBACKS:
-    onLoad() {
-        
-        let Y_OFFSET = 55;
-        this._time = 0;
-        world = this;
-        world.messageBox.opacity = 0;
-        
-        scenarioData = gd.scenarioData;
-        automateScripts = gd.automateScripts;
-        world.scenarioData = scenarioData;
-        world.automateID = -1;
-        if (typeof(automateID) !== "undefined")
-            world.automateID = automateID;
-        world.mouse = { x: 0, y: 0 };
-
-        this.initGameParams(scenarioData);     
-
-        cc.loader.loadRes( 'singleColor', cc.SpriteFrame, function( err, asset) {
-            world.singleColor = asset;
-        });
-
-        cc.loader.loadRes( 'icons/DOT_ON', cc.SpriteFrame, function( err, asset) {
-            world.dotOn = asset;
-            cc.loader.loadRes( 'icons/DOT_OFF', cc.SpriteFrame, function( err, asset) {
-                world.dotOff = asset;
-
-                // Initialise policy screen
-                world.initPolicyDesign();
-                world.initStats();
-
-            });
-        });
-
-
-        // Load policy icons
-        world.policyIcons = [];
-        Object.keys(res).forEach(function(r) {
-
-            let resUrl = res[r];
-            cc.loader.loadRes(resUrl, cc.SpriteFrame, function(err, asset) {
-
-                world.policyIcons.push(asset);
-
-            })
-
-        });
-        world.crisisIcons = {};
-        Object.keys(CRISES).forEach(function(r) {
-
-            let resUrl = CRISES[r].image;
-            cc.loader.loadRes(resUrl, cc.SpriteFrame, function(err, asset) {
-
-                world.crisisIcons[r] = (asset);
-
-            })
-
-        });
-        var url = cc.url.raw('resources/scripts/json-equal-greyscale.json');
-        cc.loader.load( url, function( err, res) {
-
-            if (err == null) {
-                world.countriesJson = res.json;
-                world.initCountries();            
-                world.spriteCountries = {};
-                world.countryNodes = {};
-
-                // loading all resource in the test assets directory
-                cc.loader.loadResDir("countries", cc.SpriteFrame, function (err, assets, urls) {
-                    
-                    for (var i = 0; i < assets.length; i++) {
-                        
-                        const spriteNode = new cc.Node('Sprite ');
-                        const sp = spriteNode.addComponent(cc.Sprite);
-                        sp.spriteFrame = assets[i];
-                        let materialVariant = cc.MaterialVariant.create(world.material);
-                        materialVariant.setProperty('u_selected', 0.0);
-                        materialVariant.setProperty('u_percentageLoss', 0.0);
-                        materialVariant.setProperty('u_percentagePrep', 0.0);
-                        sp.materials = [materialVariant];
-                        sp.setMaterial(0, materialVariant);
-                        let url = urls[i];
-                        let iso = url.match('/([A-Z]*)_')[1];
-                        world.countryNodes[iso] = spriteNode;
-
-                    }
-
-                    var scene = cc.director.getScene();
-                    let keys = Object.keys(world.countryNodes);
-
-                    for (let i = 0; i < keys.length; i++) {
-                        let key = keys[i];
-                        let country = world.countries[key];
-                        if (country !== undefined) {
-                            
-                            let countryNode = world.countryNodes[key];
-                            countryNode.setAnchorPoint(0.0, 0.0);
-                            countryNode.setPosition((country.offsetX), 
-                                                    (cc.winSize.height - ( 1 * Y_OFFSET  ) - country.offsetY));
-                            countryNode.parent = scene;
-                            countryNode.zIndex = 2;
-                            
-                        }
-                    }
-            
-                });
-            }
-        });
-
-        // Initialise controls
-        world.initControls();
-
-        let fg = cc.director.getScene().getChildByName("foreground");
-        fg.on(cc.Node.EventType.MOUSE_MOVE, function(event) {
-            
-            world.selectCountry(event, event.getLocation());
-                                                
-        });
-
-    },
-
 
     generateWeightedPolicyIndex(r) {
 
@@ -2241,10 +2117,8 @@ cc.Class({
         const ind = Math.floor(Math.random() * Object.keys(world.countries).length);
         const countryRand = world.countries[Object.keys(world.countries)[ind]];
         const pt = countryRand.centroid;
-        console.log(countryRand.name)
         btnRes.setPosition( pt.x, (world.node.height - (2 * Y_OFFSET) ) - pt.y + RESOURCE_SIZE_H / 2 );
         btnRes.setContentSize(cc.size(RESOURCE_SIZE_W, RESOURCE_SIZE_H));
-        // btnRes.setColor(COLOR_RESOURCE);
         btnRes.placedAt = gameParams.counter;
         btnRes.setAnchorPoint(0.5, 0.0);
         btnRes.parent = cc.director.getScene();
@@ -2252,7 +2126,6 @@ cc.Class({
         world.buttons.push(btnRes);
 
         btnRes.on(cc.Node.EventType.TOUCH_END, world.processResourceSelection, btnRes);
-        // world.handleMouseTouchEvent(btnRes, world.processResourceSelection);
 
         /*
         if (gameParams.automateMode) {
@@ -2750,7 +2623,6 @@ cc.Class({
         return policyBalance;
 
     },
-
 
     calculateSinglePolicyImpactOnPreparedness(country, index) {
 
@@ -3269,6 +3141,126 @@ cc.Class({
         updateTime();
     },
 
+    // LIFE-CYCLE CALLBACKS:
+    onLoad() {
+        
+        let Y_OFFSET = 55;
+        this._time = 0;
+        world = this;
+        world.messageBox.opacity = 0;
+        
+        scenarioData = gd.scenarioData;
+        automateScripts = gd.automateScripts;
+        world.scenarioData = scenarioData;
+        world.automateID = -1;
+        if (typeof(automateID) !== "undefined")
+            world.automateID = automateID;
+        world.mouse = { x: 0, y: 0 };
+
+        this.initGameParams(scenarioData);     
+
+        cc.loader.loadRes( 'singleColor', cc.SpriteFrame, function( err, asset) {
+            world.singleColor = asset;
+        });
+
+        cc.loader.loadRes( 'icons/DOT_ON', cc.SpriteFrame, function( err, asset) {
+            world.dotOn = asset;
+            cc.loader.loadRes( 'icons/DOT_OFF', cc.SpriteFrame, function( err, asset) {
+                world.dotOff = asset;
+
+                // Initialise policy screen
+                world.initPolicyDesign();
+                world.initStats();
+
+            });
+        });
+
+        // Load policy icons
+        world.policyIcons = [];
+        Object.keys(res).forEach(function(r) {
+
+            let resUrl = res[r];
+            cc.loader.loadRes(resUrl, cc.SpriteFrame, function(err, asset) {
+
+                world.policyIcons.push(asset);
+
+            })
+
+        });
+        world.crisisIcons = {};
+        Object.keys(CRISES).forEach(function(r) {
+
+            let resUrl = CRISES[r].image;
+            cc.loader.loadRes(resUrl, cc.SpriteFrame, function(err, asset) {
+
+                world.crisisIcons[r] = (asset);
+
+            })
+
+        });
+        var url = cc.url.raw('resources/scripts/json-equal-greyscale.json');
+        cc.loader.load( url, function( err, res) {
+
+            if (err == null) {
+                world.countriesJson = res.json;
+                world.initCountries();            
+                world.spriteCountries = {};
+                world.countryNodes = {};
+
+                // loading all resource in the test assets directory
+                cc.loader.loadResDir("countries", cc.SpriteFrame, function (err, assets, urls) {
+                    
+                    for (var i = 0; i < assets.length; i++) {
+                        
+                        const spriteNode = new cc.Node('Sprite ');
+                        const sp = spriteNode.addComponent(cc.Sprite);
+                        sp.spriteFrame = assets[i];
+                        let materialVariant = cc.MaterialVariant.create(world.material);
+                        materialVariant.setProperty('u_selected', 0.0);
+                        materialVariant.setProperty('u_percentageLoss', 0.0);
+                        materialVariant.setProperty('u_percentagePrep', 0.0);
+                        sp.materials = [materialVariant];
+                        sp.setMaterial(0, materialVariant);
+                        let url = urls[i];
+                        let iso = url.match('/([A-Z]*)_')[1];
+                        world.countryNodes[iso] = spriteNode;
+
+                    }
+
+                    var scene = cc.director.getScene();
+                    let keys = Object.keys(world.countryNodes);
+
+                    for (let i = 0; i < keys.length; i++) {
+                        let key = keys[i];
+                        let country = world.countries[key];
+                        if (country !== undefined) {
+                            
+                            let countryNode = world.countryNodes[key];
+                            countryNode.setAnchorPoint(0.0, 0.0);
+                            countryNode.setPosition((country.offsetX), 
+                                                    (cc.winSize.height - ( 1 * Y_OFFSET  ) - country.offsetY));
+                            countryNode.parent = scene;
+                            countryNode.zIndex = 2;
+                            
+                        }
+                    }
+            
+                });
+            }
+        });
+
+        // Initialise controls
+        world.initControls();
+
+        let fg = cc.director.getScene().getChildByName("foreground");
+        fg.on(cc.Node.EventType.MOUSE_MOVE, function(event) {
+            
+            world.selectCountry(event, event.getLocation());
+                                                
+        });
+
+    },
+
     start () {
 
         const beginSim = () => {
@@ -3338,9 +3330,6 @@ cc.Class({
     update (dt) {
 
         this._time += dt;
-        // this.material.setProperty('time', this._time);
-        // this.material.setProperty('u_percentageLoss', gameParams.totalLoss);
-        // this.material.setProperty('u_percentagePrep', gameParams.populationPreparedPercent);
         if (world.countryNodes !== undefined) {
 
             Object.keys(world.countryNodes).forEach((key) => {
@@ -3360,5 +3349,6 @@ cc.Class({
 
         }
         
-    },
+    }
+    
 });
