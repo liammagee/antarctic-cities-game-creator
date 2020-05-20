@@ -534,6 +534,7 @@ cc.Class({
         world.gameParams.tutorialMode = false;
         world.gameParams.tutorialHints = [];
         world.gameParams.stats = {};
+        world.gameParams.quizzes = [];
 
         // Shader options
         world.gameParams.shader = {};
@@ -723,6 +724,7 @@ cc.Class({
         let btn1Func = function(event) {
 
             world.messageBox.opacity = 0;
+            world.messageBox.zIndex = -1;
             btn1.node.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
@@ -737,6 +739,7 @@ cc.Class({
         let btn2Func = function(event) {
 
             world.messageBox.opacity = 0;
+            world.messageBox.zIndex = -1;
             btn1.node.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
@@ -1012,7 +1015,7 @@ cc.Class({
         
         world.showMessageBox(parent, "Game Over", message, prompt, function() {
 
-            initGameParams(world.scenarioData);
+            world.initGameParams(world.scenarioData);
             world.gameParams.state = GAME_STATES.GAME_OVER;
             world.gameParams.startCountry = null;
             world.gameParams.policies = {};
@@ -1876,7 +1879,14 @@ cc.Class({
             // if (Math.random() < 1.0) {
 
                 // Show quiz
-                let qi = gd.quizzes[Math.floor(Math.random() * gd.quizzes.length)];
+                let qindex = Math.floor(Math.random() * gd.quizzes.length);
+                let qi = gd.quizzes[qindex];
+
+                // Prevent the same quiz question being asked twice
+                if (world.gameParams.quizzes.indexOf(qi) > -1)
+                    return;
+                world.gameParams.quizzes.push(qi);
+
                 let quiz = qi.quiz[cc.sys.localStorage.language];
                 let wrong_answer = qi.wrong_answer[cc.sys.localStorage.language];
                 let right_answer = qi.right_answer[cc.sys.localStorage.language];
@@ -2334,7 +2344,7 @@ cc.Class({
             world.gameParams.state = GAME_STATES.PAUSED;
             message += gd.lang.crisis_explanation[cc.sys.localStorage.language];
 
-            let buttons = world.showMessageBox(world, gd.lang.crisis_alert[cc.sys.localStorage.language], message, "OK!", (that) => {
+            world.showMessageBox(world, gd.lang.crisis_alert[cc.sys.localStorage.language], message, "OK!", (that) => {
 
                 if (world.gameParams.tutorialMode)
                     world.gameParams.state = GAME_STATES.PAUSED_TUTORIAL;
@@ -2989,7 +2999,7 @@ cc.Class({
                     if (showDialog) {
 
                         world.gameParams.state = GAME_STATES.PAUSED;
-                        let buttons = world.showMessageBox(world, 
+                        world.showMessageBox(world, 
                             gd.lang.bulletin[cc.sys.localStorage.language] + currentYear, 
                             message, "OK", function() {
                                 world.gameParams.state = GAME_STATES.STARTED;

@@ -2,7 +2,10 @@
   "title": "antarctic-cities-game-creator",
   "packageName": "org.cocos2d.demo",
   "startScene": "f0452f9c-ab3b-40bd-a8d2-3732ee168e22",
-  "excludeScenes": [],
+  "excludeScenes": [
+    "1d6a9eee-b442-4440-be47-6f7f57cd414c",
+    "c3b6727d-d129-4be5-98a9-7225287516ea"
+  ],
   "includeSDKBox": false,
   "orientation": {
     "landscapeLeft": true,
