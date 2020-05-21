@@ -10,6 +10,10 @@ cc.Class({
 
 
     properties: {
+        audio: {
+            default: null,
+            type: cc.AudioClip
+        },
         defaultMaterial: {
             // ATTRIBUTES:
             default: null,        // The default value will be used only when the component attaching
@@ -1108,14 +1112,15 @@ cc.Class({
         }, this);
 
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnSound"), function() {
-            world.gameParams.state = GAME_STATES.PAUSED;
-
-            world.showMessageBox(world.node.parent, "Sound", "Not yet implemented", 
-                "OK", () => {
-                
-                    world.gameParams.state = GAME_STATES.STARTED;
-
-                });
+            
+            if (cc.sys.localStorage.isPlaying == "true") {
+                cc.sys.localStorage.isPlaying = false;
+                cc.audioEngine.pauseAll();
+            }
+            else {
+                cc.sys.localStorage.isPlaying = true;
+                cc.audioEngine.resumeAll();
+            }
 
         });
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnPause"), function() {
@@ -3274,6 +3279,9 @@ cc.Class({
             })
 
         });
+        // cc.loader.loadRes( "sound/Daniel_Birch_-_05_-_Environmental_Disaster_Zone", function( err, res) {
+
+        // }
         var url = 'scripts/json-equal-greyscale';
         cc.loader.loadRes( url, function( err, res) {
 
@@ -3401,6 +3409,18 @@ cc.Class({
 
     start () {
 
+        if (cc.sys.localStorage.isPlaying == undefined)
+            cc.sys.localStorage.isPlaying = true;
+        
+        this.current = cc.audioEngine.play(this.audio, true, 0.5);
+        if (cc.sys.localStorage.isPlaying != "true" )
+            cc.audioEngine.pauseAll();
+        
+    },
+
+    onDestroy: function () {
+        
+        cc.audioEngine.stop(this.current);
 
     },
 
@@ -3420,7 +3440,7 @@ cc.Class({
                     let mv = countryNode.getComponent(cc.Sprite).materials[0];
                     mv.setProperty('u_selected', (country.selected ? 1.0 : 0.0));
                     mv.setProperty('u_percentageLoss', country.loss);
-                    mv.setProperty('u_percentagePrep', country.pop_prepared_percent / 100.0);
+                    mv.setProperty('u_percentagePrep', country.pop_prepared_percent);
 
                 }
     
