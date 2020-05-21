@@ -39,7 +39,7 @@ cc.Class({
 
         this.node.on('mouseup', function ( event ) {
 
-            cc.director.loadScene("LoadingScene");
+            cc.director.loadScene("WorldScene");
 
         });
 

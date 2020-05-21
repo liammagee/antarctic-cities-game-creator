@@ -32,7 +32,7 @@ export default class NewClass extends cc.Component {
     playGame (playGame: cc.Button) {
 
         if (this.play.interactable)
-            cc.director.loadScene("WorldScene");
+            cc.director.loadScene("SelectOptions");
 
     }
 

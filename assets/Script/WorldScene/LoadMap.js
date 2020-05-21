@@ -1109,13 +1109,19 @@ cc.Class({
 
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnSound"), function() {
             
+            world.topBar.getChildByName("btnSound").getComponent(cc.Button).interactable = !(cc.sys.localStorage.isPlaying == "true");
             if (cc.sys.localStorage.isPlaying == "true") {
+
                 cc.sys.localStorage.isPlaying = false;
                 cc.audioEngine.pauseAll();
+
             }
             else {
+                
                 cc.sys.localStorage.isPlaying = true;
                 cc.audioEngine.resumeAll();
+                world.topBar.getChildByName("btnSound").getComponent(cc.Button).interactable = true;
+
             }
 
         });
@@ -1909,7 +1915,9 @@ cc.Class({
     refreshDate(world) {
 
         // world.topBar.getChildByName("lblDay").getComponent(cc.Label).string = (world.gameParams.currentDate.getDate()).toString();
-        world.topBar.getChildByName("lblMonth").getComponent(cc.Label).string = (world.gameParams.currentDate.getMonth() + 1).toString();
+        let mth = world.gameParams.currentDate.getMonth() + 1;
+        let ms = mth < 10 ? '0' + mth.toString() : mth.toString();
+        world.topBar.getChildByName("lblMonth").getComponent(cc.Label).string = ms;
         world.topBar.getChildByName("lblYear").getComponent(cc.Label).string = (world.gameParams.currentDate.getFullYear()).toString();
 
     },
@@ -3238,6 +3246,10 @@ cc.Class({
         world.mouse = { x: 0, y: 0 };
 
         this.initGameParams(world.scenarioData);     
+        
+        if (cc.sys.localStorage.isPlaying === undefined)
+            cc.sys.localStorage.isPlaying = true;
+        world.topBar.getChildByName("btnSound").getComponent(cc.Button).interactable = (cc.sys.localStorage.isPlaying === "true");
 
         cc.loader.loadRes( 'singleColor', cc.SpriteFrame, function( err, asset) {
             
@@ -3414,6 +3426,9 @@ cc.Class({
             cc.sys.localStorage.isPlaying = true;
         
         this.current = cc.audioEngine.play(this.audio, true, 0.5);
+        let time = cc.audioEngine.getDuration(this.current);
+        let start = Math.floor(Math.random() * time);
+        cc.audioEngine.setCurrentTime(this.current, start);
         if (cc.sys.localStorage.isPlaying != "true" )
             cc.audioEngine.pauseAll();
         
