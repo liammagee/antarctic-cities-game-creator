@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 // Learn cc.Class:
 //  - https://docs.cocos.com/creator/manual/en/scripting/class.html
 // Learn Attribute:
@@ -7,7 +8,6 @@
 
 cc.Class({
     extends: cc.Component,
-
 
     properties: {
         audio: {
@@ -346,8 +346,6 @@ cc.Class({
 
         });
 
-
-
         // Add proportion of main land mass with shared borders
         let allPoints = {};
         Object.keys(world.countries).forEach(k => {
@@ -373,7 +371,6 @@ cc.Class({
 
         });
 
-                
         Object.keys(allPoints).forEach(function(k) {
 
             var countries = allPoints[k];
@@ -907,7 +904,7 @@ cc.Class({
             else {
                 cc.sys.localStorage.language = 'esp';
             }
-            // Trigger game-wide language update
+            // TODO: Trigger game-wide language update
             
             world.settingsBox.opacity = 0;
             world.settingsBox.zIndex = -1;
@@ -995,7 +992,6 @@ cc.Class({
         
         gameLog.countries = countries;
         
-        cc.log(JSON.stringify(gameLog))
         xhr.send(JSON.stringify(gameLog));
 
     },
@@ -1232,7 +1228,6 @@ cc.Class({
             
             let content = page2.getChildByName("scrollview").getChildByName("view").getChildByName("content");
             content.destroyAllChildren();
-            //.getChildByName("itemCountry").getComponent(cc.Label).string = txtCountry;
 
             let counter = 0;
             countriesSorted.forEach((country) => {
@@ -1356,6 +1351,7 @@ cc.Class({
             lblPolicyScoreNode.zIndex = 106;
 
         }, btnStats);
+
         let btnStatsQuit = stats.getChildByName("btnStatsQuit");
         btnStatsQuit.on(cc.Node.EventType.TOUCH_END, function() {
             
@@ -1446,6 +1442,7 @@ cc.Class({
             return cost;
 
         };
+
         // Changes buttons with switching pages
         const switchPage = (btn, index) => {
 
@@ -1470,6 +1467,7 @@ cc.Class({
             btnPolicyInvest.opacity = 0;
 
         };
+
         const makeButton = function(text, point, index) {
 
             let btn = allButtons[index];
@@ -2553,6 +2551,7 @@ cc.Class({
             }
         
         }
+
         if (candidateCountry != null ) {
         
             candidateCountry.affected_chance = 0.1;
@@ -2887,7 +2886,6 @@ cc.Class({
         world.refreshDate(world);
         world.buttons = [];
 
-    
         /**
          * Updates the game state at regular intervals
          */
@@ -2902,7 +2900,6 @@ cc.Class({
             }
 
             world.gameParams.counter++;
-            
 
             // Handle automation here
             if (world.gameParams.automateMode) {
@@ -2999,6 +2996,7 @@ cc.Class({
                             break;
                         default:
                             break;
+
                     }
                         
                     if (showDialog) {
@@ -3221,6 +3219,7 @@ cc.Class({
         //     }
         // ]);
         updateTime();
+
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -3241,7 +3240,9 @@ cc.Class({
         this.initGameParams(world.scenarioData);     
 
         cc.loader.loadRes( 'singleColor', cc.SpriteFrame, function( err, asset) {
+            
             world.singleColor = asset;
+
         });
 
         cc.loader.loadRes( 'icons/DOT_ON', cc.SpriteFrame, function( err, asset) {
@@ -3279,13 +3280,12 @@ cc.Class({
             })
 
         });
-        // cc.loader.loadRes( "sound/Daniel_Birch_-_05_-_Environmental_Disaster_Zone", function( err, res) {
 
-        // }
         var url = 'scripts/json-equal-greyscale';
         cc.loader.loadRes( url, function( err, res) {
 
             if (err == null) {
+
                 world.countriesJson = res.json;
                 world.initCountries();            
                 world.spriteCountries = {};
@@ -3383,6 +3383,7 @@ cc.Class({
                 });
 
             },
+
             gd.lang.start_tutorial_skip[cc.sys.localStorage.language], (that) => {
 
                 world.gameParams.tutorialMode = false;
