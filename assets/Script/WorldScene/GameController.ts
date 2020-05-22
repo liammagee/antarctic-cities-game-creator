@@ -204,10 +204,9 @@ export default class NewClass extends cc.Component {
     /**
      * Tests whether a point is inside the points that outline a given geometric shape.
      */
-    collisionDetection(points,test) {
+    collisionDetection(points, test) {
 
         let crossed = false;
-        let times = 0;
         
         // Double check the detection is within the widest bounds
         let maxx = Math.max(...points.map(p => p.x));
@@ -225,7 +224,6 @@ export default class NewClass extends cc.Component {
 
                 if ((x1 + x2) / 2.0 < test.x && test.x < maxx) {
 
-                    times++;
                     crossed = !crossed;
 
                 }
@@ -424,7 +422,6 @@ export default class NewClass extends cc.Component {
         world.sortedObjs = Object.values(world.countries).sort((a, b) => { 
 
             return (a.points[0].y * cc.winSize.height + a.points[0].x) - (b.points[0].y * cc.winSize.height + b.points[0].x);  
-            // return (a.points[0].y * cc.winSize.height + a.points[0].x) > (b.points[0].y * cc.winSize.height + b.points[0].x);  
 
         });
 
@@ -508,8 +505,8 @@ export default class NewClass extends cc.Component {
         world.areaMin = 0;
         world.areaMax = 0;
         world.areaMean = 0;
-        world.areaMinCountry = "";
-        world.areaMaxCountry = "";
+        world.areaMinCountry = '';
+        world.areaMaxCountry = '';
         
         Object.keys(world.countries).forEach(function(c) {
 
@@ -763,7 +760,7 @@ export default class NewClass extends cc.Component {
 
         let buttons = [];
         buttons.push(btn1);
-        if (message === null || typeof(message) === "undefined" || message === "") {
+        if (message === null || typeof(message) === "undefined" || message === '') {
         
             if (prompt2 !== undefined) {
 
@@ -947,7 +944,7 @@ export default class NewClass extends cc.Component {
      * @param {*} prompt 
      * @param {*} callback 
      */
-    showSettingsBox(parent) {
+    showSettingsBox() {
 
         let world = this.world;
 
@@ -1168,7 +1165,7 @@ export default class NewClass extends cc.Component {
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnQuit"), function() {
             world.gameParams.state = world.res.GAME_STATES.PAUSED;
 
-            world.showMessageBox(world.node.parent, "Quit Game", "", 
+            world.showMessageBox(world.node.parent, "Quit Game", '', 
                 "Quit Game", () => {
                 
                     world.postResultsToServer();
@@ -1188,7 +1185,7 @@ export default class NewClass extends cc.Component {
 
             world.gameParams.state = world.res.GAME_STATES.PAUSED;
 
-            world.showSettingsBox(world.node.parent);
+            world.showSettingsBox();
 
         }, this);
 
@@ -1246,7 +1243,6 @@ export default class NewClass extends cc.Component {
         let designPolicy = cc.director.getScene().getChildByName("layerDesignPolicy");
         let resourceScore = cc.director.getScene().getChildByName("resourceScoreBackground");
         let stats = cc.director.getScene().getChildByName("layerStats");
-        let messageBox = cc.director.getScene().getChildByName("layerMessageBox");
 
 
         // Add handling for bottom bar buttons
@@ -1481,7 +1477,6 @@ export default class NewClass extends cc.Component {
 
         let allButtons = [btnEconomy, btnPolitics, btnCulture, btnEcology];
         let prevButton = btnEconomy;
-        let policyButtons = [];
         let policySelected = null;
 
         const costCalculation = (policySelected) => {
@@ -1680,18 +1675,6 @@ export default class NewClass extends cc.Component {
                     btnBgd.setMaterial(1, world.defaultMaterial);
                     btnBgd.spriteFrame = sfNormal;
                 });
-
-                /*
-                optNode.cost_1 = opt.cost_1;
-                optNode.cost_2 = opt.cost_2;
-                optNode.cost_3 = opt.cost_3;
-                optNode.option = opt;
-                optNode.enabled = true;
-
-                if (world.gameParams.policies[opt.id] !== undefined) {
-                    optNode.enabled = false;
-                }
-                */
 
                 let btnLabelNode = new cc.Node();
                 btnLabelNode.name = "Label";
@@ -2196,7 +2179,7 @@ export default class NewClass extends cc.Component {
         let world = this.world;
 
         let policyIndex = world.generateWeightedPolicyIndex(Math.random());
-        let icon = "";
+        let icon = '';
 
         switch(policyIndex) {
             case 0:
@@ -3063,7 +3046,7 @@ export default class NewClass extends cc.Component {
                     };
 
                     // Change of decade
-                    let message = "";
+                    let message = '';
                     let showDialog = false;
 
                     // Sort narratives by loss for comparison
@@ -3279,7 +3262,7 @@ export default class NewClass extends cc.Component {
             }
             else if (world.gameParams.currentDate >= world.gameParams.targetDate) {
 
-                let message = "";
+                let message = '';
                 // Sort narratives by loss for comparison
                 const narratives = Object.values(world.res.NARRATIVES.n2070).sort((o1, o2) => {return o2.loss - o1.loss});
                 
