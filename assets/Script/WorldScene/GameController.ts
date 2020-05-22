@@ -885,6 +885,7 @@ export default class NewClass extends cc.Component {
         let btn1Func = function(event) {
 
             world.quizBox.opacity = 0;
+            world.quizBox.zIndex = -1;
             btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
@@ -906,6 +907,7 @@ export default class NewClass extends cc.Component {
         let btn2Func = function(event) {
 
             world.quizBox.opacity = 0;
+            world.quizBox.zIndex = -1;
             btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
@@ -1926,7 +1928,7 @@ export default class NewClass extends cc.Component {
 
         for (let i = 0; i < world.gameParams.crises.length; i++) {
 
-            if (world.gameParams.crises[i].id == event.target.crisisId) {
+            if (world.gameParams.crises[i].id == event.target.id) {
 
                 const crisisInCountry = world.gameParams.crises[i];
                 crisis = world.res.CRISES[crisisInCountry.crisis];
@@ -2250,12 +2252,12 @@ export default class NewClass extends cc.Component {
         const countryRand = world.countries[Object.keys(world.countries)[ind]];
         const pt = countryRand.centroid;
         // btnRes.color = world.res.COLOR_SKY;
-        btnRes.setPosition( pt.x, (world.node.height - (2 * world.res.Y_OFFSET) ) - pt.y + world.res.RESOURCE_SIZE_H / 2 );
+        btnRes.setPosition( pt.x, (world.node.height - (1 * world.res.Y_OFFSET) ) - pt.y);// + world.res.RESOURCE_SIZE_H );
         btnRes.setContentSize(cc.size(world.res.RESOURCE_SIZE_W, world.res.RESOURCE_SIZE_H));
         btnRes.placedAt = world.gameParams.counter;
         btnRes.setAnchorPoint(0.5, 0.0);
         btnRes.parent = cc.director.getScene();
-        btnRes.zIndex = 102;
+        btnRes.zIndex = 103;
         world.buttons.push(btnRes);
 
         btnRes.on(cc.Node.EventType.TOUCH_END, world.processResourceSelection, this);
@@ -2399,7 +2401,7 @@ export default class NewClass extends cc.Component {
 
         const pt = country.centroid;
         // btnCrisis.color = world.res.COLOR_RED;
-        btnCrisis.setPosition(pt.x, (world.node.height - (2 * world.res.Y_OFFSET) ) - pt.y + world.res.RESOURCE_SIZE_H / 2 );
+        btnCrisis.setPosition(pt.x, (world.node.height - (1 * world.res.Y_OFFSET) ) - pt.y);// + world.res.RESOURCE_SIZE_H / 2 );
         btnCrisis.setContentSize(cc.size(world.res.RESOURCE_SIZE_W, world.res.RESOURCE_SIZE_H));
         // btnCrisis.setColor(world.res.COLOR_RED);
         btnCrisis.placedAt = world.gameParams.counter;
@@ -2407,7 +2409,7 @@ export default class NewClass extends cc.Component {
         btnCrisis.id = crisisInCountry.id;
         btnCrisis.name = "crisis" + crisisInCountry.id;
         btnCrisis.parent = cc.director.getScene();
-        btnCrisis.zIndex = 102;
+        btnCrisis.zIndex = 103;
         world.buttons.push(btnCrisis);
 
         btnCrisis.on(cc.Node.EventType.TOUCH_END, world.processCrisisSelection, this);
@@ -3215,8 +3217,9 @@ export default class NewClass extends cc.Component {
 
                 let policy = world.gameParams.policyOptions[policyID];
                 let policyLevel = world.gameParams.policies[policyID];
+                let policyEffect = policy.effect_on_resources * Math.log(policyLevel + 1.718);
 
-                ri *= adjustEffect(policy.effect_on_resources * Math.log(policyLevel + 1.718));
+                ri *= adjustEffect(policyEffect);
                 
             }); 
 
