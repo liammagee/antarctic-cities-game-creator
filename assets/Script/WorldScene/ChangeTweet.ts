@@ -7,6 +7,8 @@
 
 const {ccclass, property} = cc._decorator;
 
+import {Resources} from './Resources';
+
 @ccclass
 export default class NewClass extends cc.Component {
 
@@ -26,7 +28,7 @@ export default class NewClass extends cc.Component {
 
     tweetRendered() {
         
-        let world = cc.director.getScene().getChildByName('layout').getComponent("LoadMap");
+        let world = cc.director.getScene().getChildByName('layout').getComponent("LoadMap3");
         let tweetLabel = world.node.getChildByName("topBar").getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet");
         let gameParams = world.gameParams;
         let message = gameParams.scenarioName, 
@@ -34,7 +36,7 @@ export default class NewClass extends cc.Component {
         if (gameParams.messageOverride != null) {
             
             message = gameParams.messageOverride;
-            tweetLabel.color = COLOR_DESTRUCTION_POINTS;
+            tweetLabel.color = world.res.COLOR_DESTRUCTION_POINTS;
             gameParams.messageOverride = null;
 
         }    
@@ -53,9 +55,10 @@ export default class NewClass extends cc.Component {
                 message = gameParams.messagesPositive[messageIndex];
 
             }
-            tweetLabel.color = COLOR_ICE;
+            tweetLabel.color = world.res.COLOR_ICE;
 
         }
+        
         tweetLabel.getComponent(cc.Label).string = message;
 
     }

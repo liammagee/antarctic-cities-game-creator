@@ -824,7 +824,7 @@ const RESOURCE_RELATIONS = [
     [0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0]
 ];
 
-const CRISES = {
+CRISES = {
     WATER_SHORTAGE: {
         eng: "Water shortage",
         esp: "Escasez de agua",
