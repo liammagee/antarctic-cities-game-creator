@@ -73,9 +73,9 @@ export class Resources extends cc.Component {
     COLOR_FOREGROUND = this.COLOR_ICE; 
     COLOR_HIGHLIGHT = this.COLOR_OAK; 
     COLOR_RESOURCE = new cc.Color(108, 180, 244); // Blue with transparency; COLOR_UMBER; 
-    COLOR_POLICY_POINTS = new cc.Color(0, 255, 0); // Green, with transparency
-    COLOR_DESTRUCTION_POINTS = new cc.Color(255, 0, 0); // Red, with transparency
-    COLOR_DESTRUCTION_POINTS_HALF = new cc.Color(255, 0, 0); // Red, with transparency
+    COLOR_GREEN = new cc.Color(153, 204, 102); // Green, with transparency
+    COLOR_RED = new cc.Color(151, 51, 51); // Red, with transparency
+    COLOR_SKY = new cc.Color(204, 204, 255); // Red, with transparency
     COLOR_BACKGROUND_TRANS = new cc.Color(42, 54, 68); // Black, with transparency
 
     // DEFAULT LOSS CUTOFFs - Can be modified by narratives below

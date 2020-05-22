@@ -1319,7 +1319,7 @@ export default class NewClass extends cc.Component {
             let counter = 0;
             countriesSorted.forEach((country) => {
                 counter++;
-                let color = country.loss > 20 ? world.res.COLOR_DESTRUCTION_POINTS : (country.pop_prepared_percent > 20 ? world.res.COLOR_POLICY_POINTS : world.res.COLOR_ICE);
+                let color = country.loss > 20 ? world.res.COLOR_RED : (country.pop_prepared_percent > 20 ? world.res.COLOR_GREEN : world.res.COLOR_ICE);
 
                 let cn = new cc.Node();
                 let cnl = cn.addComponent(cc.Label);
@@ -1366,12 +1366,12 @@ export default class NewClass extends cc.Component {
             drawNode.destroyAllChildren();
             
             let x_o = 0, yP_o = 0, yL_o = 0, x = 0, yP = 0, yL = 0;
-            const colorD =  new cc.Color(world.res.COLOR_DESTRUCTION_POINTS.r, 
-                                        world.res.COLOR_DESTRUCTION_POINTS.g, 
-                                        world.res.COLOR_DESTRUCTION_POINTS.b);
-            const colorP =  new cc.Color(world.res.COLOR_POLICY_POINTS.r, 
-                                        world.res.COLOR_POLICY_POINTS.g, 
-                                        world.res.COLOR_POLICY_POINTS.b);
+            const colorD =  new cc.Color(world.res.COLOR_RED.r, 
+                                        world.res.COLOR_RED.g, 
+                                        world.res.COLOR_RED.b);
+            const colorP =  new cc.Color(world.res.COLOR_GREEN.r, 
+                                        world.res.COLOR_GREEN.g, 
+                                        world.res.COLOR_GREEN.b);
 
             const graphX = 4;
             const graphY = 0;
@@ -1402,8 +1402,8 @@ export default class NewClass extends cc.Component {
                 if (index > 0) {
     
                     // Line 
-                    // drawNode.drawSegment(cc.p(x_o, yL_o), cc.p(x, yL), 2, world.res.COLOR_DESTRUCTION_POINTS);
-                    // drawNode.drawSegment(cc.p(x_o, yP_o), cc.p(x, yP), 2, world.res.COLOR_POLICY_POINTS);
+                    // drawNode.drawSegment(cc.p(x_o, yL_o), cc.p(x, yL), 2, world.res.COLOR_RED);
+                    // drawNode.drawSegment(cc.p(x_o, yP_o), cc.p(x, yP), 2, world.res.COLOR_GREEN);
     
                     // Staircase
                     drawSegment(new cc.Vec2(x_o, yL_o), new cc.Vec2(x - 1, yL_o), 1, colorD);
@@ -2249,6 +2249,7 @@ export default class NewClass extends cc.Component {
         const ind = Math.floor(Math.random() * Object.keys(world.countries).length);
         const countryRand = world.countries[Object.keys(world.countries)[ind]];
         const pt = countryRand.centroid;
+        // btnRes.color = world.res.COLOR_SKY;
         btnRes.setPosition( pt.x, (world.node.height - (2 * world.res.Y_OFFSET) ) - pt.y + world.res.RESOURCE_SIZE_H / 2 );
         btnRes.setContentSize(cc.size(world.res.RESOURCE_SIZE_W, world.res.RESOURCE_SIZE_H));
         btnRes.placedAt = world.gameParams.counter;
@@ -2397,9 +2398,10 @@ export default class NewClass extends cc.Component {
         sp.spriteFrame = world.crisisIcons[crisisInCountry.crisis];
 
         const pt = country.centroid;
+        // btnCrisis.color = world.res.COLOR_RED;
         btnCrisis.setPosition(pt.x, (world.node.height - (2 * world.res.Y_OFFSET) ) - pt.y + world.res.RESOURCE_SIZE_H / 2 );
         btnCrisis.setContentSize(cc.size(world.res.RESOURCE_SIZE_W, world.res.RESOURCE_SIZE_H));
-        // btnCrisis.setColor(world.res.COLOR_DESTRUCTION_POINTS);
+        // btnCrisis.setColor(world.res.COLOR_RED);
         btnCrisis.placedAt = world.gameParams.counter;
         btnCrisis.setAnchorPoint(0.5, 0.0);
         btnCrisis.id = crisisInCountry.id;
