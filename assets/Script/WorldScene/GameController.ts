@@ -131,27 +131,20 @@ export default class NewClass extends cc.Component {
     topBar: cc.Node = null;
     @property(cc.SpriteFrame)
     singleColor: cc.SpriteFrame = null;
-    @property(cc.SpriteFrame)
-    buttonWhite: cc.SpriteFrame = null;
-    @property(cc.SpriteFrame)
-    buttonGrey: cc.SpriteFrame = null;
     @property(cc.Font)
     titleFont: cc.Font = null;
     @property(cc.Font)
     bodyFont: cc.Font = null;
-    @property(cc.TiledMap)
-    map: cc.TiledMap = null;
     @property(cc.Node)
     backgroundGreyscale: cc.Node = null;
     @property(cc.Node)
     backgroundColour: cc.Node = null;
     @property(cc.Material)
     material: cc.Material = null;
-
     @property(NewClass)
     world: NewClass = null;
-    _time: number = 0;
 
+    _time: number = 0;
     res: Resources = new Resources()
     countries: Array<Country> = []
     countriesJson: Map<string, Country> = null
@@ -862,7 +855,7 @@ export default class NewClass extends cc.Component {
         world.gameParams.state = world.res.GAME_STATES.PAUSED;
 
         world.quizBox.opacity = 255;
-        world.quizBox.zIndex = 103;
+        world.quizBox.zIndex = 104;
 
         world.quizBox.getChildByName("quizTitle").getComponent(cc.Label).string = title;
         world.quizBox.getChildByName("quizContents").getComponent(cc.Label).string = message;

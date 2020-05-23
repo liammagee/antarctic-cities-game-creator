@@ -4,7 +4,7 @@ const {ccclass, property} = cc._decorator;
 
 @ccclass
 export class Resources extends cc.Component {
-    @property (cc.String)
+@property (cc.String)
     myName: string = "";
 
     @property (cc.Node)
@@ -12,10 +12,7 @@ export class Resources extends cc.Component {
 
 
     // Version
-    VERSION_ANTARCTIC_FUTURES = "Build: 1012";
-
-    // Game data
-    gd = {};
+    VERSION_ANTARCTIC_FUTURES = "Build: 1013";
 
     // LANGUAGES
     LANGUAGES = ['eng', 'esp'];
