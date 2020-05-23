@@ -4,15 +4,9 @@ const {ccclass, property} = cc._decorator;
 
 @ccclass
 export class Resources extends cc.Component {
-@property (cc.String)
-    myName: string = "";
-
-    @property (cc.Node)
-    myNode: cc.Node = null;
-
 
     // Version
-    VERSION_ANTARCTIC_FUTURES = "Build: 1013";
+    VERSION_ANTARCTIC_FUTURES = "Build: 1014";
 
     // LANGUAGES
     LANGUAGES = ['eng', 'esp'];
