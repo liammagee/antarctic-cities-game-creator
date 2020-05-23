@@ -139,8 +139,6 @@ export default class NewClass extends cc.Component {
     backgroundGreyscale: cc.Node = null;
     @property(cc.Node)
     backgroundColour: cc.Node = null;
-    @property(cc.Material)
-    material: cc.Material = null;
     @property(NewClass)
     world: NewClass = null;
 
@@ -797,7 +795,7 @@ export default class NewClass extends cc.Component {
 
         }
 
-        let btn1Func = function(event) {
+        let btn1Func = (event) => {
 
             world.messageBox.opacity = 0;
             world.messageBox.zIndex = -1;
@@ -808,11 +806,10 @@ export default class NewClass extends cc.Component {
             callback1();
             event.stopPropagation();
 
-
         };
         btn1.node.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
         
-        let btn2Func = function(event) {
+        let btn2Func = (event) => {
 
             world.messageBox.opacity = 0;
             world.messageBox.zIndex = -1;
@@ -1694,7 +1691,6 @@ export default class NewClass extends cc.Component {
                 btnNodeBgd.color = world.res.COLOR_ICE;
                 cc.loader.loadRes(opt.img_normal, cc.SpriteFrame, function (err, sfNormal) {
                     const btnBgd = btnNodeBgd.addComponent(cc.Sprite);
-                    //btnBgd.materials = [world.defaultMaterial];
                     btnBgd.setMaterial(1, world.defaultMaterial);
                     btnBgd.spriteFrame = sfNormal;
                 });
@@ -2094,6 +2090,7 @@ export default class NewClass extends cc.Component {
     selectCountry(event, location) {
 
         let world = this.world;
+        let node = world.node.getChildByName('map');
 
         if (world.gameParams.state !== world.res.GAME_STATES.PREPARED && world.gameParams.state !== world.res.GAME_STATES.STARTED && world.gameParams.state !== world.res.GAME_STATES.PAUSED)
             return;
@@ -2118,7 +2115,7 @@ export default class NewClass extends cc.Component {
         for (let j = start; j < end; j++) {
 
             const poly = world.sortedObjs[j];
-            const mousePoint = {x: locationInNode.x, y: cc.winSize.height - locationInNode.y - (2 * world.res.Y_OFFSET)};
+            const mousePoint = {x: locationInNode.x + node.x, y: cc.winSize.height - locationInNode.y - (1 * world.res.Y_OFFSET) - node.y};
             const cd = world.collisionDetection(poly.points[0], mousePoint);
 
             if (cd) {
@@ -2277,7 +2274,7 @@ export default class NewClass extends cc.Component {
         btnRes.setContentSize(cc.size(world.res.RESOURCE_SIZE_W, world.res.RESOURCE_SIZE_H));
         btnRes.placedAt = world.gameParams.counter;
         btnRes.setAnchorPoint(0.5, 0.0);
-        btnRes.parent = cc.director.getScene();
+        btnRes.parent = world.node.getChildByName('map');
         btnRes.zIndex = 103;
         world.buttons.push(btnRes);
 
@@ -2429,7 +2426,7 @@ export default class NewClass extends cc.Component {
         btnCrisis.setAnchorPoint(0.5, 0.0);
         btnCrisis.id = crisisInCountry.id;
         btnCrisis.name = "crisis" + crisisInCountry.id;
-        btnCrisis.parent = cc.director.getScene();
+        btnCrisis.parent = world.node.getChildByName('map');
         btnCrisis.zIndex = 103;
         world.buttons.push(btnCrisis);
 
@@ -3329,7 +3326,7 @@ export default class NewClass extends cc.Component {
         
         let Y_OFFSET = 55;
         this._time = 0;
-        let world = this.world = this;
+        let world = window.world = this.world = this;
         world.messageBox.opacity = 0;
         
         world.scenarioData = world.res.scenarioData;
@@ -3376,6 +3373,7 @@ export default class NewClass extends cc.Component {
             })
 
         });
+
         world.crisisIcons = new Map<string, cc.SpriteFrame>();
         Object.keys(world.res.CRISES).forEach(function(r) {
 
@@ -3404,8 +3402,7 @@ export default class NewClass extends cc.Component {
                         const spriteNode = new cc.Node('Sprite ');
                         const sp = spriteNode.addComponent(cc.Sprite);
                         sp.spriteFrame = assets[i];
-                        let materialVariant = cc.MaterialVariant.create(world.material, sp);
-                        // let materialVariant = cc.MaterialVariant.create(world.material);
+                        let materialVariant = cc.MaterialVariant.create(world.defaultMaterial, sp);
                         materialVariant.setProperty('u_selected', 0.0);
                         materialVariant.setProperty('u_percentageLoss', 0.0);
                         materialVariant.setProperty('u_percentagePrep', 0.0);
@@ -3417,7 +3414,8 @@ export default class NewClass extends cc.Component {
 
                     }
 
-                    var scene = cc.director.getScene();
+                    let parent = world.node.getChildByName('map');
+
                     let keys = Object.keys(world.countryNodes);
 
                     for (let i = 0; i < keys.length; i++) {
@@ -3427,22 +3425,24 @@ export default class NewClass extends cc.Component {
                             
                             let countryNode = world.countryNodes[key];
                             countryNode.setAnchorPoint(0.0, 0.0);
-                            countryNode.setPosition((country.offsetX), 
-                                                    (cc.winSize.height - ( 1 * world.res.Y_OFFSET  ) - country.offsetY));
-                            countryNode.parent = scene;
+                            countryNode.setPosition((country.offsetX) - parent.x, 
+                                                    (cc.winSize.height - ( 1 * world.res.Y_OFFSET  ) - country.offsetY) - parent.y);
+                            countryNode.parent = parent;
                             countryNode.zIndex = 2;
                             
                         }
                     }
             
                 });
+
             }
+
         });
 
         // Initialise controls
         world.initControls();
 
-        let fg = cc.director.getScene().getChildByName("foreground");
+        let fg = world.node.getChildByName('map').getChildByName('foreground');
         fg.on(cc.Node.EventType.MOUSE_MOVE, function(event) {
             
             world.selectCountry(event, event.getLocation());
@@ -3460,6 +3460,58 @@ export default class NewClass extends cc.Component {
             world.doSim();
 
         };
+
+        world.node.on(cc.Node.EventType.MOUSE_WHEEL, (event) => {
+
+            if (world.gameParams.modal)
+                return false;
+        
+            const node = world.node.getChildByName('map');
+            const delta = cc.sys.isNative ? event.getScrollY() * 6 : -event.getScrollY();
+            const newScale = node.scale * (1 + delta / 1000.0);
+            // Calculate margins adjusted for size
+            const marginX = node.width / (2 / (1e-06 + newScale - 1));
+            const allowance = 200;
+        
+            // &&  node.x < (marginX + allowance) && node.x > (-marginX - allowance)
+            if (newScale <= 10.0 && newScale >= 0.9) {
+                
+                node.setScale(newScale);
+
+            }
+
+        }, world.node);
+
+        world.node.on(cc.Node.EventType.MOUSE_MOVE, (event) => {
+
+            if (world.gameParams.modal)
+                return false;
+
+            if (event.getButton() == cc.Event.EventMouse.BUTTON_LEFT) {
+                console.log('got here')
+                const node = world.node.getChildByName('map');
+                const scale = node.scale;
+                const size = node.getContentSize();
+                const scaledX = scale * size.width;
+                const scaledY = scale * size.height;
+                // Calculate margins adjusted for size
+                const marginX = node.width / (2 / (1e-06 + scale - 1));
+                const marginY = -Y_OFFSET + node.height / (2 / (1e-06 + scale - 1));
+                const allowance = 200;
+
+                // if (node.x + event.getDeltaX() < (marginX + allowance)  && 
+                //     node.x + event.getDeltaX() > (-marginX - allowance) &&
+                //     node.y + event.getDeltaY() < (marginY + allowance) && 
+                //     node.y + event.getDeltaY() > (-marginY - allowance) ) {
+
+                    node.x += event.getDeltaX();
+                    node.y += event.getDeltaY();
+
+                // }
+
+            }
+
+        }, world.node);
 
         let antCountries = ["NZL", "AUS", "ZAF", "ARG", "CHL"];
         let startCountry = antCountries[Math.floor(Math.random() * antCountries.length)];
