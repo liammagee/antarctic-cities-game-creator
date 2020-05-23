@@ -88,9 +88,9 @@ class GameParams  {
     minimumLoss: number = 0
     totalLoss: number = 0
     scenarioName: string = ''
-    messagesNegative: number = 0
-    messagesPositive: number = 0
-    messageOverride: number = 0
+    messagesNegative: string[] = []
+    messagesPositive: string[] = []
+    messageOverride: string = null
     tutorialMode: boolean = false
     tutorialHints: Array<string> = []
     stats: Object = {}
@@ -974,15 +974,17 @@ export default class NewClass extends cc.Component {
                 world.backgroundColour.opacity = (255);
             }
 
-            let engChecked = world.settingsBox.getChildByName("toggleContainer").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
+            let engChecked = world.settingsBox.getChildByName("toggleLanguage").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
             if (engChecked) {
                 cc.sys.localStorage.language = 'eng';
             }
             else {
                 cc.sys.localStorage.language = 'esp';
             }
+            console.log(engChecked)
             // TODO: Trigger game-wide language update
-            
+            world.updateLanguageSettings()
+
             world.settingsBox.opacity = 0;
             world.settingsBox.zIndex = -1;
             world.gameParams.state = world.res.GAME_STATES.STARTED;
@@ -1002,6 +1004,30 @@ export default class NewClass extends cc.Component {
             
         };
         btn2.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
+
+    }
+
+    /**
+     * Updates all labels with language-specific settings.
+     * Note: Used in preferences to i18n Cocos plugin, since some strings need to be updated dynamically.
+     */
+    updateLanguageSettings() {
+
+        let world = this.world;
+        let scene = cc.director.getScene();
+        let layout = scene.getChildByName('layout');
+        let bottomBar = layout.getChildByName('bottomBar');
+        
+        bottomBar.getChildByName('btnDesignPolicy').getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = world.res.lang.commands_policy[cc.sys.localStorage.language];
+        bottomBar.getChildByName('lblLossLabel').getComponent(cc.Label).string = world.res.lang.commands_loss[cc.sys.localStorage.language];
+        bottomBar.getChildByName('lblPreparednessLabel').getComponent(cc.Label).string = world.res.lang.commands_prepared[cc.sys.localStorage.language];
+        bottomBar.getChildByName('btnStats').getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = world.res.lang.commands_stats[cc.sys.localStorage.language];
+
+        world.gameParams.messagesNegative = world.scenarioData[cc.sys.localStorage.language].messages.negative;
+        world.gameParams.messagesPositive = world.scenarioData[cc.sys.localStorage.language].messages.positive;
+        world.gameParams.messageOverride = null;
+
+        world.initPolicyDesign();
 
     }
 
@@ -1570,6 +1596,7 @@ export default class NewClass extends cc.Component {
             return btn;
 
         };
+
         btnPolicyInvest.on(cc.Node.EventType.TOUCH_END,  () => {
 
             const cost = costCalculation(policySelected);
@@ -1643,6 +1670,7 @@ export default class NewClass extends cc.Component {
             let resourceGrp = world.res.RESOURCES[Object.keys(world.res.RESOURCES)[i]];
             let xLoc = 0, yLoc = 0, policyOptionCounter = 0; 
             let page = pageView.node.getChildByName("view").getChildByName("content").children[i];
+            page.removeAllChildren();
 
             for (let j = 0; j < resourceGrp.policyOptions.length; j++) {
 
@@ -3329,6 +3357,7 @@ export default class NewClass extends cc.Component {
                 world.dotOff = asset;
 
                 // Initialise policy screen
+                world.updateLanguageSettings();
                 world.initPolicyDesign();
                 world.initStats();
 

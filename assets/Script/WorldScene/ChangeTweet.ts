@@ -36,7 +36,7 @@ export default class NewClass extends cc.Component {
         if (gameParams.messageOverride != null) {
             
             message = gameParams.messageOverride;
-            tweetLabel.color = world.res.COLOR_DESTRUCTION_POINTS;
+            tweetLabel.color = world.res.COLOR_RED;
             gameParams.messageOverride = null;
 
         }    

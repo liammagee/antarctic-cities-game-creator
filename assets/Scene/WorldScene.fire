@@ -8061,7 +8061,7 @@
   {
     "__type__": "cc.Node",
     "_name": "layerSettings",
-    "_objFlags": 0,
+    "_objFlags": 512,
     "_parent": {
       "__id__": 1
     },
@@ -15130,7 +15130,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 100,
+      "width": 222,
       "height": 40
     },
     "_anchorPoint": {
@@ -16367,15 +16367,12 @@
     "singleColor": {
       "__uuid__": "e17bf851-674d-4ebf-8ac3-9b3ccd7e84c0"
     },
-    "buttonWhite": null,
-    "buttonGrey": null,
     "titleFont": {
       "__uuid__": "a3ed6705-89e9-4b1a-bbe7-597590c95916"
     },
     "bodyFont": {
       "__uuid__": "b3dadb65-d25d-4456-a662-6bca454b43b4"
     },
-    "map": null,
     "backgroundGreyscale": {
       "__id__": 345
     },
@@ -16393,7 +16390,7 @@
   {
     "__type__": "cc.Node",
     "_name": "layerMessageBox",
-    "_objFlags": 512,
+    "_objFlags": 0,
     "_parent": {
       "__id__": 1
     },

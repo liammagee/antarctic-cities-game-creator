@@ -1,6 +1,18 @@
 {
 	"game": {
-		"name": "UNKNOW GAME",
-		"appid": "UNKNOW"
-	}
+		"name": "Antarctic Futures",
+		"appid": "602399369",
+		"cid": "0"
+	},
+	"configs": [
+		{
+			"appid": "602399369",
+			"services": [
+				{
+					"service_id": "235",
+					"enable": false
+				}
+			]
+		}
+	]
 }
