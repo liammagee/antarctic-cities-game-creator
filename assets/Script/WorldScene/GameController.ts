@@ -71,7 +71,7 @@ class Country  {
     destructionPoints: any[] = []
     destructionDots: any[] = []
     selected: boolean = false
-    places: Place[] = []
+    places: Map<string,Place> = new Map<string,Place>()
 }
 
 class CrisisCountry {
@@ -431,6 +431,20 @@ export default class NewClass extends cc.Component {
                 country.destructionPoints = [],
                 country.destructionDots = [],
                 country.selected = false   
+                country.places = new Map<string, Place>();
+                obj.places.forEach( (p) => {
+                    let place = new Place();
+                    place.points = p.points;
+                    place.name = p.NAME;
+                    place.iso_a2 = p.ISO_A2;
+                    place.iso_a3 = p.ADM0_A3;
+                    place.latitute = p.LATITUDE;
+                    place.longitude = p.LONGITUDE;
+                    place.pop_max = p.POP_MAX;
+                    place.pop_min = p.POP_MIN;
+                    country.places[place.name] = place;
+                });
+                /*
                 country.places = obj.places.map( (p) => {
                     let place = new Place();
                     place.points = p.points;
@@ -443,6 +457,7 @@ export default class NewClass extends cc.Component {
                     place.pop_min = p.POP_MIN;
                     return place;
                 });
+                */
 
                 map[obj.iso_a3] = country;
 
@@ -1033,12 +1048,12 @@ export default class NewClass extends cc.Component {
             else {
                 cc.sys.localStorage.language = 'esp';
             }
-            console.log(engChecked)
             // TODO: Trigger game-wide language update
             world.updateLanguageSettings()
 
             world.settingsBox.opacity = 0;
             world.settingsBox.zIndex = -1;
+            world.gameParams.modal = false;
             world.gameParams.state = world.res.GAME_STATES.STARTED;
 
         };
@@ -1052,6 +1067,7 @@ export default class NewClass extends cc.Component {
             event.stopPropagation();
             world.settingsBox.opacity = 0;
             world.settingsBox.zIndex = -1;
+            world.gameParams.modal = false;
             world.gameParams.state = world.res.GAME_STATES.STARTED;
             
         };
@@ -1236,6 +1252,8 @@ export default class NewClass extends cc.Component {
 
         // Handlers
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnQuit"), function() {
+
+            world.gameParams.modal = true;
             world.gameParams.state = world.res.GAME_STATES.PAUSED;
 
             world.showMessageBox(world.node.parent, "Quit Game", '', 
@@ -1250,12 +1268,14 @@ export default class NewClass extends cc.Component {
                 }, 
                 "Return to Game", () => {
 
+                    world.gameParams.modal = false;
                     world.gameParams.state = world.res.GAME_STATES.STARTED;
 
                 });            
         });
         world.topBar.getChildByName("btnSettings").on(cc.Node.EventType.TOUCH_END, function() {
 
+            world.gameParams.modal = true;
             world.gameParams.state = world.res.GAME_STATES.PAUSED;
 
             world.showSettingsBox();
@@ -1330,6 +1350,7 @@ export default class NewClass extends cc.Component {
         // Add handling for bottom bar buttons
         btnDesignPolicy.on(cc.Node.EventType.TOUCH_END, function() {
             
+            world.gameParams.modal = true;
             world.gameParams.state = world.res.GAME_STATES.PAUSED;
             designPolicy.zIndex = 105;
             resourceScore.zIndex = 106;
@@ -1358,6 +1379,7 @@ export default class NewClass extends cc.Component {
 
         btnStats.on(cc.Node.EventType.TOUCH_END, function() {
             
+            world.gameParams.modal = true;
             world.gameParams.state = world.res.GAME_STATES.PAUSED;
             stats.zIndex = 105;
             let page1 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_1");
@@ -1524,6 +1546,7 @@ export default class NewClass extends cc.Component {
         let btnStatsQuit = stats.getChildByName("btnStatsQuit");
         btnStatsQuit.on(cc.Node.EventType.TOUCH_END, function() {
             
+            world.gameParams.modal = false;
             world.gameParams.state = world.res.GAME_STATES.STARTED;
             stats.zIndex = -1;
 
@@ -1562,21 +1585,20 @@ export default class NewClass extends cc.Component {
 
         let allButtons = [btnEconomy, btnPolitics, btnCulture, btnEcology];
         let prevButton = btnEconomy;
-        let policySelected = null;
 
-        const costCalculation = (policySelected) => {
+        const costCalculation = (policy) => {
             
-            let policyLevel = world.gameParams.policies[policySelected.id];
-            let cost = policySelected.cost_1;
+            let policyLevel = world.gameParams.policies[policy.id];
+            let cost = policy.cost_1;
 
             if (policyLevel !== undefined) {
 
                 switch(policyLevel) {
                     case 1:
-                        cost = policySelected.cost_2;
+                        cost = policy.cost_2;
                         break;
                     case 2:
-                        cost = policySelected.cost_3;
+                        cost = policy.cost_3;
                         break;
                     case 3:
                         cost = 0;
@@ -1586,7 +1608,7 @@ export default class NewClass extends cc.Component {
             }
 
             let dists = world.generateResourceDistribution();
-            let policyCategory = Math.floor((policySelected.id - 1) / 4);
+            let policyCategory = Math.floor((policy.id - 1) / 4);
             let weights = [];
 
             for (let i = 0; i < dists.length; i++) {
@@ -1661,8 +1683,10 @@ export default class NewClass extends cc.Component {
 
         };
 
+        //btnPolicyInvest.off(cc.Node.EventType.TOUCH_END);
         btnPolicyInvest.on(cc.Node.EventType.TOUCH_END,  () => {
 
+            let policySelected = btnPolicyInvest.policy;
             const cost = costCalculation(policySelected);
 
             if (world.gameParams.resources - cost >= 0 && 
@@ -1728,6 +1752,7 @@ export default class NewClass extends cc.Component {
 
         const pageCount = 4;
         const levelButtons = {};
+        let currentOpt = null;
        
         for (let i = 0; i < pageCount; ++i) {
 
@@ -1777,12 +1802,12 @@ export default class NewClass extends cc.Component {
 
                 const policySelector = (event) => {
 
-                    policySelected = opt;
-                    policyLabel.getComponent(cc.Label).string = (policySelected[cc.sys.localStorage.language].text_long);
-                    policyDescription.getComponent(cc.Label).string = (policySelected[cc.sys.localStorage.language].description);
+                    policyLabel.getComponent(cc.Label).string = (opt[cc.sys.localStorage.language].text_long);
+                    policyDescription.getComponent(cc.Label).string = (opt[cc.sys.localStorage.language].description);
                     
-                    const cost = costCalculation(policySelected);
+                    const cost = costCalculation(opt);
                     policyCostLabel.getComponent(cc.Label).string = world.res.lang.policy_platform_cost[cc.sys.localStorage.language] + cost.toString();
+                    btnPolicyInvest.attr({'policy': opt});
 
                     if (world.gameParams.policies[opt.id] == 3) {
 
@@ -1807,6 +1832,7 @@ export default class NewClass extends cc.Component {
                     policyDescription.opacity = 255;
                     policyCostLabel.opacity = 255;
                     btnPolicyInvest.opacity = 255;
+                    currentOpt = opt;
 
                 };
 
@@ -1817,6 +1843,8 @@ export default class NewClass extends cc.Component {
                     btnLabelNode.color = world.res.COLOR_UMBER;
                 };
                 const exitBtn = function(event) {
+                    if (currentOpt == opt)
+                        return;
                     btnNodeBgd.color = world.res.COLOR_ICE;
                     btnLabelNode.color = world.res.COLOR_ICE;
                 };
@@ -1887,21 +1915,21 @@ export default class NewClass extends cc.Component {
             }
         }        
 
-        btnEconomy.on(cc.Node.EventType.TOUCH_END, function(event) {
+        btnEconomy.on(cc.Node.EventType.TOUCH_END, (event) => {
             switchPage(btnEconomy, 0);
         });
-        btnPolitics.on(cc.Node.EventType.TOUCH_END, function(event) {
+        btnPolitics.on(cc.Node.EventType.TOUCH_END, (event) => {
             switchPage(btnPolitics, 1);
         });
-        btnCulture.on(cc.Node.EventType.TOUCH_END, function(event) {
+        btnCulture.on(cc.Node.EventType.TOUCH_END, (event) => {
             switchPage(btnCulture, 2);
         });
-        btnEcology.on(cc.Node.EventType.TOUCH_END, function(event) {
+        btnEcology.on(cc.Node.EventType.TOUCH_END, (event) => {
             switchPage(btnEcology, 3);
         });
 
-        pageView.node.on('page-turning', function(pv) {
-            let index = pv.getCurrentPageIndex();
+        pageView.node.on('page-turning', (event) => {
+            let index = event.getCurrentPageIndex();
             let btn = allButtons[index];
             switchPage(btn, index);
         }, world);
@@ -3458,12 +3486,32 @@ export default class NewClass extends cc.Component {
         
     }
 
-    showAntarcticCities() {
+    showAntarcticCities(radius) {
 
         let world = this.world;
-        let mapFront = world.node.getChildByName('mapFront');
+        if (world.countries['AUS'] === undefined)
+            return;
+        let cities = world.node.getChildByName('mapFront').getChildByName('cities');
+        let graphics = cities.getComponent(cc.Graphics);
+        graphics.clear();
+        graphics.fillColor = world.res.COLOR_GREEN;
 
-        let hobart = world.countries['AUS'].places
+        let hobart = world.countries['AUS'].places['Hobart'];
+        let christchurch = world.countries['NZL'].places['Christchurch'];
+        let capetown = world.countries['ZAF'].places['Cape Town'];
+        let puntaarenas = world.countries['CHL'].places['Punta Arenas'];
+        let ushuaia = world.countries['ARG'].places['Ushuaia'];
+
+        graphics.circle(hobart.points[0] - world.node.width / 2, world.node.height - hobart.points[1] - world.res.Y_OFFSET - world.node.height / 2, radius);
+        graphics.fill();
+        graphics.circle(christchurch.points[0] - world.node.width / 2, world.node.height - christchurch.points[1] - world.res.Y_OFFSET - world.node.height / 2, radius);
+        graphics.fill();
+        graphics.circle(capetown.points[0] - world.node.width / 2, world.node.height - capetown.points[1] - world.res.Y_OFFSET - world.node.height / 2, radius);
+        graphics.fill();
+        graphics.circle(puntaarenas.points[0] - world.node.width / 2, world.node.height - puntaarenas.points[1] - world.res.Y_OFFSET - world.node.height / 2, radius);
+        graphics.fill();
+        graphics.circle(ushuaia.points[0] - world.node.width / 2, world.node.height - ushuaia.points[1] - world.res.Y_OFFSET - world.node.height / 2, radius);
+        graphics.fill();
 
     }
 
@@ -3501,7 +3549,6 @@ export default class NewClass extends cc.Component {
 
                 // Initialise policy screen
                 world.updateLanguageSettings();
-                world.initPolicyDesign();
                 world.initStats();
 
             });
@@ -3732,6 +3779,7 @@ export default class NewClass extends cc.Component {
         let world = this.world;
 
         this._time += dt;
+
         if (world.countryNodes !== undefined) {
 
             Object.keys(world.countryNodes).forEach((key) => {
@@ -3750,6 +3798,9 @@ export default class NewClass extends cc.Component {
             });
 
         }
+
+        let radius = 3 * ((this._time * 3) % 3);
+        world.showAntarcticCities(radius);
         
     }
 }
