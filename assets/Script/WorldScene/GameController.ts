@@ -161,6 +161,7 @@ export default class NewClass extends cc.Component {
     btnQuit: cc.Node = null
     btnSettings: cc.Node = null
     btnSound: cc.Node = null
+    btnSnapshot: cc.Node = null
     btnPause: cc.Node = null
     btnPlay: cc.Node = null
     btnFF: cc.Node = null
@@ -1165,6 +1166,7 @@ export default class NewClass extends cc.Component {
         world.btnQuit = world.topBar.getChildByName("btnQuit");
         world.btnSettings = world.topBar.getChildByName("btnSettings");
         world.btnSound = world.topBar.getChildByName("btnSound");
+        world.btnSnapshot = world.topBar.getChildByName("btnSnapshot");
         world.btnPause = world.topBar.getChildByName("btnPause");
         world.btnPlay = world.topBar.getChildByName("btnPlay");
         world.btnFF = world.topBar.getChildByName("btnFF");
@@ -1225,6 +1227,15 @@ export default class NewClass extends cc.Component {
             }
 
         });
+        world.topBar.getChildByName("btnSnapshot").on(cc.Node.EventType.TOUCH_END, function() {
+
+            world.gameParams.state = world.res.GAME_STATES.PAUSED;
+
+            world.snapshot();
+
+            world.gameParams.state = world.res.GAME_STATES.STARTED;
+
+        }, this);
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnPause"), function() {
 
             world.gameParams.state = world.res.GAME_STATES.PAUSED;
@@ -3321,6 +3332,74 @@ export default class NewClass extends cc.Component {
 
     }
 
+    /**
+     * Taken from:
+     * https://docs.cocos.com/creator/manual/en/render/camera.html
+     * https://gist.github.com/zhangzhibin/c515021931cfc9adb6e9bab53b51a3c1
+     */
+    snapshot() {
+
+        if (!cc.sys.isBrowser)
+            return;
+            
+        // This code works only on web platform. To use this features on native platform, please refer to the capture_to_native scene in example-cases.
+        let node = new cc.Node();
+        node.parent = cc.director.getScene();
+        node.zIndex = cc.macro.MAX_ZINDEX;
+        let w = cc.winSize.width;
+        let h = cc.winSize.height;
+        node.x = w / 2;
+        node.y = h / 2;
+        let camera = node.addComponent(cc.Camera);
+        // let camera = cc.director.getScene().getChildByName('Canvas').getChildByName('Main Camera').getComponent(cc.Camera);
+
+        // Set the CullingMask of the screenshot you want
+        camera.cullingMask = 0xffffffff;
+
+        // Create a new RenderTexture and set this new RenderTexture to the camera's targetTexture so that the camera content will be rendered to this new RenderTexture
+        let texture = new cc.RenderTexture();
+        let gl = cc.game._renderContext;
+        // If the Mask component is not included in the screenshot, you don't need to pass the third parameter.
+        // texture.initWithSize(cc.visibleRect.width, cc.visibleRect.height, gl.STENCIL_INDEX8);
+        texture.initWithSize(cc.visibleRect.width, cc.visibleRect.height, gl.STENCIL_INDEX8);
+        camera.targetTexture = texture;
+
+        // Render the camera once, updating the content once into RenderTexture
+        camera.render(cc.director.getScene());
+
+        // This allows the data to be obtained from the rendertexture.
+        let data = texture.readPixels();
+
+        // Then you can manipulate the data.
+        let canvas = document.createElement('canvas');
+        let ctx = canvas.getContext('2d');
+        let width = canvas.width = texture.width;
+        let height = canvas.height = texture.height;
+
+        canvas.width = texture.width;
+        canvas.height = texture.height;
+
+        let rowBytes = width * 4;
+        for (let row = 0; row < height; row++) {
+            let srow = height - 1 - row;
+            let imageData = ctx.createImageData(width, 1);
+            let start = srow*width*4;
+            for (let i = 0; i < rowBytes; i++) {
+                imageData.data[i] = data[start+i];
+            }
+
+            ctx.putImageData(imageData, 0, row);
+        }
+
+        let dataURL = canvas.toDataURL("image/jpeg");
+        let img = document.createElement("img");
+        img.src = dataURL;  
+        
+        var href = dataURL.replace(/^data:image[^;]*/, "data:image/octet-stream");
+        document.location.href = href;
+        
+    }
+
     // LIFE-CYCLE CALLBACKS:
     onLoad() {
         
@@ -3461,7 +3540,8 @@ export default class NewClass extends cc.Component {
 
         };
 
-        world.node.on(cc.Node.EventType.MOUSE_WHEEL, (event) => {
+        let map = world.node.getChildByName('map');
+        map.on(cc.Node.EventType.MOUSE_WHEEL, (event) => {
 
             if (world.gameParams.modal)
                 return false;
@@ -3480,15 +3560,14 @@ export default class NewClass extends cc.Component {
 
             }
 
-        }, world.node);
+        }, map);
 
-        world.node.on(cc.Node.EventType.MOUSE_MOVE, (event) => {
+        map.on(cc.Node.EventType.MOUSE_MOVE, (event) => {
 
             if (world.gameParams.modal)
                 return false;
 
             if (event.getButton() == cc.Event.EventMouse.BUTTON_LEFT) {
-                console.log('got here')
                 const node = world.node.getChildByName('map');
                 const scale = node.scale;
                 const size = node.getContentSize();
@@ -3511,7 +3590,7 @@ export default class NewClass extends cc.Component {
 
             }
 
-        }, world.node);
+        }, map);
 
         let antCountries = ["NZL", "AUS", "ZAF", "ARG", "CHL"];
         let startCountry = antCountries[Math.floor(Math.random() * antCountries.length)];

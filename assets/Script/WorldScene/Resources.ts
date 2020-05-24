@@ -6,7 +6,7 @@ const {ccclass, property} = cc._decorator;
 export class Resources extends cc.Component {
 
     // Version
-    VERSION_ANTARCTIC_FUTURES = "Build: 1014";
+    VERSION_ANTARCTIC_FUTURES = "Build: 1015";
 
     // LANGUAGES
     LANGUAGES = ['eng', 'esp'];
