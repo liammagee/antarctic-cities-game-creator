@@ -2271,6 +2271,7 @@ export default class NewClass extends cc.Component {
     addResource() {
 
         let world = this.world;
+        let map = world.node.getChildByName('map');
 
         const btnRes = new TimedNode('Resource');
         const sp = btnRes.addComponent(cc.Sprite);
@@ -2281,11 +2282,11 @@ export default class NewClass extends cc.Component {
         const countryRand = world.countries[Object.keys(world.countries)[ind]];
         const pt = countryRand.centroid;
         // btnRes.color = world.res.COLOR_SKY;
-        btnRes.setPosition( pt.x, (world.node.height - (1 * world.res.Y_OFFSET) ) - pt.y);// + world.res.RESOURCE_SIZE_H );
+        btnRes.setPosition( pt.x - map.x, (world.node.height - (1 * world.res.Y_OFFSET) ) - pt.y - map.y);// + world.res.RESOURCE_SIZE_H );
         btnRes.setContentSize(cc.size(world.res.RESOURCE_SIZE_W, world.res.RESOURCE_SIZE_H));
         btnRes.placedAt = world.gameParams.counter;
         btnRes.setAnchorPoint(0.5, 0.0);
-        btnRes.parent = world.node.getChildByName('map');
+        btnRes.parent = map;
         btnRes.zIndex = 103;
         world.buttons.push(btnRes);
 
@@ -2415,6 +2416,7 @@ export default class NewClass extends cc.Component {
     addCrisis() {
 
         let world = this.world;
+        let map = world.node.getChildByName('map');
 
         const r2 = Math.random();
         const crisisInCountry = world.crisisProbLocation(r2);
@@ -2430,14 +2432,14 @@ export default class NewClass extends cc.Component {
 
         const pt = country.centroid;
         // btnCrisis.color = world.res.COLOR_RED;
-        btnCrisis.setPosition(pt.x, (world.node.height - (1 * world.res.Y_OFFSET) ) - pt.y);// + world.res.RESOURCE_SIZE_H / 2 );
+        btnCrisis.setPosition(pt.x - map.x, (world.node.height - (1 * world.res.Y_OFFSET) ) - pt.y - map.y);// + world.res.RESOURCE_SIZE_H / 2 );
         btnCrisis.setContentSize(cc.size(world.res.RESOURCE_SIZE_W, world.res.RESOURCE_SIZE_H));
         // btnCrisis.setColor(world.res.COLOR_RED);
         btnCrisis.placedAt = world.gameParams.counter;
         btnCrisis.setAnchorPoint(0.5, 0.0);
         btnCrisis.id = crisisInCountry.id;
         btnCrisis.name = "crisis" + crisisInCountry.id;
-        btnCrisis.parent = world.node.getChildByName('map');
+        btnCrisis.parent = map;
         btnCrisis.zIndex = 103;
         world.buttons.push(btnCrisis);
 
@@ -3341,7 +3343,7 @@ export default class NewClass extends cc.Component {
 
         if (!cc.sys.isBrowser)
             return;
-            
+
         // This code works only on web platform. To use this features on native platform, please refer to the capture_to_native scene in example-cases.
         let node = new cc.Node();
         node.parent = cc.director.getScene();
