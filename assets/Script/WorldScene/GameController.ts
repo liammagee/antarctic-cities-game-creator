@@ -1639,7 +1639,6 @@ export default class NewClass extends cc.Component {
         // Changes buttons with switching pages
         const switchPage = (btn, index) => {
 
-            policySelected = null;
             pageView.setCurrentPageIndex(index);
             btn.getComponent(cc.Button).interactable = false;
             btn.getChildByName("Label").color = world.res.COLOR_UMBER;
