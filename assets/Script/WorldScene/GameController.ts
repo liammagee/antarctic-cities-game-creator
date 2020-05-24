@@ -25,19 +25,53 @@ class Shader  {
     u_borderRadius: number = 0.0
 }
 
+class Place  {
+    points: cc.Vec2[] = []
+    name: string = null
+    iso_a2: string = null
+    iso_a3: string = null
+    latitute: number = 0
+    longitude: number = 0
+    pop_max: number = 0
+    pop_min: number = 0
+}
+
 class Country  {
     name: string = null
+    points: cc.Vec2[] = []
+    extremes: cc.Vec2[] = []
+    centroid: cc.Vec2 = null
+    area: number = 0
+    affected_chance: number = 0
+    pop_est: number = 0
+    pop_aware: number = 0
+    pop_aware_percent: number = 0
+    pop_prepared: number = 0
+    pop_prepared_percent: number = 0
+    gdp_est: number = 0
+    iso_a2: string = null
     iso_a3: string = null
-    points: Array<cc.Vec2> = null
+    subregion: string = null
+    economy: string = null
+    income_grp: string = null
+    income_grp_num: number = 0
+    equator_dist: number = 0
+    offsetX: number = 0
+    offsetY: number = 0
+
+    policy: number = 0
+    previousLoss: number = 0
+    loss: number = 0
+    neighbours: Country[] = []
     points_shared: number = 0
     points_total: number = 0
-    neighbours: Array<Country> = null
-    loss: number = 0
-    pop_prepared_percent: number = 0
-    centroid: cc.Vec2 = null
-    policy: number = 0
     shared_border_percentage: number = 0
-    income_grp: string = ''
+    policyPoints: any[] = []
+    policyDots: any[] = []
+    destructionPoints: any[] = []
+    destructionDots: any[] = []
+    selected: boolean = false
+    places: Place[] = []
 }
 
 class CrisisCountry {
@@ -144,8 +178,8 @@ export default class NewClass extends cc.Component {
 
     _time: number = 0;
     res: Resources = new Resources()
-    countries: Array<Country> = []
-    countriesJson: Map<string, Country> = null
+    countries: Country[] = []
+    countriesJson: Map<string, Country> = new Map<string, Country>()
     sortedObjs: Country[] = []
     areaMin: number = 0
     areaMax: number = 0
@@ -242,9 +276,8 @@ export default class NewClass extends cc.Component {
     /**
      * Generates min, max coordinates
      */
-    extremes(world, name) {
+    extremes(pa) {
         
-        let pa = this.pointArray(world, name);
         let extremes = [];
         
         for (let i = 0; i < pa.length; i++) {
@@ -275,7 +308,7 @@ export default class NewClass extends cc.Component {
     }
 
 
-    regionalArea(world, points) {
+    regionalArea(points) {
         
         let area = 0;
 
@@ -296,15 +329,15 @@ export default class NewClass extends cc.Component {
     /*
      * Gauss shoelace algorithm - https://gamedev.stackexchange.com/questions/151034/how-to-compute-the-area-of-an-irregular-shape
      */
-    areas(world, name) { 
+    areas(pa) { 
 
-        let pa = this.pointArray(world, name);
+        // let pa = this.pointArray(world, name);
         let area = 0;
         
         for (let i = 0; i < pa.length; i++) {
 
             let p = pa[i];
-            area += this.regionalArea(world, p);
+            area += this.regionalArea(p);
 
         }
 
@@ -315,16 +348,16 @@ export default class NewClass extends cc.Component {
     /**
      * Create country centroids.
      */
-    centroids(world, name) { 
+    centroids(pa) { 
 
-        let pa = this.pointArray(world, name);
+        // let pa = this.pointArray(world, name);
         let lastArea = 0, thisArea = 0;
         let regionID = -1;
 
         for (let i = 0; i < pa.length; i++) {
         
             let p = pa[i];
-            thisArea = this.regionalArea(world, p);
+            thisArea = this.regionalArea(p);
         
             if (thisArea > lastArea) {
 
@@ -348,7 +381,7 @@ export default class NewClass extends cc.Component {
         
         });
 
-        return { x: totalX / points.length, y: totalY / points.length }
+        return new cc.Vec2(totalX / points.length, totalY / points.length );
 
     }
 
@@ -358,48 +391,60 @@ export default class NewClass extends cc.Component {
 
         world.countries = Object.values(world.countriesJson).reduce((map, obj) => {  
 
-                if (!map[obj.iso_a3]) {
+            if (!map[obj.iso_a3]) {
 
-                map[obj.iso_a3] = {
+                let country = new Country();
+                
+                country.name = obj.name,
+                country.points = obj.points,
+                country.extremes = this.extremes(obj.points),
+                country.centroid = this.centroids(obj.points),
+                country.area = this.areas(obj.points),
+                
+                country.affected_chance = 1.0,
+                country.pop_est = parseInt(obj.pop_est),
+                country.pop_aware = 0,
+                country.pop_aware_percent = 0,
+                country.pop_prepared = 0,
+                country.pop_prepared_percent = 0,
 
-                    name: obj.name,
-                    points: this.pointArray(world, obj.iso_a3),
-                    extremes: this.extremes(world, obj.iso_a3),
-                    centroid: this.centroids(world, obj.iso_a3),
-                    area: this.areas(world, obj.iso_a3),
-                    
-                    affected_chance: 1.0,
-                    pop_est: parseInt(obj.pop_est),
-                    pop_aware: 0,
-                    pop_aware_percent: 0,
-                    pop_prepared: 0,
-                    pop_prepared_percent: 0,
+                country.gdp_est = parseInt(obj.gdp_md_est),
+                country.iso_a2 = obj.iso_a2,
+                country.iso_a3 = obj.iso_a3,
+                country.subregion = obj.subregion,
+                country.economy = obj.economy,
+                country.income_grp = obj.income_grp,
+                country.income_grp_num = parseInt(obj.income_grp.charAt(0)),
+                country.equator_dist = obj.equatorDist,
+                country.offsetX = obj.offsetX,
+                country.offsetY = obj.offsetY,
 
-                    gdp_est: parseInt(obj.gdp_md_est),
-                    gid: 1,
-                    iso_a2: obj.iso_a2,
-                    iso_a3: obj.iso_a3,
-                    subregion: obj.subregion,
-                    economy: obj.economy,
-                    income_grp: obj.income_grp,
-                    income_grp_num: parseInt(obj.income_grp.charAt(0)),
-                    equator_dist: obj.equatorDist,
-                    offsetX: obj.offsetX,
-                    offsetY: obj.offsetY,
+                country.policy = 0,
+                country.previousLoss = world.gameParams.previousLoss,
+                country.loss = world.gameParams.previousLoss,
+                country.neighbours = [],
+                country.points_shared = 0,
+                country.points_total = 0,
+                country.shared_border_percentage = 0,
+                country.policyPoints = [],
+                country.policyDots = [],
+                country.destructionPoints = [],
+                country.destructionDots = [],
+                country.selected = false   
+                country.places = obj.places.map( (p) => {
+                    let place = new Place();
+                    place.points = p.points;
+                    place.name = p.NAME;
+                    place.iso_a2 = p.ISO_A2;
+                    place.iso_a3 = p.ADM0_A3;
+                    place.latitute = p.LATITUDE;
+                    place.longitude = p.LONGITUDE;
+                    place.pop_max = p.POP_MAX;
+                    place.pop_min = p.POP_MIN;
+                    return place;
+                });
 
-                    policy: 0,
-                    previousLoss: world.gameParams.previousLoss,
-                    loss: world.gameParams.previousLoss,
-                    neighbours: [],
-                    points_shared: 0,
-                    points_total: 0,
-                    shared_border_percentage: 0,
-                    policyPoints: [],
-                    policyDots: [],
-                    destructionPoints: [],
-                    destructionDots: [] ,
-                    selected: false   
-                };
+                map[obj.iso_a3] = country;
 
             } 
 
@@ -410,7 +455,6 @@ export default class NewClass extends cc.Component {
         /**
          * Sorts objects by their relative screen position, to avoid overlapping tiles.
          */
-        Object.values(world.countries).sort()
         world.sortedObjs = Object.values(world.countries).sort((a, b) => { 
 
             return (a.points[0].y * cc.winSize.height + a.points[0].x) - (b.points[0].y * cc.winSize.height + b.points[0].x);  
@@ -423,7 +467,7 @@ export default class NewClass extends cc.Component {
             
             var c = world.countries[k];
             
-            c.points.forEach(function(p) {
+            c.points.forEach((p) => {
             
                 var pStr = p.x +"-"+p.y;
 
@@ -442,14 +486,14 @@ export default class NewClass extends cc.Component {
 
         });
 
-        Object.keys(allPoints).forEach(function(k) {
+        Object.keys(allPoints).forEach( (k) => {
 
             var countries = allPoints[k];
 
-            countries.forEach(function(c1) {
+            countries.forEach( (c1) => {
 
                 var country = world.countries[c1];
-                countries.forEach(function(c2) {
+                countries.forEach( (c2) => {
 
                     if (c1 != c2) {
                     
@@ -472,7 +516,7 @@ export default class NewClass extends cc.Component {
         });
 
 
-        Object.keys(world.countries).forEach(function(c) {
+        Object.keys(world.countries).forEach( (c) => {
         
             var country = world.countries[c];
             country.shared_border_percentage = country.points_shared / country.points_total;
@@ -487,7 +531,7 @@ export default class NewClass extends cc.Component {
         
 
         // Add population density
-        Object.keys(world.countries).forEach(function(c) { 
+        Object.keys(world.countries).forEach( (c) => { 
         
             var country = world.countries[c];
             country.density = country.pop_est / country.area;
@@ -500,7 +544,7 @@ export default class NewClass extends cc.Component {
         world.areaMinCountry = '';
         world.areaMaxCountry = '';
         
-        Object.keys(world.countries).forEach(function(c) {
+        Object.keys(world.countries).forEach( (c) => {
 
             var country = world.countries[c];
             
@@ -525,7 +569,7 @@ export default class NewClass extends cc.Component {
         world.areaMean /= Object.keys(world.countries).length;
         world.areaRatio = Math.floor(Math.log2(world.areaMax / world.areaMin));
 
-        Object.keys(world.countries).forEach(function(c) {
+        Object.keys(world.countries).forEach( (c) => {
 
             var country = world.countries[c];
             // Change the power for more or less points
@@ -535,9 +579,13 @@ export default class NewClass extends cc.Component {
 
         // Add world populations
         world.gameParams.populationWorld = Object.keys(world.countries).map(function(c) { 
+
             return world.countries[c].pop_est; 
-        }).reduce(function(a, c) {
+
+        }).reduce( (a, c) => {
+
             return a + parseInt(c);
+
         }, 0);
 
     }
@@ -964,12 +1012,18 @@ export default class NewClass extends cc.Component {
             world.gameParams.greyscale = gsChecked;
 
             if (gsChecked) {
-                world.backgroundGreyscale.opacity = (255);
-                world.backgroundColour.opacity = (0);
+
+                world.backgroundGreyscale.opacity = 255;
+                world.backgroundColour.opacity = 0;
+                world.node.color = new cc.Color(234, 245, 247);
+
             }
             else {
-                world.backgroundGreyscale.opacity = (0);
-                world.backgroundColour.opacity = (255);
+                
+                world.backgroundGreyscale.opacity = 0;
+                world.backgroundColour.opacity = 255;
+                world.node.color = world.res.COLOR_LICORICE;
+
             }
 
             let engChecked = world.settingsBox.getChildByName("toggleLanguage").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
@@ -1080,7 +1134,6 @@ export default class NewClass extends cc.Component {
                 income_grp: undefined, 
                 income_grp_num: undefined, 
                 iso_a2: undefined, 
-                gid: undefined, 
                 gdp: undefined, 
                 extremes: undefined, 
                 equator_dist: undefined, 
@@ -1478,6 +1531,9 @@ export default class NewClass extends cc.Component {
 
         // Set ordering
         stats.zIndex = -1;
+
+        // Update tweet label
+        world.tweetLabel.string = world.gameParams.scenarioName;
         
     }
 
@@ -2101,7 +2157,7 @@ export default class NewClass extends cc.Component {
     selectCountry(event, location) {
 
         let world = this.world;
-        let node = world.node.getChildByName('map');
+        let node = world.node.getChildByName('mapFront');
 
         if (world.gameParams.state !== world.res.GAME_STATES.PREPARED && world.gameParams.state !== world.res.GAME_STATES.STARTED && world.gameParams.state !== world.res.GAME_STATES.PAUSED)
             return;
@@ -2271,7 +2327,7 @@ export default class NewClass extends cc.Component {
     addResource() {
 
         let world = this.world;
-        let map = world.node.getChildByName('map');
+        let map = world.node.getChildByName('mapFront');
 
         const btnRes = new TimedNode('Resource');
         const sp = btnRes.addComponent(cc.Sprite);
@@ -2416,7 +2472,7 @@ export default class NewClass extends cc.Component {
     addCrisis() {
 
         let world = this.world;
-        let map = world.node.getChildByName('map');
+        let map = world.node.getChildByName('mapFront');
 
         const r2 = Math.random();
         const crisisInCountry = world.crisisProbLocation(r2);
@@ -3402,6 +3458,15 @@ export default class NewClass extends cc.Component {
         
     }
 
+    showAntarcticCities() {
+
+        let world = this.world;
+        let mapFront = world.node.getChildByName('mapFront');
+
+        let hobart = world.countries['AUS'].places
+
+    }
+
     // LIFE-CYCLE CALLBACKS:
     onLoad() {
         
@@ -3468,7 +3533,7 @@ export default class NewClass extends cc.Component {
         });
 
         var url = 'scripts/json-equal-greyscale';
-        cc.loader.loadRes( url, function( err, res) {
+        cc.loader.loadRes( url, ( err, res) => {
 
             if (err == null) {
 
@@ -3478,6 +3543,8 @@ export default class NewClass extends cc.Component {
                 // loading all resource in the test assets directory
                 cc.loader.loadResDir("countries", cc.SpriteFrame, function (err, assets, urls) {
                     
+                    let mapBack = world.node.getChildByName('mapBack');
+
                     for (var i = 0; i < assets.length; i++) {
                         
                         const spriteNode = new cc.Node('Sprite ');
@@ -3487,31 +3554,21 @@ export default class NewClass extends cc.Component {
                         materialVariant.setProperty('u_selected', 0.0);
                         materialVariant.setProperty('u_percentageLoss', 0.0);
                         materialVariant.setProperty('u_percentagePrep', 0.0);
-                        //sp.materials = [materialVariant];
                         sp.setMaterial(0, materialVariant);
                         let url = urls[i];
                         let iso = url.match('/([A-Z]*)_')[1];
                         world.countryNodes[iso] = spriteNode;
-
-                    }
-
-                    let parent = world.node.getChildByName('map');
-
-                    let keys = Object.keys(world.countryNodes);
-
-                    for (let i = 0; i < keys.length; i++) {
-                        let key = keys[i];
-                        let country = world.countries[key];
+                        let country = world.countries[iso];
                         if (country !== undefined) {
                             
-                            let countryNode = world.countryNodes[key];
-                            countryNode.setAnchorPoint(0.0, 0.0);
-                            countryNode.setPosition((country.offsetX) - parent.x, 
-                                                    (cc.winSize.height - ( 1 * world.res.Y_OFFSET  ) - country.offsetY) - parent.y);
-                            countryNode.parent = parent;
-                            countryNode.zIndex = 2;
+                            spriteNode.setAnchorPoint(0.0, 0.0);
+                            spriteNode.setPosition((country.offsetX) - mapBack.x, 
+                                                    (cc.winSize.height - ( 1 * world.res.Y_OFFSET  ) - country.offsetY) - mapBack.y);
+                            spriteNode.parent = mapBack;
+                            spriteNode.zIndex = 202;
                             
                         }
+
                     }
             
                 });
@@ -3523,8 +3580,8 @@ export default class NewClass extends cc.Component {
         // Initialise controls
         world.initControls();
 
-        let fg = world.node.getChildByName('map').getChildByName('foreground');
-        fg.on(cc.Node.EventType.MOUSE_MOVE, function(event) {
+        let map = world.node.getChildByName('mapFront');
+        map.on(cc.Node.EventType.MOUSE_MOVE, (event) => {
             
             world.selectCountry(event, event.getLocation());
                                                 
@@ -3542,42 +3599,43 @@ export default class NewClass extends cc.Component {
 
         };
 
-        let map = world.node.getChildByName('map');
-        map.on(cc.Node.EventType.MOUSE_WHEEL, (event) => {
+        let mapFront = world.node.getChildByName('mapFront');
+        mapFront.on(cc.Node.EventType.MOUSE_WHEEL, (event) => {
 
             if (world.gameParams.modal)
                 return false;
         
-            const node = world.node.getChildByName('map');
+            const mapBack = world.node.getChildByName('mapBack');
             const delta = cc.sys.isNative ? event.getScrollY() * 6 : -event.getScrollY();
-            const newScale = node.scale * (1 + delta / 1000.0);
+            const newScale = mapBack.scale * (1 + delta / 1000.0);
             // Calculate margins adjusted for size
-            const marginX = node.width / (2 / (1e-06 + newScale - 1));
+            const marginX = mapBack.width / (2 / (1e-06 + newScale - 1));
             const allowance = 200;
         
             // &&  node.x < (marginX + allowance) && node.x > (-marginX - allowance)
-            if (newScale <= 10.0 && newScale >= 0.9) {
+            if (newScale <= 10.0 && newScale >= 1.0) {
                 
-                node.setScale(newScale);
+                mapBack.setScale(newScale);
+                mapFront.setScale(newScale);
 
             }
 
-        }, map);
+        }, mapFront);
 
-        map.on(cc.Node.EventType.MOUSE_MOVE, (event) => {
+        mapFront.on(cc.Node.EventType.MOUSE_MOVE, (event) => {
 
             if (world.gameParams.modal)
                 return false;
 
             if (event.getButton() == cc.Event.EventMouse.BUTTON_LEFT) {
-                const node = world.node.getChildByName('map');
-                const scale = node.scale;
-                const size = node.getContentSize();
+                const mapBack = world.node.getChildByName('mapBack');
+                const scale = mapBack.scale;
+                const size = mapBack.getContentSize();
                 const scaledX = scale * size.width;
                 const scaledY = scale * size.height;
                 // Calculate margins adjusted for size
-                const marginX = node.width / (2 / (1e-06 + scale - 1));
-                const marginY = -Y_OFFSET + node.height / (2 / (1e-06 + scale - 1));
+                const marginX = mapBack.width / (2 / (1e-06 + scale - 1));
+                const marginY = -Y_OFFSET + mapBack.height / (2 / (1e-06 + scale - 1));
                 const allowance = 200;
 
                 // if (node.x + event.getDeltaX() < (marginX + allowance)  && 
@@ -3585,8 +3643,10 @@ export default class NewClass extends cc.Component {
                 //     node.y + event.getDeltaY() < (marginY + allowance) && 
                 //     node.y + event.getDeltaY() > (-marginY - allowance) ) {
 
-                    node.x += event.getDeltaX();
-                    node.y += event.getDeltaY();
+                    mapBack.x += event.getDeltaX();
+                    mapBack.y += event.getDeltaY();
+                    mapFront.x += event.getDeltaX();
+                    mapFront.y += event.getDeltaY();
 
                 // }
 
