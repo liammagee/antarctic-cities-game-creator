@@ -1751,7 +1751,7 @@ export default class NewClass extends cc.Component {
 
         const pageCount = 4;
         const levelButtons = {};
-        let currentOpt = null;
+        let currentOptNode = null;
        
         for (let i = 0; i < pageCount; ++i) {
 
@@ -1775,6 +1775,7 @@ export default class NewClass extends cc.Component {
                 optNode.setContentSize(cc.size(page.width / 3, page.height / 3));
 
                 const btnNodeBgd = new cc.Node();
+                btnNodeBgd.name = "Background";
                 btnNodeBgd.setAnchorPoint(new cc.Vec2(0, 0));
                 btnNodeBgd.setContentSize(cc.size(104, 104));
                 btnNodeBgd.setPosition(50, 50);
@@ -1831,7 +1832,11 @@ export default class NewClass extends cc.Component {
                     policyDescription.opacity = 255;
                     policyCostLabel.opacity = 255;
                     btnPolicyInvest.opacity = 255;
-                    currentOpt = opt;
+                    if (currentOptNode != null && currentOptNode != optNode) {
+                        currentOptNode.getChildByName("Background").color = world.res.COLOR_ICE;
+                        currentOptNode.getChildByName("Label").color = world.res.COLOR_ICE;
+                    }
+                    currentOptNode = optNode;
 
                 };
 
@@ -1842,7 +1847,7 @@ export default class NewClass extends cc.Component {
                     btnLabelNode.color = world.res.COLOR_UMBER;
                 };
                 const exitBtn = function(event) {
-                    if (currentOpt == opt)
+                    if (currentOptNode == optNode)
                         return;
                     btnNodeBgd.color = world.res.COLOR_ICE;
                     btnLabelNode.color = world.res.COLOR_ICE;
