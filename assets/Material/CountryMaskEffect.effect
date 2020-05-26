@@ -24,7 +24,9 @@ CCEffect %{
         u_sizeMultiplier: { value: 1.75 }
         u_stepMin: { value: 0.25 }
         u_stepMax: { value: 1.0 }
-        u_borderRadius: { value: .001 }
+        u_dimPower: { value: 0.05 }
+        u_borderRadius: { value: .01 }
+        u_selected: { value: 1.0 }
 }%
 
 
@@ -96,6 +98,7 @@ CCProgram fs %{
     float u_sizeMultiplier;
     float u_stepMin;
     float u_stepMax;
+    float u_dimPower;
     float u_borderRadius;
 
   };
@@ -145,12 +148,13 @@ CCProgram fs %{
   }
 
   float textureAlpha(vec2 coord) {
-      float alpha = 1.-randForCell(-coord, vec2(0., 0.)) * u_randAlpha;
+      float alpha = 1. - randForCell(-coord, vec2(0., 0.)) * u_randAlpha;
       return alpha * texture(texture, v_uv0).a;
   }
   float cellIntensity(vec2 coord, vec2 offset, vec2 shift) {
       return cell(coord, offset, shift) * textureAlpha(coord + offset);
   }
+
   // Intensity of the dot
   float dotIntensity(vec2 coord, vec2 shift) {
       coord -= shift;
@@ -190,8 +194,9 @@ CCProgram fs %{
       accum += texture(texture, (coord.xy + vec2(- radius, radius)));
       accum /= 9.;
       accum = 1.0 - (abs(0.5 - accum) * 2.);
-      accum.rgb = greyDark * accum.a;
-      accum *= u_selected;
+      accum.rgb = vec3(1.0) * accum.a;
+      // accum.rgb = greyDark * accum.a;
+      // accum *= u_selected;
       return accum;
   }
 
@@ -228,22 +233,30 @@ CCProgram fs %{
     float di1 = dotIntensity(st, vec2(0., 0.));
     // Another set of dots
     float di2 = dotIntensity(st, vec2(u_cellSize * 0.5, u_cellSize * 0.5));
-    // float di2 = dotIntensity(st, vec2(u_cellSize*0.5, u_cellSize*0.5));
 
     // Fill values
     float v1 = ( 1.0 - u_percentageLoss / 100.0 );
-    v1 = v1 * v1 * v1;
+    v1 = pow(v1, u_dimPower);
     float v2 = ( 1.0 - u_percentagePrep / 100.0 );
-    v2 = v2 * v2 * v2;
+    v2 = pow(v2, u_dimPower);
 
     // Construct the mask
     // Add border
     mask = border;
     
-    vec4 color1 = vec4(di1, 0., 0., di1);
-    color1 *= 1. - v1;
-    vec4 color2 = vec4(0., di2, 0., di2);
-    color2 *= 1. - v2;
+    // Randomise which dots appear
+    float rred = randForCell(-st, vec2(0.0, 0.0));
+    float rgreen = randForCell(-st, vec2(-u_cellSize * 0.5, -u_cellSize * 0.5));
+    vec4 af_test = vec4(1.0);
+    vec4 af_red = vec4(153.0 / 255.0, 51.0 / 255.0, 51.0 / 255.0, 1.0);
+    vec4 af_green = vec4(153.0 / 255.0, 204.0 / 255.0, 102.0 / 255.0, 1.0);
+    vec4 color1 = af_red * di1;
+    // color1 *= 1. - v1;
+    color1 *= smoothstep(rred, rred, 1. - v1);
+    // vec4 color2 = vec4(0., di2, 0., di2);
+    vec4 color2 = af_green * di2;
+    // color2 *= 1. - v2;
+    color2 *= smoothstep(rgreen, rgreen, 1. - v2);
     mask = overlay(mask, color1);
     mask = overlay(mask, color2);
 

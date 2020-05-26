@@ -840,8 +840,8 @@ export default class NewClass extends cc.Component {
 
             if (prompt2 !== undefined) {
 
-                btn1.node.x = -0.25 * world.messageBox.width;
-                btn2.node.x = 0.25 * world.messageBox.width;
+                btn1.node.x = -0.2 * world.messageBox.width;
+                btn2.node.x = 0.2 * world.messageBox.width;
                 btn2.node.opacity = 255;
                 btn2.interactable = true;
                 btn2.enabled = true;
@@ -2611,24 +2611,37 @@ export default class NewClass extends cc.Component {
 
     }
 
-    sigmoidalPercent(percent, inflectionPoint) {
-
-        let world = this.world;
+    /**
+     * Returns a decayed value of a percentile (0-100),
+     * between Math.E (2.78...) and 1. 
+     * The inflectionPoint parameter, also 0-100, indicates the point of fastest decay.
+     * The decay fundtion is roughly sigmoidal around the inflection point.
+     */
+    sigmoidalDecay(percent, inflectionPoint) {
 
         if (inflectionPoint === undefined)
             inflectionPoint = 50;
 
-        // Some value between -1.0 and 1.0
-        let normedPercent = ( percent - inflectionPoint ) / inflectionPoint;
+        // Some value between 0.0 and 1.0 (where inflectionPoint = 50.0)
+        let normedPercent = Math.abs(( percent - inflectionPoint ) / inflectionPoint);
         let normedPercentWithFactor = normedPercent * 1.0;
-        // Some value between e (2.78...) and 1 / e (0.367) 
-        let sigmoidalPercent = 1 / Math.pow(Math.E, normedPercentWithFactor);
+        // Some value between e (2.78...) and 1 / e (0.367) (or lower if inflection point != 50.0)
+        let sd = 1 / Math.pow(Math.E, normedPercentWithFactor);
+        // ensure the minimum value is 1.0
+        sd += 1.0;
 
-        return sigmoidalPercent;
+        return sd;
 
     }
 
-    // Evaluates loss
+    /**
+     * Evaluates loss.
+     * 
+     * To test:
+     * let country = world.countries.AUS
+     * const lossCurrent = country.loss;
+     * world.evaluateLoss(country)
+     */
     evaluateLoss(country) {
 
         let world = this.world;
@@ -2650,18 +2663,26 @@ export default class NewClass extends cc.Component {
             const crisis = world.res.CRISES[crisisInCountry.crisis];
             // Add effects of country / global loss ratio to crisis effect
             // Take the square root of the ratio of country to world loss, and multiply this by the crisis effect
-            rateOfLossFactor *= (1 + crisis.effect_on_environmental_loss * (Math.pow(lossCurrent / world.gameParams.totalLoss, 0.5)));
-            
+            let crisisEffect = (1 + crisis.effect_on_environmental_loss * (Math.pow(lossCurrent / world.gameParams.totalLoss, 0.5)));
+            rateOfLossFactor *= crisisEffect;
+
+            if (country.iso_a3 == 'AUS') {
+                console.log(crisisEffect)
+            }
+                
         });
 
-        const sigmoidalLossFactor = ( 1 + (rateOfLossFactor - 1) * world.sigmoidalPercent(lossCurrent, 5.0) );
-        let lossNew = lossCurrent + (sigmoidalLossFactor - 1);
-
+        const decayLossFactor = ( 1 + (rateOfLossFactor - 1) * world.sigmoidalDecay(lossCurrent, 50.0) );
+        let lossNew = lossCurrent + (decayLossFactor - 1);
+        if (country.iso_a3 == 'AUS') {
+            console.log("se: "+decayLossFactor+":"+rateOfLossFactor)
+        }
         if (lossNew > 100)
             lossNew = 100;
         if (lossNew < 0)
             lossNew = 0;
-
+    
+    
         return lossNew;
 
     }
@@ -3007,9 +3028,9 @@ export default class NewClass extends cc.Component {
         }
         
         // Add sigmoidal effect
-        let sigmoidalInfluence = world.sigmoidalPercent(country.pop_prepared_percent, 5) + 0.5;
+        let decayInfluence = world.sigmoidalDecay(country.pop_prepared_percent, 10.0);
 
-        return severityEffect * sigmoidalInfluence;
+        return severityEffect * decayInfluence;
 
     }
 
@@ -3072,8 +3093,6 @@ export default class NewClass extends cc.Component {
 
         if (world.gameParams.startCountry === null || world.gameParams.state !== world.res.GAME_STATES.PREPARED)
             return;
-
-        let buttons = [];
 
         const country = world.countries[world.gameParams.startCountry];
         country.policy = 1.0;
@@ -3361,10 +3380,17 @@ export default class NewClass extends cc.Component {
             for (let i = 0; i < world.buttons.length; i++) {
 
                 const button = world.buttons[i];
-                if (world.gameParams.counter > button.placedAt + world.res.RESOURCE_DURATION) 
-                    button.removeFromParent();
-                else 
+                if (button.name == 'Resource' && world.gameParams.counter > button.placedAt + world.res.RESOURCE_DURATION) {
+
+                    button.destroy();
+
+                }
+                else {
+
                     newButtons.push(button);
+
+                }
+                    
 
             }
             world.buttons = newButtons;

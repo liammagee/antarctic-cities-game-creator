@@ -14,7 +14,15 @@
       },
       "props": {
         "u_percentageLoss": 0,
-        "u_percentagePrep": 0
+        "u_percentagePrep": 0,
+        "u_randFactor": 0.8,
+        "u_randAlpha": 0,
+        "u_cellSize": 10,
+        "u_sizeMultiplier": 1.75,
+        "u_sizePower": 3,
+        "u_dimPower": 0.6,
+        "u_stepMax": 0.5,
+        "u_stepMin": 0.5
       }
     }
   }
