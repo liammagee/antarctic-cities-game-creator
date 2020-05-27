@@ -1,7 +1,7 @@
 {
   "group-list": [
     "default",
-    "resourceScore"
+    ""
   ],
   "collision-matrix": [
     [
@@ -25,10 +25,10 @@
     "3D Physics/Builtin",
     "3D Particle"
   ],
-  "last-module-event-record-time": 1589954803572,
+  "last-module-event-record-time": 1590620508047,
   "design-resolution-width": 1334,
   "design-resolution-height": 750,
-  "fit-width": false,
+  "fit-width": true,
   "fit-height": true,
   "use-project-simulator-setting": false,
   "simulator-orientation": false,

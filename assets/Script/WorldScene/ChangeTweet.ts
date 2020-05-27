@@ -28,7 +28,7 @@ export default class NewClass extends cc.Component {
 
     tweetRendered() {
         
-        let world = cc.director.getScene().getChildByName('layout').getComponent("GameController");
+        let world = cc.director.getScene().getChildByName('Canvas').getChildByName('layout').getComponent("GameController");
         let tweetLabel = world.node.getChildByName("topBar").getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet");
         let gameParams = world.gameParams;
         let message = gameParams.scenarioName, 

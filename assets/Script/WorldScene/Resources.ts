@@ -72,6 +72,8 @@ export class Resources extends cc.Component {
     // DEFAULT LOSS CUTOFFs - Can be modified by narratives below
     LOSS_TOTAL = 80;
     LOSS_PARTIAL = 80;
+    // Game play parameters
+    SIGMOIDAL_DECAY = true;
 
     // RESOURCES
     res = {

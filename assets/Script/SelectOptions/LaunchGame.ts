@@ -22,7 +22,7 @@ export default class NewClass extends cc.Component {
         if (cc.sys.localStorage.greyscale === undefined)
             cc.sys.localStorage.greyscale = true;
 
-        this.node.on('mouseup', function ( event ) {
+        this.node.on(cc.Node.EventType.TOUCH_END, function ( event ) {
 
             cc.director.loadScene("WorldScene");
 

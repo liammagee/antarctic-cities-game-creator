@@ -1083,7 +1083,7 @@ export default class NewClass extends cc.Component {
 
         let world = this.world;
         let scene = cc.director.getScene();
-        let layout = scene.getChildByName('layout');
+        let layout = scene.getChildByName('Canvas').getChildByName('layout');
         let bottomBar = layout.getChildByName('bottomBar');
         
         bottomBar.getChildByName('btnDesignPolicy').getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = world.res.lang.commands_policy[cc.sys.localStorage.language];
@@ -1240,15 +1240,15 @@ export default class NewClass extends cc.Component {
         world.btnPlay = world.topBar.getChildByName("btnPlay");
         world.btnFF = world.topBar.getChildByName("btnFF");
         world.tweetLabel = world.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Label);
-        world.bottomBar = cc.director.getScene().getChildByName("layout").getChildByName("bottomBar");
+        world.bottomBar = cc.director.getScene().getChildByName('Canvas').getChildByName("layout").getChildByName("bottomBar");
         world.countryLabel = world.bottomBar.getChildByName("lblCountry").getComponent(cc.Label);
         world.countryLoss = world.bottomBar.getChildByName("lblLossPercent").getComponent(cc.Label);
         world.countryLossProgress = world.bottomBar.getChildByName("progressBarLoss").getComponent(cc.ProgressBar);
         world.countryAwarePrepared = world.bottomBar.getChildByName("lblPreparednessPercent").getComponent(cc.Label);
         world.countryPreparedProgress = world.bottomBar.getChildByName("progressBarPreparedness").getComponent(cc.ProgressBar);
-        world.resourceScoreLabel = cc.director.getScene().getChildByName("resourceScoreBackground").getChildByName("lblResourceScore").getComponent(cc.Label);
-        world.quizBox = cc.director.getScene().getChildByName("layerQuizBox");
-        world.settingsBox = cc.director.getScene().getChildByName("layerSettings");
+        world.resourceScoreLabel = cc.director.getScene().getChildByName('Canvas').getChildByName("resourceScoreBackground").getChildByName("lblResourceScore").getComponent(cc.Label);
+        world.quizBox = cc.director.getScene().getChildByName('Canvas').getChildByName("layerQuizBox");
+        world.settingsBox = cc.director.getScene().getChildByName('Canvas').getChildByName("layerSettings");
 
         // Handlers
         world.handleMouseTouchEvent(world.topBar.getChildByName("btnQuit"), function() {
@@ -1342,9 +1342,9 @@ export default class NewClass extends cc.Component {
 
         let btnDesignPolicy = world.node.getChildByName("bottomBar").getChildByName("btnDesignPolicy");
         let btnStats = world.node.getChildByName("bottomBar").getChildByName("btnStats");
-        let designPolicy = cc.director.getScene().getChildByName("layerDesignPolicy");
-        let resourceScore = cc.director.getScene().getChildByName("resourceScoreBackground");
-        let stats = cc.director.getScene().getChildByName("layerStats");
+        let designPolicy = cc.director.getScene().getChildByName('Canvas').getChildByName("layerDesignPolicy");
+        let resourceScore = cc.director.getScene().getChildByName('Canvas').getChildByName("resourceScoreBackground");
+        let stats = cc.director.getScene().getChildByName('Canvas').getChildByName("layerStats");
 
 
         // Add handling for bottom bar buttons
@@ -1354,7 +1354,7 @@ export default class NewClass extends cc.Component {
             world.gameParams.state = world.res.GAME_STATES.PAUSED;
             designPolicy.zIndex = 105;
             resourceScore.zIndex = 106;
-            let layerDesignPolicy = cc.director.getScene().getChildByName("layerDesignPolicy");
+            let layerDesignPolicy = cc.director.getScene().getChildByName('Canvas').getChildByName("layerDesignPolicy");
             let policyLabel = layerDesignPolicy.getChildByName("policyLabel");
             let policyDescription = layerDesignPolicy.getChildByName("policyDescription");
             let policyCostLabel = layerDesignPolicy.getChildByName("policyCostLabel");
@@ -1564,9 +1564,9 @@ export default class NewClass extends cc.Component {
 
         let world = this.world;
 
-        let layerDesignPolicy = cc.director.getScene().getChildByName("layerDesignPolicy");
+        let layerDesignPolicy = cc.director.getScene().getChildByName('Canvas').getChildByName("layerDesignPolicy");
         let pageView = layerDesignPolicy.getChildByName("pageview").getComponent(cc.PageView);
-        let resourceScoreLabel = cc.director.getScene().getChildByName("resourceScoreBackground").getChildByName("lblResourceScore").getComponent(cc.Label);
+        let resourceScoreLabel = cc.director.getScene().getChildByName('Canvas').getChildByName("resourceScoreBackground").getChildByName("lblResourceScore").getComponent(cc.Label);
 
         // Switch pages
         let btnEconomy = layerDesignPolicy.getChildByName("btnEconomy");
@@ -1944,7 +1944,7 @@ export default class NewClass extends cc.Component {
 
         let world = this.world;
 
-        let layerStats = cc.director.getScene().getChildByName("layerStats");
+        let layerStats = cc.director.getScene().getChildByName('Canvas').getChildByName("layerStats");
 
         let pageView = layerStats.getChildByName("pageview").getComponent(cc.PageView);
 
@@ -2619,18 +2619,15 @@ export default class NewClass extends cc.Component {
      */
     sigmoidalDecay(percent, inflectionPoint) {
 
-        if (inflectionPoint === undefined)
-            inflectionPoint = 50;
+        if (!this.world.res.SIGMOIDAL_DECAY)
+            return 1.0;
+
+        inflectionPoint = (inflectionPoint === undefined) ? 50 : inflectionPoint;
 
         // Some value between 0.0 and 1.0 (where inflectionPoint = 50.0)
-        let normedPercent = Math.abs(( percent - inflectionPoint ) / inflectionPoint);
-        let normedPercentWithFactor = normedPercent * 1.0;
+        let normedInverse = 1.0 - Math.abs(( percent - inflectionPoint ) / inflectionPoint);
         // Some value between e (2.78...) and 1 / e (0.367) (or lower if inflection point != 50.0)
-        let sd = 1 / Math.pow(Math.E, normedPercentWithFactor);
-        // ensure the minimum value is 1.0
-        sd += 1.0;
-
-        return sd;
+        return Math.pow(Math.E, normedInverse);
 
     }
 
@@ -2672,8 +2669,8 @@ export default class NewClass extends cc.Component {
                 
         });
 
-        const decayLossFactor = ( 1 + (rateOfLossFactor - 1) * world.sigmoidalDecay(lossCurrent, 50.0) );
-        let lossNew = lossCurrent + (decayLossFactor - 1);
+        const decayLossFactor = ( (rateOfLossFactor - 1) * world.sigmoidalDecay(lossCurrent, 50.0) );
+        let lossNew = lossCurrent + decayLossFactor;
         if (country.iso_a3 == 'AUS') {
             console.log("se: "+decayLossFactor+":"+rateOfLossFactor)
         }
@@ -3028,7 +3025,7 @@ export default class NewClass extends cc.Component {
         }
         
         // Add sigmoidal effect
-        let decayInfluence = world.sigmoidalDecay(country.pop_prepared_percent, 10.0);
+        let decayInfluence = world.sigmoidalDecay(country.pop_prepared_percent, 50.0);
 
         return severityEffect * decayInfluence;
 
@@ -3460,7 +3457,7 @@ export default class NewClass extends cc.Component {
 
         // This code works only on web platform. To use this features on native platform, please refer to the capture_to_native scene in example-cases.
         let node = new cc.Node();
-        node.parent = cc.director.getScene();
+        node.parent = cc.director.getScene().getChildByName('Canvas');
         node.zIndex = cc.macro.MAX_ZINDEX;
         let w = cc.winSize.width;
         let h = cc.winSize.height;
