@@ -31,8 +31,18 @@ export default class NewClass extends cc.Component {
 
     playGame (playGame: cc.Button) {
 
-        if (this.play.interactable)
+        if (this.play.interactable) {
+
+            if (cc.sys.isMobile) {
+
+                cc.screen['requestFullScreen'](null, () => {
+                    cc.log('now fullscreen');
+                });
+
+            }
             cc.director.loadScene("SelectOptions");
+
+        }
 
     }
 
