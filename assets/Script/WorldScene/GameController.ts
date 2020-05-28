@@ -2671,9 +2671,9 @@ export default class NewClass extends cc.Component {
 
         const decayLossFactor = ( (rateOfLossFactor - 1) * world.sigmoidalDecay(lossCurrent, 50.0) );
         let lossNew = lossCurrent + decayLossFactor;
-        if (country.iso_a3 == 'AUS') {
-            console.log("se: "+decayLossFactor+":"+rateOfLossFactor)
-        }
+        // if (country.iso_a3 == 'AUS') {
+        //     console.log("se: "+decayLossFactor+":"+rateOfLossFactor)
+        // }
         if (lossNew > 100)
             lossNew = 100;
         if (lossNew < 0)

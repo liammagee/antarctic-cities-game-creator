@@ -194,9 +194,8 @@ CCProgram fs %{
       accum += texture(texture, (coord.xy + vec2(- radius, radius)));
       accum /= 9.;
       accum = 1.0 - (abs(0.5 - accum) * 2.);
-      accum.rgb = vec3(1.0) * accum.a;
-      // accum.rgb = greyDark * accum.a;
-      // accum *= u_selected;
+      accum.rgb = greyDark * accum.a;
+      accum *= u_selected;
       return accum;
   }
 

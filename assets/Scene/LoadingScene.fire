@@ -856,7 +856,7 @@
       "ctor": "Float64Array",
       "array": [
         40,
-        -19.554000000000002,
+        -19.554,
         0,
         0,
         0,
@@ -2111,6 +2111,9 @@
     },
     "consent": {
       "__id__": 21
+    },
+    "lblConsent": {
+      "__id__": 17
     },
     "_id": "c3EuwuP0hFm5J9npagTmEQ"
   }

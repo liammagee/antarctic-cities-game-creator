@@ -16,9 +16,18 @@ export default class NewClass extends cc.Component {
     @property(cc.Toggle)
     consent: cc.Toggle = null;
 
+    @property(cc.Label)
+    lblConsent: cc.Label = null;
+
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+        
+        this.lblConsent.node.on(cc.Node.EventType.TOUCH_END, (event) => {
+            
+            this.consent.node.emit(cc.Node.EventType.TOUCH_END, event);
+ 
+        }, this);
 
     }
 
