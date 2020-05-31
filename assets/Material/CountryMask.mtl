@@ -16,7 +16,7 @@
         "u_percentageLoss": 0,
         "u_percentagePrep": 0,
         "u_randFactor": 0.8,
-        "u_randAlpha": 0,
+        "u_randAlpha": 1,
         "u_cellSize": 10,
         "u_sizeMultiplier": 1.75,
         "u_sizePower": 3,

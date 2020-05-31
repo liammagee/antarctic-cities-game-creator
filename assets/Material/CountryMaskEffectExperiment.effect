@@ -168,7 +168,7 @@ CCProgram fs %{
       float v1 = ( 1.0 - u_percentageLoss / 100.0 );
       v1 = 1.0 - pow(v1, u_dimPower);
       v1 = step(v1, 1.-r);
-      // ci *= v1;
+      ci *= v1;
       return ci;
   }
 
@@ -216,9 +216,6 @@ CCProgram fs %{
       return accum;
   }
 
-  vec4 overlayOld(vec4 under, vec4 over) {
-      return step(over, 0.5) + ((1.-length(over.rgb)*over.a) * under);
-  }
   vec4 overlay(vec4 under, vec4 over) {
       return over.a * over + ((1.-length(over.rgb)*over.a) * under);
   }
@@ -268,18 +265,25 @@ CCProgram fs %{
     // float rred = 1.0-dotIntensity(st, vec2(0., 0.));
     float rgreen = randForCell(-st, vec2(-u_cellSize * 0.5, -u_cellSize * 0.5));
     vec4 af_test = vec4(1.0);
-    vec4 af_red = vec4(153.0 / 255.0, 51.0 / 255.0, 51.0 / 255.0, 1.0);
-    // vec4 af_red = vec4(255.0 / 255.0, 51.0 / 255.0, 51.0 / 255.0, 1.0);
+    // vec4 af_red = vec4(153.0 / 255.0, 51.0 / 255.0, 51.0 / 255.0, 1.0);
+    vec4 af_red = vec4(255.0 / 255.0, 51.0 / 255.0, 51.0 / 255.0, 1.0);
     vec4 af_green = vec4(153.0 / 255.0, 204.0 / 255.0, 102.0 / 255.0, 1.0);
     vec4 color1 = af_red * di1;
-    color1 *= smoothstep(rred, rred, 1. - v1);
+    // color1 *= smoothstep(di1*.1, di1*.1, 1. - v1);
+    // color1 *= step(1. - v1, di1*.5);
+    // color1 *= smoothstep(rred, rred, 1. - v1);
+    // color1 *= smoothstep(di1 * rred, di1 * rred, 1. - v1);
+    // color1 *= step( 1. - v1, rred);
+    // vec4 color2 = vec4(0., di2, 0., di2);
     vec4 color2 = af_green * di2;
+    // color2 *= 1. - v2;
     color2 *= smoothstep(rgreen, rgreen, 1. - v2);
     mask = overlay(mask, color1);
-    mask = overlay(mask, color2);
+    // mask = overlay(mask, color2);
 
     ALPHA_TEST(o);
 
     gl_FragColor = mask;
+    // gl_FragColor = vec4(mask.r, 0.0, 0.0, 1.0);
   }
 }%

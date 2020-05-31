@@ -55,6 +55,12 @@ export default class NewClass extends cc.Component {
 
     }
 
+    learnMove() {
+
+        cc.sys.openURL("https://antarctic-cities.org/the-game/");
+
+    }
+
     start () {
 
     }

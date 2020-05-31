@@ -28,8 +28,9 @@ export default class NewClass extends cc.Component {
 
     tweetRendered() {
         
-        let world = cc.director.getScene().getChildByName('Canvas').getChildByName('layout').getComponent("GameController");
-        let tweetLabel = world.node.getChildByName("topBar").getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet");
+        let universe = cc.director.getScene().getChildByName('Canvas').getChildByName('layout').getComponent("GameController");
+        let world = universe.world;
+        let tweetLabel = universe.node.getChildByName("topBar").getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet");
         let gameParams = world.gameParams;
         let message = gameParams.scenarioName, 
                     messageIndex = -1;
@@ -55,7 +56,7 @@ export default class NewClass extends cc.Component {
                 message = gameParams.messagesPositive[messageIndex];
 
             }
-            tweetLabel.color = world.res.COLOR_ICE;
+            tweetLabel.color = universe.colors.COLOR_ICE;
 
         }
         
