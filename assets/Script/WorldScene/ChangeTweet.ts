@@ -28,35 +28,35 @@ export default class NewClass extends cc.Component {
 
     tweetRendered() {
         
-        let universe = cc.director.getScene().getChildByName('Canvas').getChildByName('layout').getComponent("GameController");
-        let world = universe.world;
-        let tweetLabel = universe.node.getChildByName("topBar").getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet");
-        let gameParams = world.gameParams;
-        let message = gameParams.scenarioName, 
+        let controller = cc.director.getScene().getChildByName('Canvas').getChildByName('layout').getComponent("GameController");
+        let world = controller.world;
+        let tweetLabel = controller.node.getChildByName("topBar").getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet");
+        let gameState = world.gameState;
+        let message = gameState.scenarioName, 
                     messageIndex = -1;
-        if (gameParams.messageOverride != null) {
+        if (gameState.messageOverride != null) {
             
-            message = gameParams.messageOverride;
-            tweetLabel.color = world.res.COLOR_RED;
-            gameParams.messageOverride = null;
+            message = gameState.messageOverride;
+            tweetLabel.color = world.colours.COLOR_RED;
+            gameState.messageOverride = null;
 
         }    
-        else if (gameParams.totalLoss > 0 || gameParams.populationPreparedPercent > 0) {
+        else if (gameState.totalLoss > 0 || gameState.populationPreparedPercent > 0) {
 
-            const weight = gameParams.totalLoss / (gameParams.totalLoss + gameParams.populationPreparedPercent);
+            const weight = gameState.totalLoss / (gameState.totalLoss + gameState.populationPreparedPercent);
             if (Math.random() < weight) {
 
-                messageIndex = Math.floor(Math.random() * gameParams.messagesNegative.length);
-                message = gameParams.messagesNegative[messageIndex];
+                messageIndex = Math.floor(Math.random() * gameState.messagesNegative.length);
+                message = gameState.messagesNegative[messageIndex];
 
             }
             else {
                 
-                messageIndex = Math.floor(Math.random() * gameParams.messagesPositive.length);
-                message = gameParams.messagesPositive[messageIndex];
+                messageIndex = Math.floor(Math.random() * gameState.messagesPositive.length);
+                message = gameState.messagesPositive[messageIndex];
 
             }
-            tweetLabel.color = universe.colors.COLOR_ICE;
+            tweetLabel.color = controller.colors.COLOR_ICE;
 
         }
         
