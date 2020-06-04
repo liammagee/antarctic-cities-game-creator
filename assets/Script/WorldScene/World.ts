@@ -2,6 +2,10 @@
 import {Resources} from './Resources';
 
 
+export class Utils {
+
+}
+
 /**
  * Proxy struct for Point
  */
@@ -88,6 +92,7 @@ export class Policy {
     cost_2: number = 0
     cost_3: number = 0
     
+
 }
 
 export class GameState  {
@@ -123,6 +128,7 @@ export class GameState  {
     rateOfLoss: number = 0
     minimumLoss: number = 0
     totalLoss: number = 0
+    finalState: number = -1
     scenarioName: string = ''
     messagesNegative: string[] = []
     messagesPositive: string[] = []
@@ -540,21 +546,19 @@ export class World {
             const source = world.gameState.policyOptions[i+1];
             world.gameState.policyRelations[source.id] = {};
     
-            for (let j = i + 1; j < policyLen; j++){
-    
+            // for (let j = i + 1; j < policyLen; j++){
+            for (let j = 0; j < policyLen; j++){
+                if (j == i)
+                    continue;
+
                 const target = world.gameState.policyOptions[j+1];
                 if (world.gameState.policyRelations[target.id] === undefined)
                     world.gameState.policyRelations[target.id] = {};
                 
-                const val = world.res.RESOURCE_MATRIX[j][i];
-                const rel = world.res.RESOURCE_RELATIONS[j][i];
+                let val = world.res.RESOURCE_MATRIX[i][j];
+                val = val == undefined ? 0 : val;
                 world.gameState.policyRelations[source.id][target.id] = val;
                 
-                if (rel == 1) {
-    
-                    world.gameState.policyRelations[target.id][source.id] = val;
-    
-                }
     
             }
     
@@ -692,7 +696,6 @@ export class World {
         const preparednessFactor = 1 + 0.1 * country.pop_prepared_percent / 100.0;
         rateOfLossFactor /= preparednessFactor;
 
-        //let crisis = world.res.CRISES[world.gameState.crises[0].crisis];
         world.gameState.crises.forEach(crisisInCountry => {
             
             const crisis = world.res.CRISES[crisisInCountry.crisis];
@@ -973,22 +976,20 @@ export class World {
 
     }
 
-    calculateSinglePolicyImpactOnPreparedness(country, index) {
+    calculateSinglePolicyImpactOnPreparedness(country, keys, relations, policyId) {
 
         let world = this;
 
         let severityEffect = 1.0;
 
-        const policyID = parseInt(Object.keys(world.gameState.policies)[index]);
-        const policy = world.gameState.policyOptions[policyID];
-        const level = world.gameState.policies[policyID];
+        const policy = world.gameState.policyOptions[policyId];
+        const level = world.gameState.policies[policyId];
 
         // Generate a natural log, so that level 1 = 1; level 2 = 1.31; level 3 = 1.55
         const levelMultiplier = Math.log(level + 1.718);
 
         // Check population
         const pop = parseInt(country.pop_est);
-        // https://content.meteoblue.com/en/meteoscool/general-climate-zones
         if (pop < 10000000) {
 
             severityEffect *= (1 + policy.effect_on_pop_low * levelMultiplier);
@@ -1046,21 +1047,23 @@ export class World {
 
         }
 
+
         // Calculate impact of other strategies
-        for (let j = index + 1; j < Object.keys(world.gameState.policies).length; j++) {
-            // if (i == j)
-            //     continue;
+        for (let j = 0; j < keys.length; j++) {
 
-            const otherPolicyID = parseInt(Object.keys(world.gameState.policies)[j]);
+            const otherPolicyID = parseInt(keys[j]);
+            if (otherPolicyID == policyId)
+                continue;
+
             const otherLevel = world.gameState.policies[otherPolicyID];
-            // Generate a natural log, so that level 1 = 1; level 2 = 1.31; level 3 = 1.55
-            const otherLevelMultiplier = Math.log(otherLevel + 1.718);
+            // Generate a natural log, so that level 1 = 0.57; level 2 = 0.75; level 3 = 0.89
+            const otherLevelMultiplier = Math.log(Math.E + (otherLevel - 1)) / Math.log(Math.E + (3));
 
-            const relation = world.gameState.policyRelations[policyID][otherPolicyID];
+            const val = relations[otherPolicyID];
             
-            if (typeof(relation) !== "undefined") {
+            if (val !== undefined) {
             
-                severityEffect *= (1 + relation * otherLevelMultiplier);
+                severityEffect *= (1.000001 + val * otherLevelMultiplier);
             
             }
 
@@ -1076,9 +1079,12 @@ export class World {
 
         let severityEffect = 1.0;
 
-        for (let i = 0; i < Object.keys(world.gameState.policies).length; i++) {
+        let keys = Object.keys(world.gameState.policies);
+        for (let i = 0; i < keys.length; i++) {
 
-            severityEffect *= world.calculateSinglePolicyImpactOnPreparedness(country, i);
+            let policyId = keys[i];
+            let relations = world.gameState.policyRelations[policyId];
+            severityEffect *= world.calculateSinglePolicyImpactOnPreparedness(country, keys, relations, policyId);
 
         }
         
@@ -1142,4 +1148,397 @@ export class World {
             
     }
 
+    adjustEffect(effect) {
+
+        let world = this;
+
+        // Effect must be positive
+        effect += 1.000001;
+        // Invert effect
+        effect = 1.0 / effect;
+        // Multiply by difficulty
+        if (effect > 1.0)
+            effect = Math.pow(effect, world.gameState.difficultyMultiplier);
+        else 
+            effect = Math.pow(effect, 1.0 / world.gameState.difficultyMultiplier);
+
+        return effect;
+
+    }
+
+
+
+    isItTimeForNewResources() {
+
+        let world = this;
+
+        let ri = world.gameState.resourceInterval;
+        world.gameState.crises.forEach(crisisInCountry => {
+            
+            let crisis = world.res.CRISES[crisisInCountry.crisis];
+            let crisisEffect = crisis.effect_on_resources;
+            let country = world.countries[crisisInCountry.country];
+            // Add country-specific effects here
+            // ...
+    
+            // Add to overall effect
+            ri *= world.adjustEffect(crisisEffect);
+            
+        }); 
+    
+        Object.keys(world.gameState.policies).forEach(policyID => {
+    
+            let policy = world.gameState.policyOptions[policyID];
+            let policyLevel = world.gameState.policies[policyID];
+            let policyEffect = policy.effect_on_resources * Math.log(policyLevel + 1.718);
+    
+            ri *= world.adjustEffect(policyEffect);
+            
+        }); 
+
+        return ri;
+
+    }
+
+
+    isItTimeForNewCrisis() {
+
+        let world = this;
+
+        let ci = world.gameState.crisisInterval;
+        Object.keys(world.gameState.policies).forEach(policyID => {
+    
+            const policy = world.gameState.policyOptions[policyID];
+            const policyLevel = world.gameState.policies[policyID];
+            ci /= 1 + (policy.effect_on_crises * Math.log(policyLevel + 1.718));
+            
+        });        
+        
+        return ci;
+
+    }
+
+
+    /**
+     * Updates various game state time variables.
+     * Should be called only when the game counter is divisable by TIME_INTERVAL.
+     */
+    updateGameTime(callback: Function) {
+
+        let world = this;
+
+        let message = undefined;
+
+        world.gameState.currentDate = new Date(world.gameState.currentDate.valueOf());
+        world.gameState.currentDate.setDate(world.gameState.currentDate.getDate() + 30.417);
+
+        // Get the current and previous year
+        const currentYear = world.gameState.currentDate.getFullYear();
+        const previousYear = world.gameState.previousDate.getFullYear();
+        
+        // When the year has changed
+        if (currentYear > previousYear) {
+
+            world.gameState.stats[previousYear] = {
+                loss: world.gameState.totalLoss,
+                prepared: world.gameState.populationPreparedPercent
+            };
+
+            // Sort narratives by loss for comparison
+            const narratives = Object.values(world.res.NARRATIVES.n2048).sort((o1, o2) => {return o2.loss - o1.loss});
+
+            switch (currentYear) {
+                case 2048:
+                   
+                    for (let i = 0; i < narratives.length; i++) {
+                    
+                        const n = narratives[i];
+                    
+                        if (world.gameState.totalLoss >= n.loss) {
+                            
+                            let index = Math.floor(Math.random() * n[world.gameState.language].length);
+                            message = n[world.gameState.language][index];
+                            break;
+
+                        }
+
+                    }
+                    break;
+                // Add other year breaks here
+                default:
+                    break;
+
+            }
+
+        }
+
+        // world.gameState.previousDate = world.gameState.currentDate;
+
+        if (callback!== undefined && message !== undefined) {
+
+            callback(message);
+
+        }
+
+        return message;
+
+    }
+
+    updateGameStats() {
+
+        let world  = this;
+
+        // Add policy robustness and loss
+        let totalPolicy = 0, totalLoss = 0;
+        let countriedAffected = 0, populationAware = 0, populationPrepared = 0;
+        
+        Object.keys(world.countries).forEach( key => {
+
+            const country = world.countries[key];
+            const loss = world.evaluateLoss(country);
+
+            // if (loss >= 0.1) {
+                country.previousLoss = country.loss;
+                country.loss = loss;
+            // }
+
+            if (country.affected_chance) {
+
+                world.transmitFrom(country);
+                world.infectWithin(country);
+                world.registerPreparednessWithin(country);
+
+                countriedAffected++;
+                populationAware += country.pop_aware;
+                populationPrepared += country.pop_prepared;
+
+                country.pop_aware_percent = 100 * country.pop_aware / country.pop_est;
+                let existingConvincedPercentage = country.pop_prepared_percent;
+                country.pop_prepared_percent = 100 * country.pop_prepared / country.pop_est;
+
+                let imin = (existingConvincedPercentage > 0.5) ? parseInt(existingConvincedPercentage) : 0;
+                let imax = (country.pop_prepared_percent > 0.5) ? parseInt(country.pop_prepared_percent) : 0;
+
+            }
+
+            totalPolicy += country.policy;
+            totalLoss += country.loss;
+
+        });
+
+        totalPolicy /= Object.keys(world.countries).length;
+        world.gameState.policy = totalPolicy;
+
+        totalLoss /= Object.keys(world.countries).length;
+        world.gameState.previousLoss = totalLoss;
+        world.gameState.totalLoss = totalLoss;
+
+        world.gameState.countriedAffected = countriedAffected;
+        world.gameState.populationAware = populationAware;
+        world.gameState.populationPrepared = populationPrepared;
+        world.gameState.populationAwarePercent = 100 * world.gameState.populationAware / world.gameState.populationWorld;
+        world.gameState.populationPreparedPercent = 100 * world.gameState.populationPrepared / world.gameState.populationWorld;
+
+
+    }
+
+                            
+    /**
+     * Calculate the probability distribution of crisis & country
+     */ 
+    crisisProbDistribution() {
+        
+        let world = this;
+
+        const probs = [];
+        const crisisKeys = Object.keys(world.res.CRISES);
+        const countryKeys = Object.keys(world.countries);
+        let denom = 0;
+
+        crisisKeys.forEach(ck => {
+
+            const crisis = world.res.CRISES[ck];
+            
+            countryKeys.forEach(yk => {
+            
+                const country = world.countries[yk];
+                const lossProp = country.loss / world.gameState.totalLoss;
+                const preparedProp = country.pop_prepared_percent / world.gameState.populationPreparedPercent;
+                
+                let totalInfluence = 1.0;
+                totalInfluence += lossProp * crisis.influence_of_environmental_loss;
+                totalInfluence += preparedProp * crisis.influence_of_preparedness;
+                
+                if (isNaN(totalInfluence))
+                    totalInfluence = 0.0;
+                
+                // if (totalInfluence > 0) {
+                
+                    denom += totalInfluence;
+                    probs.push(totalInfluence);
+                
+                // }
+
+            });
+
+        });
+
+        if (denom > 0.0) {
+
+            for (let i = 0; i < probs.length; i++) {
+        
+                probs[i] /= denom;
+            
+            }
+    
+        }
+
+        return probs;
+
+    }
+
+    crisisProbLocation(r) {
+
+        let world = this;
+
+        const probs = world.crisisProbDistribution();
+        const crisisKeys = Object.keys(world.res.CRISES);
+        const countryKeys = Object.keys(world.countries);
+        let crisisCountry = new CrisisCountry();
+        let counter = 0;
+        
+        for (let i = 0; i < probs.length; i++) {
+        
+            counter += probs[i];
+
+            if (r < counter) {
+
+                const crisisID = Math.floor(crisisKeys.length * i / probs.length);
+                const countryID = i % countryKeys.length;
+                let crisisCountry = new CrisisCountry();
+                crisisCountry.crisis = crisisKeys[crisisID];
+                crisisCountry.country = countryKeys[countryID];
+                crisisCountry.id = i;
+                crisisCountry.counter = world.gameState.counter;
+                return crisisCountry;
+
+            }
+
+
+        
+        }
+
+        return undefined;
+
+    }
+
+
+
+    generateResourceDistribution() {
+
+        let world = this;
+
+        let dists = [];
+        let total = 0;
+
+        for (let i = 0; i < 16; i++) {
+
+            let weight = 1;
+            if (world.gameState.policies[i + 1] !== undefined) 
+                weight += world.gameState.policies[i + 1];
+            
+            total += weight;
+            dists.push(weight);
+
+        }
+
+        for (let i = 0; i < dists.length; i++) {
+
+            dists[i] /= total;
+
+        }
+
+        return dists;
+
+    }
+
+
+    generateWeightedPolicyIndex(r) {
+        
+        let world = this;
+
+        let dists = world.generateResourceDistribution();
+        let counter = 0;
+        let chosenPolicy = 0;
+
+        for (let i = 0; i < dists.length; i++) {
+
+            let prob = dists[i];
+            counter += prob;
+
+            if (counter > r) {
+
+                chosenPolicy = i;
+                break;
+            
+            }
+
+        }
+
+        return chosenPolicy;
+
+    }
+
+
+    costCalculation(policy) {
+            
+        let world = this;
+
+        let policyLevel = world.gameState.policies[policy.id];
+        let cost = policy.cost_1;
+
+        if (policyLevel !== undefined) {
+
+            switch(policyLevel) {
+                case 1:
+                    cost = policy.cost_2;
+                    break;
+                case 2:
+                    cost = policy.cost_3;
+                    break;
+                case 3:
+                    cost = 0;
+                    break;
+            }
+
+        }
+
+        let dists = world.generateResourceDistribution();
+        let policyCategory = Math.floor((policy.id - 1) / 4);
+        let weights = [];
+
+        for (let i = 0; i < dists.length; i++) {
+
+            if (i % 4 == 0) {
+
+                weights.push(dists[i] * 4);
+                
+            }
+            else {
+
+                let wi = Math.floor(i / 4);
+                weights[wi] += dists[i] * 4;
+
+            }
+
+        }
+
+        if (weights[policyCategory] > 1)
+            cost *= weights[policyCategory];
+        
+        cost = Math.round(cost);
+
+        return cost;
+
+    };
 }

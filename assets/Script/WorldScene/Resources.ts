@@ -120,7 +120,7 @@ export class Resources  {
                 effect_on_transmissability: 0,
                 effect_on_infectivity: 0,
                 effect_on_resources: 0.2,
-                effect_on_crises: 0.5,
+                effect_on_crises: 0.05,
                 effect_on_pop_high: 0,
                 effect_on_pop_medium: -0.05,
                 effect_on_pop_low: -0.1,
@@ -160,7 +160,7 @@ export class Resources  {
                 effect_on_transmissability: 0,
                 effect_on_infectivity: 0,
                 effect_on_resources: 0.4,
-                effect_on_crises: 0.5,
+                effect_on_crises: 0.05,
                 effect_on_pop_high: -0.1,
                 effect_on_pop_medium: 0,
                 effect_on_pop_low: 0.2,
@@ -200,7 +200,7 @@ export class Resources  {
                 effect_on_transmissability: 0,
                 effect_on_infectivity: 0,
                 effect_on_resources: 0.3,
-                effect_on_crises: 0.0,
+                effect_on_crises: -0.05,
                 effect_on_pop_high: 0.05,
                 effect_on_pop_medium: 0,
                 effect_on_pop_low: 0,
@@ -240,7 +240,7 @@ export class Resources  {
                 effect_on_transmissability: 0,
                 effect_on_infectivity: 0,
                 effect_on_resources: 0.2,
-                effect_on_crises: 1.0,
+                effect_on_crises: 0.1,
                 effect_on_pop_high: -0.1,
                 effect_on_pop_medium: -0.1,
                 effect_on_pop_low: -0.05,
@@ -411,7 +411,7 @@ export class Resources  {
                 effect_on_transmissability: 0,
                 effect_on_infectivity: 0,
                 effect_on_resources: 0.1,
-                effect_on_crises: 1.0,
+                effect_on_crises: 0.1,
                 effect_on_pop_high: -0.05,
                 effect_on_pop_medium: 0,
                 effect_on_pop_low: 0,
@@ -777,7 +777,7 @@ export class Resources  {
     };
 
 
-    RESOURCE_MATRIX = [
+    RESOURCE_MATRIX2 = [
         [ 0		                                                                ],
         [ 0 	,0	                                                            ],
         [ 0     ,0	,0						 ],
@@ -796,24 +796,23 @@ export class Resources  {
         [ 0 	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0   ]
     ];
 
-    RESOURCE_RELATIONS = [
-        [0															],
-        [0	,0														],
-        [0	,0	,0													],
-        [1	,0	,0	,0												],
-        [0	,0	,0	,0	,0											],
-        [0	,0	,0	,0	,0	,0										],
-        [0	,0	,0	,0	,0	,0	,0									],
-        [0	,0	,0	,0	,0	,0	,0	,0								],
-        [0	,0	,0	,0	,0	,0	,0	,0	,0							],
-        [0	,0	,0	,0	,0	,0	,0	,0	,0	,0						],
-        [1	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0					],
-        [0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0				],
-        [0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0			],
-        [0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0		],
-        [0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	],
-        [0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0]
-    ];
+    RESOURCE_MATRIX = [
+        [0, 0.4, -0.5, 1, 0, -0.5, -0.2, 0, 0.2, 0.2, 0.1, 0, 0.1, 0.1, 0.1, -0.1],
+        [0.1, 0, -0.7, 0, 0, -0.3, -0.1, 0.2, 0.1, 0, -0.2, 0, 0.2, 0.2, 0.1, 0],
+        [-0.5, -0.5, 0, -0.8, 0.2, 0.8, 0.2, -0.3, 0.1, 0.1, 1, -0.4, 0.2, 0.4, 0.2, 0.1],
+        [1, 0.6, -1, 0, 0.2, -0.7, 0.2, 0.2, 0.4, 0.4, -0.6, 0, -0.7, -0.8, 0.2, -1],
+        [0.6, -0.2, 0.2, -0.6, 0, 0.4, 1, -0.5, 0, 0.1, 0.5, -0.4, 0.1, 0.1, 0.5, 0.5],
+        [0, -0.1, 0.5, -0.6, 0.6, 0, 0.4, -0.8, 0.3, 0.2, 0.6, -0.1, 0.3, 0.4, 0.3, 0.3],
+        [-0.1, -0.4, 0.2, 0.4, 0.6, 0.5, 0, -0.6, 0.1, 0.3, 0.2, 0.1, 0.2, 0.1, 0.4, 0.4],
+        [0.1, 0.4, -0.8, 0.1, -0.9, -0.7, -0.6, 0, 0, 0.1, -0.6, 0, 0.3, -0.3, 0.1, -0.7],
+        [0, 0.3, 0.1, 0.2, 0.4, -0.4, 0.1, 0, 0, 0.6, 0.3, 1, -0.3, 0, 0.1, 0.1],
+        [0.3, 0.1, -0.3, 0.1, 0.6, -0.5, 0.1, 0.4, 0.6, 0, 0.1, 0.7, -0.6, 0.3, 0.1, 0.2],
+        [-0.2, 0.2, 0.8, -0.5, 0.2, 0.8, 0.1, -0.7, 0.5, 0.2, 0, -0.4, 0.6, 0.5, 0.8, 0.7],
+        [0.2, 0, -0.6, 0.2, 0.3, 0.2, 0.1, -0.3, 0.9, 1, 0.5, 0, 0, 0, 0.3, 0.2],
+        [0.1, 0.4, 0.4, -0.4, 0, 0.2, 0, 0.2, -0.2, -0.5, 0.1, 0.1, 0, 1, 0.8, 0.5],
+        [0.1, 0.2, 0.5, -0.4, 0.1, 0.5, 0, -0.4, 0.1, 0.4, 0.7, 0, 1, 0, 0.5, 0.3],
+        [0.2, 0.4, 0.2, 0.2, 0, 0.2, 0.6, 0.1, 0.2, 0, 0.2, 0, 1, 0.8, 0, 0.5],
+        [-0.7, -0.2, -0.1, -1, 0.2, -0.1, 0.5, -1, 0, 0.6, 0.3, 0, 0.6, 0.2, -0.1, 0]    ];
 
     CRISES = {
         WATER_SHORTAGE: {
@@ -1320,8 +1319,8 @@ export class Resources  {
                 "mutation_likelihood": 0.5
             },
             "advanced_stats": {
-                "loss_increase_speed": 0.02, 
-                "minimum_loss_increase": 0.002, 
+                "loss_increase_speed": 0.1, 
+                "minimum_loss_increase": 0.02, 
                 "infectivity_increase_speed": 1.0, 
                 "minimum_infectivity_increase": 0.1, 
                 "severity_increase_speed": 1.0, 

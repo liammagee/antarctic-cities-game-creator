@@ -932,56 +932,6 @@ export default class GameController extends cc.Component {
         let allButtons = [btnEconomy, btnPolitics, btnCulture, btnEcology];
         let prevButton = btnEconomy;
 
-        const costCalculation = (policy) => {
-            
-            let policyLevel = world.gameState.policies[policy.id];
-            let cost = policy.cost_1;
-
-            if (policyLevel !== undefined) {
-
-                switch(policyLevel) {
-                    case 1:
-                        cost = policy.cost_2;
-                        break;
-                    case 2:
-                        cost = policy.cost_3;
-                        break;
-                    case 3:
-                        cost = 0;
-                        break;
-                }
-
-            }
-
-            let dists = controller.generateResourceDistribution();
-            let policyCategory = Math.floor((policy.id - 1) / 4);
-            let weights = [];
-
-            for (let i = 0; i < dists.length; i++) {
-
-                if (i % 4 == 0) {
-
-                    weights.push(dists[i] * 4);
-                    
-                }
-                else {
-
-                    let wi = Math.floor(i / 4);
-                    weights[wi] += dists[i] * 4;
-
-                }
-
-            }
-
-            if (weights[policyCategory] > 1)
-                cost *= weights[policyCategory];
-            
-            cost = Math.round(cost);
-
-            return cost;
-
-        };
-
         // Changes buttons with switching pages
         const switchPage = (btn, index) => {
 
@@ -1031,8 +981,8 @@ export default class GameController extends cc.Component {
         //btnPolicyInvest.off(cc.Node.EventType.TOUCH_END);
         btnPolicyInvest.on(cc.Node.EventType.TOUCH_END,  () => {
 
-            let policySelected = btnPolicyInvest.policy;
-            const cost = costCalculation(policySelected);
+            let policySelected = btnPolicyInvest['policy'];
+            const cost = world.costCalculation(policySelected);
 
             if (world.gameState.resources - cost >= 0 && 
                 world.gameState.policies[policySelected.id] === undefined) {
@@ -1065,7 +1015,7 @@ export default class GameController extends cc.Component {
 
             }
 
-            let newCost = costCalculation(policySelected);
+            let newCost = world.costCalculation(policySelected);
             policyCostLabel.getComponent(cc.Label).string = (world.res.lang.policy_platform_cost[cc.sys.localStorage.language] + newCost.toString());
 
             if (world.gameState.policies[policySelected.id] == 3) {
@@ -1151,7 +1101,7 @@ export default class GameController extends cc.Component {
                     policyLabel.getComponent(cc.Label).string = (opt[cc.sys.localStorage.language].text_long);
                     policyDescription.getComponent(cc.Label).string = (opt[cc.sys.localStorage.language].description);
                     
-                    const cost = costCalculation(opt);
+                    const cost = world.costCalculation(opt);
                     policyCostLabel.getComponent(cc.Label).string = world.res.lang.policy_platform_cost[cc.sys.localStorage.language] + cost.toString();
                     btnPolicyInvest.attr({'policy': opt});
 
@@ -1511,33 +1461,6 @@ export default class GameController extends cc.Component {
 
     }
 
-    generateResourceDistribution() {
-
-        let world = this.world;
-
-        let dists = [];
-        let total = 0;
-
-        for (let i = 0; i < 16; i++) {
-
-            let weight = 1;
-            if (world.gameState.policies[i + 1] !== undefined) 
-                weight += world.gameState.policies[i + 1];
-            
-            total += weight;
-            dists.push(weight);
-
-        }
-
-        for (let i = 0; i < dists.length; i++) {
-
-            dists[i] /= total;
-
-        }
-
-        return dists;
-
-    }
 
     selectCountry(event, location) {
 
@@ -1619,33 +1542,6 @@ export default class GameController extends cc.Component {
         return true;
     }
 
-    generateWeightedPolicyIndex(r) {
-        
-        let controller = this.controller;
-        let world = this.world;
-
-        let dists = controller.generateResourceDistribution();
-        let counter = 0;
-        let chosenPolicy = 0;
-
-        for (let i = 0; i < dists.length; i++) {
-
-            let prob = dists[i];
-            counter += prob;
-
-            if (counter > r) {
-
-                chosenPolicy = i;
-                break;
-            
-            }
-
-        }
-
-        return chosenPolicy;
-
-    }
-
     /**
      * Generate a policy icon, based on a weighted average of existing policies.
      */
@@ -1654,7 +1550,7 @@ export default class GameController extends cc.Component {
         let controller = this.controller;
         let world = this.world;
 
-        let policyIndex = controller.generateWeightedPolicyIndex(Math.random());
+        let policyIndex = world.generateWeightedPolicyIndex(Math.random());
         let icon = '';
 
         switch(policyIndex) {
@@ -1774,89 +1670,7 @@ export default class GameController extends cc.Component {
         world.gameState.lastResource = world.gameState.counter;
 
     }
-                            
-    /**
-     * Calculate the probability distribution of crisis & country
-     */ 
-    crisisProbDistribution() {
-        
-        let world = this.world;
 
-        const probs = [];
-        const crisisKeys = Object.keys(world.res.CRISES);
-        const countryKeys = Object.keys(world.countries);
-        let denom = 0;
-        
-        crisisKeys.forEach(ck => {
-
-            const crisis = world.res.CRISES[ck];
-            
-            countryKeys.forEach(yk => {
-            
-                const country = world.countries[yk];
-                const lossProp = country.loss / world.gameState.totalLoss;
-                const preparedProp = country.pop_prepared_percent / world.gameState.populationPreparedPercent;
-                
-                let totalInfluence = 1.0;
-                totalInfluence += lossProp * crisis.influence_of_environmental_loss;
-                totalInfluence += preparedProp * crisis.influence_of_preparedness;
-                
-                if (isNaN(totalInfluence))
-                    totalInfluence = 0.0;
-                
-                if (totalInfluence > 0) {
-                
-                    denom += totalInfluence;
-                    probs.push(totalInfluence);
-                
-                }
-
-            });
-
-        });
-
-        for (let i = 0; i < probs.length; i++) {
-        
-            probs[i] /= denom;
-        
-        }
-        
-        return probs;
-
-    }
-
-    crisisProbLocation(r) {
-
-        let controller = this.controller;
-        let world = this.world;
-
-        const probs = controller.crisisProbDistribution();
-        const crisisKeys = Object.keys(world.res.CRISES);
-        const countryKeys = Object.keys(world.countries);
-        let crisisCountry = new CrisisCountry();
-        let counter = 0;
-        
-        for (let i = 0; i < probs.length; i++) {
-        
-            counter += probs[i];
-
-            if (r < counter) {
-
-                const crisisID = Math.floor(crisisKeys.length * i / probs.length);
-                const countryID = i % countryKeys.length;
-                crisisCountry.crisis = crisisKeys[crisisID];
-                crisisCountry.country = countryKeys[countryID];
-                crisisCountry.id = i;
-                crisisCountry.counter = world.gameState.counter;
-                break;
-
-            }
-        
-        }
-
-        return crisisCountry;
-
-    }
 
     /**
      * Add a new crisis.
@@ -1868,11 +1682,15 @@ export default class GameController extends cc.Component {
 
         let map = controller.node.getChildByName('mapFront');
 
-        const r2 = Math.random();
-        const crisisInCountry = controller.crisisProbLocation(r2);
+        const r = Math.random();
+        const crisisInCountry = world.crisisProbLocation(r);
+        if (crisisInCountry === undefined)
+            return;
+            
         world.gameState.crisisCountry = crisisInCountry;
         world.gameState.crises.push(crisisInCountry);
         world.gameState.crisisCount++;
+
         const crisis = world.res.CRISES[crisisInCountry.crisis];
         const country = world.countries[crisisInCountry.country];
 
@@ -1901,9 +1719,6 @@ export default class GameController extends cc.Component {
                         world.res.lang.crisis_suffix[cc.sys.localStorage.language] + 
                         country.name + "."; 
         
-        // btnCrisis.setTitleColor(controller.colors.COLOR_LICORICE);
-        // btnCrisis.setTitleText(crisis.name);
-
         if (world.gameState.crisisCount < 4) {
 
             world.gameState.state = world.res.GAME_STATES.PAUSED;
@@ -1989,349 +1804,6 @@ export default class GameController extends cc.Component {
         world.gameState.state = world.res.GAME_STATES.STARTED;
         controller.refreshDate(world);
         controller.buttons = [];
-
-        /**
-         * Updates the game state at regular intervals
-         */
-        const updateTime = () => {
-
-            if (world.gameState.state !== world.res.GAME_STATES.STARTED) {
-
-                // Refresh the timeout
-                world.gameState.timeoutID = setTimeout(updateTime, 20);
-                return;
-
-            }
-
-            world.gameState.counter++;
-
-            // Handle automation here
-            if (world.gameState.automateMode) {
-                        /*
-
-                // Select resources
-                for (let i = 0 ; i < world.gameState.automateScript.policyEvents.length; i++) {
-
-                    let pe = world.gameState.automateScript.policyEvents[i];
-                    
-                    if (world.gameState.counter == pe.counter / world.res.MONTH_INTERVAL) {
-
-                        fireClickOnTarget(world.btnDevelopPolicy, function() {
-                            
-                            let resNames = Object.values(world.res.RESOURCES).map(res => res.name);
-                            let resGrp = Math.floor((pe.policyID - 1) / resNames.length);
-                            let element = world.designPolicyLayer.getChildByName(resNames[resGrp]);
-
-                            fireClickOnTarget(element, function() {
-                                let btn = world.designPolicyLayer.policyButtons[pe.policyID - 1];
-                                
-                                fireClickOnTarget(btn, function() {
-
-                                    fireClickOnTarget(world.designPolicyLayer.investButton, function() {
-
-                                        fireClickOnTarget(world.designPolicyLayer.btnExit);
-
-                                    });
-
-                                });
-                            });
-                        });
-                        break;
-
-                    }
-                };
-
-                // Select crisis
-                for (let i = 0; i < world.gameState.crises.length; i++) {
-
-                    let crisisInCountry = world.gameState.crises[i];
-                    
-                    if (world.gameState.counter == crisisInCountry.counter + world.gameState.automateScript.crisisDuration) {
-                        
-                        let target = controller.node.getChildByName("crisis"+crisisInCountry.id);
-                        world.fireClickOnTarget(target);
-
-                    }
-
-                }
-                    */
-
-            }
-
-            if (world.gameState.counter % world.gameState.timeInterval == 0) {
-
-                world.gameState.currentDate = new Date(world.gameState.currentDate.valueOf());
-                world.gameState.currentDate.setDate(world.gameState.currentDate.getDate() + 30.417);
-
-                // Get the current and previous year
-                const currentYear = world.gameState.currentDate.getFullYear();
-                const previousYear = world.gameState.previousDate.getFullYear();
-                
-                // When the year has changed
-                if (currentYear > previousYear) {
-
-                    world.gameState.stats[previousYear] = {
-                        loss: world.gameState.totalLoss,
-                        prepared: world.gameState.populationPreparedPercent
-                    };
-
-                    let message = '';
-                    let showDialog = false;
-
-                    // Sort narratives by loss for comparison
-                    const narratives = Object.values(world.res.NARRATIVES.n2048).sort((o1, o2) => {return o2.loss - o1.loss});
-
-                    switch (currentYear) {
-                        case 2048:
-                            showDialog = true;
-                            
-                            for (let i = 0; i < narratives.length; i++) {
-                            
-                                const n = narratives[i];
-                            
-                                if (world.gameState.totalLoss >= n.loss) {
-                                    
-                                    let index = Math.floor(Math.random() * n[cc.sys.localStorage.language].length);
-                                    message = n[cc.sys.localStorage.language][index];
-                                    break;
-
-                                }
-
-                            }
-                            break;
-                        default:
-                            break;
-
-                    }
-                        
-                    if (showDialog) {
-
-                        world.gameState.state = world.res.GAME_STATES.PAUSED;
-                        controller.showMessageBox(world, 
-                            world.res.lang.bulletin[cc.sys.localStorage.language] + currentYear, 
-                            message, "OK", function() {
-                                world.gameState.state = world.res.GAME_STATES.STARTED;
-                            }, undefined, undefined);
-
-                        if (world.gameState.automateMode) {
-
-                            //world.fireClickOnTarget(buttons[0]);
-
-                        }
-
-                    }
-
-                }
-
-                world.gameState.previousDate = world.gameState.currentDate;
-
-
-                // Add policy robustness and loss
-                let totalPolicy = 0, totalLoss = 0;
-                let countriedAffected = 0, populationAware = 0, populationPrepared = 0;
-                
-                Object.keys(world.countries).forEach( key => {
-
-                    const country = world.countries[key];
-                    const loss = world.evaluateLoss(country);
-
-                    if (loss >= 0.1) {
-                        country.previousLoss = country.loss;
-                        country.loss = loss;
-                    }
-
-                    if (country.affected_chance) {
-
-                        world.transmitFrom(country);
-                        world.infectWithin(country);
-                        world.registerPreparednessWithin(country);
-
-                        countriedAffected++;
-                        populationAware += country.pop_aware;
-                        populationPrepared += country.pop_prepared;
-
-                        country.pop_aware_percent = 100 * country.pop_aware / country.pop_est;
-                        let existingConvincedPercentage = country.pop_prepared_percent;
-                        country.pop_prepared_percent = 100 * country.pop_prepared / country.pop_est;
-
-                        let imin = (existingConvincedPercentage > 0.5) ? parseInt(existingConvincedPercentage) : 0;
-                        let imax = (country.pop_prepared_percent > 0.5) ? parseInt(country.pop_prepared_percent) : 0;
-
-                    }
-
-                    totalPolicy += country.policy;
-                    totalLoss += country.loss;
-
-                });
-
-                totalPolicy /= Object.keys(world.countries).length;
-                world.gameState.policy = totalPolicy;
-
-                totalLoss /= Object.keys(world.countries).length;
-                world.gameState.previousLoss = totalLoss;
-                world.gameState.totalLoss = totalLoss;
-
-                world.gameState.countriedAffected = countriedAffected;
-                world.gameState.populationAware = populationAware;
-                world.gameState.populationPrepared = populationPrepared;
-                world.gameState.populationAwarePercent = 100 * world.gameState.populationAware / world.gameState.populationWorld;
-                world.gameState.populationPreparedPercent = 100 * world.gameState.populationPrepared / world.gameState.populationWorld;
-
-                if (world.gameState.currentCountry != null) {
-
-                    controller.printCountryStats();
-
-                }
-                else {
-
-                    controller.printWorldStats();
-
-                }
-
-            }
-
-
-            // Various events
-            let ci = world.gameState.crisisInterval;
-            Object.keys(world.gameState.policies).forEach(policyID => {
-
-                const policy = world.gameState.policyOptions[policyID];
-                const policyLevel = world.gameState.policies[policyID];
-                ci /= 1 + (policy.effect_on_crises * Math.log(policyLevel + 1.718));
-                
-            });         
-
-            // Check enough time has elapsed to generate a new resource with some probability (1 / RESOURCE_CHANCE)
-            if (world.gameState.counter - world.gameState.lastCrisis >= ci  && Math.random() < world.res.CRISIS_CHANCE) {
-
-                controller.addCrisis();
-
-            }
-
-            let adjustEffect = (effect) => {
-
-                // Effect must be positive
-                effect += 1.000001;
-                // Invert effect
-                effect = 1.0 / effect;
-                // Multiply by difficulty
-                if (effect > 1.0)
-                    effect = Math.pow(effect, world.gameState.difficultyMultiplier);
-                else 
-                    effect = Math.pow(effect, 1.0 / world.gameState.difficultyMultiplier);
-
-                return effect;
-
-            };
-
-            let ri = world.gameState.resourceInterval;
-            world.gameState.crises.forEach(crisisInCountry => {
-                
-                let crisis = world.res.CRISES[crisisInCountry.crisis];
-                let crisisEffect = crisis.effect_on_resources;
-                let country = world.countries[crisisInCountry.country];
-                // Add country-specific effects here
-                // ...
-
-                // Add to overall effect
-                ri *= adjustEffect(crisisEffect);
-                
-            }); 
-
-            Object.keys(world.gameState.policies).forEach(policyID => {
-
-                let policy = world.gameState.policyOptions[policyID];
-                let policyLevel = world.gameState.policies[policyID];
-                let policyEffect = policy.effect_on_resources * Math.log(policyLevel + 1.718);
-
-                ri *= adjustEffect(policyEffect);
-                
-            }); 
-
-            // Check enough time has elapsed to generate a new resource with some probability (1 / RESOURCE_CHANCE)
-            if (world.gameState.counter - world.gameState.lastResource >= ri) {
-
-                controller.addResource();
-                world.gameState.resourceInterval *= 1.1;
-
-            }
-            
-            if (world.gameState.tutorialMode && world.gameState.counter % world.gameState.tutorialInterval == 0) {
-                
-                controller.addTutorial();
-
-            }
-
-            // Add buttons
-            const newButtons = [];
-            for (let i = 0; i < controller.buttons.length; i++) {
-
-                const button = controller.buttons[i];
-                if (button.name == 'Resource' && world.gameState.counter > button.placedAt + world.res.RESOURCE_DURATION) {
-
-                    button.destroy();
-
-                }
-                else {
-
-                    newButtons.push(button);
-
-                }
-                    
-
-            }
-            controller.buttons = newButtons;
-            
-            // Update labels
-            controller.resourceScoreLabel.string = world.gameState.resources.toString();
-            controller.refreshDate(world);
-
-            // Game over                        
-            if (world.gameState.totalLoss >= 100) {
-
-                // Sort narratives by loss for comparison
-                const narratives = Object.values(world.res.NARRATIVES.n2070).sort((o1, o2) => {return o2.loss - o1.loss});
-                const n = narratives[0];
-                const index = Math.floor(Math.random() * n[cc.sys.localStorage.language].length);
-                const message = n[cc.sys.localStorage.language][index];
-                controller.gameOver(world, message, "OK");
-
-            }
-            else if (world.gameState.currentDate >= world.gameState.targetDate) {
-
-                let message = '';
-                // Sort narratives by loss for comparison
-                const narratives = Object.values(world.res.NARRATIVES.n2070).sort((o1, o2) => {return o2.loss - o1.loss});
-                
-                for (let i = 0; i < narratives.length; i++) {
-
-                    const n = narratives[i];
-                    if (world.gameState.totalLoss > n.loss) {
-
-                        const index = Math.floor(Math.random() * n[cc.sys.localStorage.language].length);
-                        message = n[cc.sys.localStorage.language][index];
-                        break;
-
-                    }
-
-                }
-
-                controller.gameOver(world, message, "OK");
-
-            }
-
-            // Refresh the timeout
-            world.gameState.timeoutID = setTimeout(updateTime, 20);
-
-        }; 
-
-        // Run the updates in the background, so interaction is not blocked.
-        // cc.async.parallel([
-        //     function() {
-        //         updateTime();
-        //     }
-        // ]);
-        updateTime();
 
     }
 
@@ -2707,6 +2179,189 @@ export default class GameController extends cc.Component {
 
     }
 
+    updateLive() {
+
+        let controller = this;
+        let world = this.world;
+
+        world.gameState.counter++;
+
+        // Handle automation here
+        if (world.gameState.automateMode) {
+            /*
+
+            // Select resources
+            for (let i = 0 ; i < world.gameState.automateScript.policyEvents.length; i++) {
+
+                let pe = world.gameState.automateScript.policyEvents[i];
+                
+                if (world.gameState.counter == pe.counter / world.res.MONTH_INTERVAL) {
+
+                    fireClickOnTarget(world.btnDevelopPolicy, function() {
+                        
+                        let resNames = Object.values(world.res.RESOURCES).map(res => res.name);
+                        let resGrp = Math.floor((pe.policyID - 1) / resNames.length);
+                        let element = world.designPolicyLayer.getChildByName(resNames[resGrp]);
+
+                        fireClickOnTarget(element, function() {
+                            let btn = world.designPolicyLayer.policyButtons[pe.policyID - 1];
+                            
+                            fireClickOnTarget(btn, function() {
+
+                                fireClickOnTarget(world.designPolicyLayer.investButton, function() {
+
+                                    fireClickOnTarget(world.designPolicyLayer.btnExit);
+
+                                });
+
+                            });
+                        });
+                    });
+                    break;
+
+                }
+            };
+
+            // Select crisis
+            for (let i = 0; i < world.gameState.crises.length; i++) {
+
+                let crisisInCountry = world.gameState.crises[i];
+                
+                if (world.gameState.counter == crisisInCountry.counter + world.gameState.automateScript.crisisDuration) {
+                    
+                    let target = controller.node.getChildByName("crisis"+crisisInCountry.id);
+                    world.fireClickOnTarget(target);
+
+                }
+
+            }
+                */
+
+        }
+
+        if (world.gameState.counter % world.gameState.timeInterval == 0) {
+
+            world.updateGameTime((message) => {
+                
+                world.gameState.state = world.res.GAME_STATES.PAUSED;
+                const currentYear = world.gameState.currentDate.getFullYear();
+                controller.showMessageBox(world, 
+                    world.res.lang.bulletin[cc.sys.localStorage.language] + currentYear, 
+                    message, "OK", function() {
+                        world.gameState.state = world.res.GAME_STATES.STARTED;
+                    }, undefined, undefined);
+
+                if (world.gameState.automateMode) {
+
+                    //world.fireClickOnTarget(buttons[0]);
+
+                }
+            });
+
+            world.updateGameStats();
+
+
+            if (world.gameState.currentCountry != null) {
+
+                controller.printCountryStats();
+
+            }
+            else {
+
+                controller.printWorldStats();
+
+            }
+
+        }
+
+
+        // Various events
+        let ci = world.isItTimeForNewCrisis();     
+
+        // Check enough time has elapsed to generate a new resource with some probability (1 / RESOURCE_CHANCE)
+        if (world.gameState.counter - world.gameState.lastCrisis >= ci  && Math.random() < world.res.CRISIS_CHANCE) {
+
+            controller.addCrisis();
+
+        }
+
+        let ri = world.isItTimeForNewResources();
+
+        // Check enough time has elapsed to generate a new resource with some probability (1 / RESOURCE_CHANCE)
+        if (world.gameState.counter - world.gameState.lastResource >= ri) {
+
+            controller.addResource();
+            world.gameState.resourceInterval *= 1.1;
+
+        }
+        
+        if (world.gameState.tutorialMode && world.gameState.counter % world.gameState.tutorialInterval == 0) {
+            
+            controller.addTutorial();
+
+        }
+
+        // Add buttons
+        const newButtons = [];
+        for (let i = 0; i < controller.buttons.length; i++) {
+
+            const button = controller.buttons[i];
+            if (button.name == 'Resource' && world.gameState.counter > button.placedAt + world.res.RESOURCE_DURATION) {
+
+                button.destroy();
+
+            }
+            else {
+
+                newButtons.push(button);
+
+            }
+                
+
+        }
+        controller.buttons = newButtons;
+        
+        // Update labels
+        controller.resourceScoreLabel.string = world.gameState.resources.toString();
+        controller.refreshDate(world);
+
+        // Game over                        
+        if (world.gameState.totalLoss >= 100) {
+
+            // Sort narratives by loss for comparison
+            const narratives = Object.values(world.res.NARRATIVES.n2070).sort((o1, o2) => {return o2.loss - o1.loss});
+            const n = narratives[0];
+            const index = Math.floor(Math.random() * n[cc.sys.localStorage.language].length);
+            const message = n[cc.sys.localStorage.language][index];
+            controller.gameOver(world, message, "OK");
+
+        }
+        else if (world.gameState.currentDate >= world.gameState.targetDate) {
+
+            let message = '';
+            // Sort narratives by loss for comparison
+            const narratives = Object.values(world.res.NARRATIVES.n2070).sort((o1, o2) => {return o2.loss - o1.loss});
+            
+            for (let i = 0; i < narratives.length; i++) {
+
+                const n = narratives[i];
+                if (world.gameState.totalLoss > n.loss) {
+
+                    const index = Math.floor(Math.random() * n[cc.sys.localStorage.language].length);
+                    message = n[cc.sys.localStorage.language][index];
+                    break;
+
+                }
+
+            }
+
+            controller.gameOver(world, message, "OK");
+
+        }
+
+
+    }
+
     update (dt) {
 
         let controller = this.controller;
@@ -2735,6 +2390,12 @@ export default class GameController extends cc.Component {
 
         let radius = 3 * ((this._time * 3) % 3);
         controller.showAntarcticCities(radius);
+
+        if (world.gameState.state === world.res.GAME_STATES.STARTED) {
+
+            this.updateLive();
+
+        }
         
     }
 }
