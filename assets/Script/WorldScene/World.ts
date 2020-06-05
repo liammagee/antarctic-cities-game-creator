@@ -693,7 +693,7 @@ export class World {
         let rateOfLossFactor = 1 + rateOfLossMonthly;
 
         // Weaken rate of loss by population prepared for good policy
-        const preparednessFactor = 1 + 0.1 * country.pop_prepared_percent / 100.0;
+        const preparednessFactor = 1 + 0.25 * country.pop_prepared_percent / 100.0;
         rateOfLossFactor /= preparednessFactor;
 
         world.gameState.crises.forEach(crisisInCountry => {
@@ -707,6 +707,7 @@ export class World {
         });
 
         const decayLossFactor = ( (rateOfLossFactor - 1) * world.sigmoidalDecay(lossCurrent, world.res.DECAY_LOSS) );
+        // const decayLossFactor = ( (rateOfLossFactor - 1) * world.exponentialDecay(lossCurrent, world.res.DECAY_LOSS) );
         let lossNew = lossCurrent + decayLossFactor;
 
         if (lossNew > 100)
@@ -938,6 +939,7 @@ export class World {
 
     }
 
+
     calculatePolicyBalanceOnPreparedness() {
 
         let world = this;
@@ -1063,13 +1065,29 @@ export class World {
             
             if (val !== undefined) {
             
-                severityEffect *= (1.000001 + val * otherLevelMultiplier);
+                severityEffect *= (1.0 + (val * otherLevelMultiplier) * 0.1) + 0.000001;
             
             }
 
         }
 
+        //severityEffect = Math.pow(severityEffect, 0.5);
+
         return severityEffect;
+
+    }
+
+    /**
+     * Scales a percentile from E down to 1, based on the rateOfDecay parameter.
+     * @param percent 
+     * @param rateOfDecay 
+     */
+    exponentialDecay(percent, rateOfDecay) {
+
+        // return Math.pow(Math.sqrt(Math.E), Math.pow((100 - percent) / 100, rateOfDecay));
+        // return Math.pow(Math.E, 1 / (100 * (percent + 0.01) ));
+        let percentDenom = percent > 1.0 ? 100 : 1;
+        return Math.pow(Math.E, (1 - percent) / (percentDenom ));
 
     }
 
@@ -1084,14 +1102,23 @@ export class World {
 
             let policyId = keys[i];
             let relations = world.gameState.policyRelations[policyId];
-            severityEffect *= world.calculateSinglePolicyImpactOnPreparedness(country, keys, relations, policyId);
+            let singleImpact = world.calculateSinglePolicyImpactOnPreparedness(country, keys, relations, policyId);
+            severityEffect *= singleImpact;
 
         }
         
-        // Add sigmoidal effect
-        let decayInfluence = world.sigmoidalDecay(country.pop_prepared_percent, world.res.DECAY_PREPAREDNESS);
+        // Add sigmoidal decay
+        // let decayInfluence = world.sigmoidalDecay(country.pop_prepared_percent, world.res.DECAY_PREPAREDNESS);
+        // Add exponential decay
+        let decayInfluence = world.exponentialDecay(country.pop_prepared_percent, world.res.DECAY_PREPAREDNESS);
 
-        return severityEffect * decayInfluence;
+        
+        severityEffect = Math.pow(severityEffect, decayInfluence);
+        severityEffect = 1.0 + severityEffect * 0.01;
+        // if (country.iso_a3 == 'AUS')
+        //     console.log(severityEffect+":"+decayInfluence+":"+country.pop_prepared_percent)
+        // console.log(severityEffect)
+        return severityEffect;
 
     }
 
@@ -1112,11 +1139,11 @@ export class World {
         const policyBalance =  world.calculatePolicyBalanceOnPreparedness();
         const policyImpact =  world.calculatePolicyImpactOnPreparedness(country);
         const policyEffect = policyBalance * policyImpact * severityIncreaseSpeed;
-        const policyEffectNormalised = 1 + ((policyEffect - 1) / (world.res.MONTH_INTERVAL));
+        let policyEffectNormalised = 1 + ((policyEffect - 1) / (world.res.MONTH_INTERVAL));
 
-        if (severityIncreaseSpeed < severityMinimumIncrease) {
+        if (policyEffectNormalised < severityMinimumIncrease) {
 
-            severityIncreaseSpeed = severityMinimumIncrease;
+            policyEffectNormalised = severityMinimumIncrease;
 
         }
 
@@ -1128,7 +1155,7 @@ export class World {
         }
         else {
 
-            popPrepared *= (policyEffectNormalised);
+            popPrepared *= policyEffectNormalised;
 
         }
 
@@ -1272,7 +1299,7 @@ export class World {
 
         }
 
-        // world.gameState.previousDate = world.gameState.currentDate;
+        world.gameState.previousDate = world.gameState.currentDate;
 
         if (callback!== undefined && message !== undefined) {
 
@@ -1297,10 +1324,10 @@ export class World {
             const country = world.countries[key];
             const loss = world.evaluateLoss(country);
 
-            // if (loss >= 0.1) {
+            if (loss > 0.0) {
                 country.previousLoss = country.loss;
                 country.loss = loss;
-            // }
+            }
 
             if (country.affected_chance) {
 

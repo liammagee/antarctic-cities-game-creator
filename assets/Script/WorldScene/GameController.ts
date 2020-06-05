@@ -1686,7 +1686,7 @@ export default class GameController extends cc.Component {
         const crisisInCountry = world.crisisProbLocation(r);
         if (crisisInCountry === undefined)
             return;
-            
+
         world.gameState.crisisCountry = crisisInCountry;
         world.gameState.crises.push(crisisInCountry);
         world.gameState.crisisCount++;
@@ -2345,7 +2345,7 @@ export default class GameController extends cc.Component {
             for (let i = 0; i < narratives.length; i++) {
 
                 const n = narratives[i];
-                if (world.gameState.totalLoss > n.loss) {
+                if (world.gameState.totalLoss >= n.loss) {
 
                     const index = Math.floor(Math.random() * n[cc.sys.localStorage.language].length);
                     message = n[cc.sys.localStorage.language][index];

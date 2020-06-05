@@ -17,9 +17,9 @@ program
     .option('-s, --strategy <strategy>', 'one of 5 strategy options: none, musk, soc-dem, eco, contra', 'none')
     .parse(process.argv);
 
-const TIME_INTERVAL = 20;
-const CHANCE_EACH_TICK_OF_ADDRESSING_CRISIS = 0.7 * 1 / TIME_INTERVAL;
-const CHANCE_EACH_TICK_OF_DESIGNING_POLICY = 0.3 * 1 / TIME_INTERVAL;
+const TIME_INTERVAL = 15;
+const CHANCE_EACH_TICK_OF_ADDRESSING_CRISIS = 0.1 * 1 / TIME_INTERVAL;
+const CHANCE_EACH_TICK_OF_DESIGNING_POLICY = 0.1 * 1 / TIME_INTERVAL;
 const SLOWDOWN_RESOURCE = 0.05 * 1 / TIME_INTERVAL;
 const DECAY_LOSS = 50.0;
 const DECAY_PREPAREDNESS = 50.0;
@@ -37,13 +37,16 @@ else if (program.strategy == 'eco')
 // Contradictory
 else if (program.strategy == 'contra')
     POLICY_FILTER = ['Free Trade Agreements', 'Reduce Inequality', 'Remove Regulations', 'Boost Military', 'Global Education', 'Global Heritage Trust', 'Public Transport'];
+// Military
+else if (program.strategy == 'mil')
+    POLICY_FILTER = ['Boost Military'];
 
 log(chalk.red(`Running Sim with strategy: '${program.strategy}' and these policies: ${POLICY_FILTER.join(', ')}.`));
 
 
-const PRINT_ANNUAL_STATS = false;
+const PRINT_ANNUAL_STATS = true;
 const PRINT_RUN_STATS = true;
-const RUNS = 3;
+const RUNS = 1;
 const PARALLEL = false;
 
 let resourcesById = {};
@@ -71,8 +74,9 @@ const init = () => {
     world.res.DECAY_LOSS = DECAY_LOSS;
     world.res.DECAY_PREPAREDNESS = DECAY_PREPAREDNESS;
     world.res.CRISIS_CHANCE = CRISIS_CHANCE;
+    world.res.MONTH_INTERVAL = TIME_INTERVAL;
 
-    world.updateTimeVars(TIME_INTERVAL);
+    world.updateTimeVars(world.res.MONTH_INTERVAL);
 
     Object.values(world.res.RESOURCES).forEach((grp) => { grp.policyOptions.forEach((po) => { resourcesById[po.id] = po; })})
     
@@ -122,7 +126,7 @@ const doGameOver = () => {
     for (; i < narratives.length; i++) {
 
         const n = narratives[i];
-        if (world.gameState.totalLoss > n.loss) {
+        if (world.gameState.totalLoss >= n.loss) {
 
             const index = Math.floor(Math.random() * n[world.gameState.language].length);
             message = n[world.gameState.language][index];
@@ -133,6 +137,7 @@ const doGameOver = () => {
     }
 
     let gameOverState = -1;
+
     if (i == narratives.length - 1) {
         gameOverState = 0;
     }
@@ -171,6 +176,7 @@ const doGameOver = () => {
         printWorldStats();
     
     }
+
     
     return gameOverState;
 
@@ -183,21 +189,20 @@ const runSim = () => {
 
     if (world.gameState.counter % world.gameState.timeInterval == 0) {
 
-        world.gameState.previousDate = world.gameState.currentDate;
+        const previousYear = world.gameState.previousDate.getFullYear();
         world.updateGameTime((message) => { 
             if (PRINT_ANNUAL_STATS)
                 console.log(message); 
         });
         world.updateGameStats();
         const currentYear = world.gameState.currentDate.getFullYear();
-        const previousYear = world.gameState.previousDate.getFullYear();
         if (currentYear > previousYear) {
             if (PRINT_ANNUAL_STATS)
                 printWorldStats();
-    
         }
 
     }
+
 
     // Check enough time has elapsed to generate a new resource with some probability (1 / RESOURCE_CHANCE)
     let ci = world.isItTimeForNewCrisis();
@@ -387,7 +392,16 @@ const runAll = () => {
     
 }
 runAll();
+
+// FOR UNIT TESTS
+
 // init();
+// for (let i = 0; i < 100; i++) {
+//     let val1 = world.sigmoidalDecay(i, 10.0);
+//     let val2 = world.exponentialDecay(i, 50.0);
+//     log(i+":"+val1+":"+val2);
+// }
+
 // Object.keys(world.gameState.policyRelations).forEach((source) => {
 //     let targets = world.gameState.policyRelations[source];
 //     Object.keys(targets).forEach((target) => {

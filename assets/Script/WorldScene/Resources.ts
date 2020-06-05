@@ -32,8 +32,8 @@ export class Resources  {
     FULLSCREEN = true;
 
     // Decay effects
-    DECAY_LOSS: number = 50.0;
-    DECAY_PREPAREDNESS: number = 50.0;
+    DECAY_LOSS: number = 5.0;
+    DECAY_PREPAREDNESS: number = 5.0;
 
 
     // Timing Constants
@@ -1319,12 +1319,12 @@ export class Resources  {
                 "mutation_likelihood": 0.5
             },
             "advanced_stats": {
-                "loss_increase_speed": 0.1, 
+                "loss_increase_speed": 0.05, 
                 "minimum_loss_increase": 0.02, 
                 "infectivity_increase_speed": 1.0, 
                 "minimum_infectivity_increase": 0.1, 
-                "severity_increase_speed": 1.0, 
-                "minimum_severity_increase": 1.0, 
+                "severity_increase_speed": 1.1, 
+                "minimum_severity_increase": 0.1, 
                 "lethality_increase_speed": 0.05, 
                 "minimum_lethality_increase_speed": 0.4, 
                 "enable_corpse_transmission": false,
