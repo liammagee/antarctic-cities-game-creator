@@ -983,6 +983,7 @@ export class World {
         let world = this;
 
         let severityEffect = 1.0;
+        let decayInfluence = world.exponentialDecay(country.pop_prepared_percent, world.res.DECAY_PREPAREDNESS);      
 
         const policy = world.gameState.policyOptions[policyId];
         const level = world.gameState.policies[policyId];
@@ -1065,13 +1066,12 @@ export class World {
             
             if (val !== undefined) {
             
-                severityEffect *= (1.0 + (val * otherLevelMultiplier) * 0.1) + 0.000001;
+                let otherPolicyEffect = (1.0 + (val * otherLevelMultiplier) * 0.3) + 0.000001;
+                severityEffect *= otherPolicyEffect;
             
             }
 
         }
-
-        //severityEffect = Math.pow(severityEffect, 0.5);
 
         return severityEffect;
 
@@ -1087,7 +1087,7 @@ export class World {
         // return Math.pow(Math.sqrt(Math.E), Math.pow((100 - percent) / 100, rateOfDecay));
         // return Math.pow(Math.E, 1 / (100 * (percent + 0.01) ));
         let percentDenom = percent > 1.0 ? 100 : 1;
-        return Math.pow(Math.E, (1 - percent) / (percentDenom ));
+        return Math.pow(3*Math.E, (1 - percent) / (percentDenom ));
 
     }
 
@@ -1110,14 +1110,10 @@ export class World {
         // Add sigmoidal decay
         // let decayInfluence = world.sigmoidalDecay(country.pop_prepared_percent, world.res.DECAY_PREPAREDNESS);
         // Add exponential decay
-        let decayInfluence = world.exponentialDecay(country.pop_prepared_percent, world.res.DECAY_PREPAREDNESS);
-
-        
+        let decayInfluence = world.exponentialDecay(country.pop_prepared_percent, world.res.DECAY_PREPAREDNESS);      
         severityEffect = Math.pow(severityEffect, decayInfluence);
         severityEffect = 1.0 + severityEffect * 0.01;
-        // if (country.iso_a3 == 'AUS')
-        //     console.log(severityEffect+":"+decayInfluence+":"+country.pop_prepared_percent)
-        // console.log(severityEffect)
+
         return severityEffect;
 
     }
@@ -1140,6 +1136,8 @@ export class World {
         const policyImpact =  world.calculatePolicyImpactOnPreparedness(country);
         const policyEffect = policyBalance * policyImpact * severityIncreaseSpeed;
         let policyEffectNormalised = 1 + ((policyEffect - 1) / (world.res.MONTH_INTERVAL));
+        // if (country.iso_a3 == 'AUS')
+        //     console.log(policyImpact+":"+policyBalance+":"+policyEffectNormalised+":"+country.pop_prepared_percent)
 
         if (policyEffectNormalised < severityMinimumIncrease) {
 
