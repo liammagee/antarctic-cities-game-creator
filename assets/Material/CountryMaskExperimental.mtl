@@ -1,10 +1,10 @@
 {
   "__type__": "cc.Material",
-  "_name": "CountryMask",
+  "_name": "CountryMaskExperimental",
   "_objFlags": 0,
   "_native": "",
   "_effectAsset": {
-    "__uuid__": "6deb374b-6f4d-4f85-864c-06f3a6eda795"
+    "__uuid__": "3596430e-7489-4721-99ad-6d020e64589b"
   },
   "_techniqueIndex": 0,
   "_techniqueData": {
@@ -14,10 +14,10 @@
         "u_percentagePrep": 0,
         "u_randFactor": 0.8,
         "u_randAlpha": 0.2,
-        "u_cellSize": 10,
-        "u_sizeMultiplier": 1.75,
-        "u_sizePower": 3,
-        "u_dimPower": 0.6,
+        "u_cellSize": 5,
+        "u_sizeMultiplier": 6,
+        "u_sizePower": 5,
+        "u_dimPower": 3,
         "u_stepMax": 0.5,
         "u_stepMin": 0.5
       },

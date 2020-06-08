@@ -180,6 +180,250 @@ export class World {
     // Shuffle from https://gist.github.com/guilhermepontes/17ae0cc71fa2b13ea8c20c94c5c35dc4
     shuffleArray = a => a.sort(() => Math.random() - 0.5);
 
+    /**
+     * Scales a percentile from E down to 1, based on the rateOfDecay parameter.
+     * @param percent 
+     * @param rateOfDecay 
+     */
+    exponentialDecay(percent, rateOfDecay) {
+
+        // return Math.pow(Math.sqrt(Math.E), Math.pow((100 - percent) / 100, rateOfDecay));
+        // return Math.pow(Math.E, 1 / (100 * (percent + 0.01) ));
+        let percentDenom = percent > 1.0 ? 100 : 1;
+        return Math.pow(3*Math.E, (1 - percent) / (percentDenom ));
+
+    }
+
+
+
+    /**
+     * Returns a decayed value of a percentile (0-100),
+     * between Math.E (2.78...) and 1. 
+     * The inflectionPoint parameter, also 0-100, indicates the point of fastest decay.
+     * The decay fundtion is roughly sigmoidal around the inflection point.
+     */
+    sigmoidalDecay(percent, inflectionPoint) {
+
+        let world = this;
+
+        if (!world.res.SIGMOIDAL_DECAY)
+            return 1.0;
+
+        inflectionPoint = (inflectionPoint === undefined) ? 50 : inflectionPoint;
+
+        // Some value between 0.0 and 1.0 (where inflectionPoint = 50.0)
+        let normedInverse = 1.0 - Math.abs(( percent - inflectionPoint ) / inflectionPoint);
+        // Some value between e (2.78...) and 1 / e (0.367) (or lower if inflection point != 50.0)
+        return Math.pow(Math.E, normedInverse);
+
+    }
+
+
+
+
+
+
+    private initialiseCountries() {
+        this.countries = Object.values(this.countriesJson).reduce((map, obj) => {
+            if (!map[obj.iso_a3]) {
+                let country = new Country();
+                country.name = obj.name,
+                    country.points = obj.points.map((pa) => { return pa.map((p) => { return new Point(parseFloat(p.x), parseFloat(p.y)); }); }),
+                    country.extremes = this.extremes(country.points),
+                    country.centroid = this.centroids(country.points),
+                    country.area = this.areas(country.points),
+                    country.affected_chance = 1.0,
+                    country.pop_est = parseInt(obj.pop_est),
+                    country.pop_aware = 0,
+                    country.pop_aware_percent = 0,
+                    country.pop_prepared = 0,
+                    country.pop_prepared_percent = 0,
+                    country.gdp_est = parseInt(obj.gdp_md_est),
+                    country.iso_a2 = obj.iso_a2,
+                    country.iso_a3 = obj.iso_a3,
+                    country.subregion = obj.subregion,
+                    country.economy = obj.economy,
+                    country.income_grp = obj.income_grp,
+                    country.income_grp_num = parseInt(obj.income_grp.charAt(0)),
+                    country.equator_dist = obj.equatorDist,
+                    country.offsetX = obj.offsetX,
+                    country.offsetY = obj.offsetY,
+                    country.policy = 0,
+                    country.previousLoss = this.gameState.previousLoss,
+                    country.loss = this.gameState.previousLoss,
+                    country.neighbours = [],
+                    country.points_shared = 0,
+                    country.points_total = 0,
+                    country.shared_border_percentage = 0,
+                    country.policyPoints = [],
+                    country.policyDots = [],
+                    country.destructionPoints = [],
+                    country.destructionDots = [],
+                    country.selected = false;
+                country.places = new Map<string, Place>();
+                obj.places.forEach((p) => {
+                    let place = new Place();
+                    place.points = p.points;
+                    place.name = p.NAME;
+                    place.iso_a2 = p.ISO_A2;
+                    place.iso_a3 = p.ADM0_A3;
+                    place.latitute = p.LATITUDE;
+                    place.longitude = p.LONGITUDE;
+                    place.pop_max = p.POP_MAX;
+                    place.pop_min = p.POP_MIN;
+                    country.places[place.name] = place;
+                });
+                map[obj.iso_a3] = country;
+            }
+            return map;
+        }, {});
+    }
+
+
+    mapAllPoints() {
+        let allPoints = {};
+        Object.keys(this.countries).forEach(k => {
+            var c = this.countries[k];
+            c.points.forEach((pointArray) => {
+                pointArray.forEach((p) => {
+                    var pStr = p.x + "-" + p.y;
+                    // console.log(pStr);
+                    if (allPoints[pStr] !== undefined) {
+                        allPoints[pStr].push(c.iso_a3);
+                    }
+                    else {
+                        allPoints[pStr] = [c.iso_a3];
+                    }
+                });
+            });
+        });
+        return allPoints;
+    }
+
+    /**
+     * Sorts objects by their relative screen position, to avoid overlapping tiles.
+     */
+    private sortCountriesByCoordinates() {
+        this.sortedObjs = Object.values(this.countries).sort((a, b) => {
+            return (a.points[0][0].y * this.gameState.height + a.points[0][0].x) - (b.points[0][0].y * this.gameState.height + b.points[0][0].x);
+        });
+    }
+
+    private establishNeighbours() {
+
+        // Add proportion of main land mass with shared borders
+        let allPoints = this.mapAllPoints();
+        Object.keys(allPoints).forEach((k) => {
+            var countries = allPoints[k];
+            countries.forEach((c1) => {
+                var country = this.countries[c1];
+                countries.forEach((c2) => {
+                    if (c1 != c2) {
+                        if (country.neighbours.indexOf(c2) == -1) {
+                            country.neighbours.push(c2);
+                        }
+                        country.points_shared += 1;
+                    }
+                });
+                country.points_total += 1;
+            });
+        });
+
+        Object.keys(this.countries).forEach( (c) => {
+        
+            var country = this.countries[c];
+            country.shared_border_percentage = country.points_shared / country.points_total;
+            
+            if (country.shared_border_percentage > 1.0) {
+
+                country.shared_border_percentage = 1.0;
+                
+            }
+
+        });
+    }
+
+
+    /**
+     * Add population density
+     */
+    private establishDensities() {
+        Object.keys(this.countries).forEach((c) => {
+            var country = this.countries[c];
+            country.density = country.pop_est / country.area;
+        });
+    }    
+
+    private establishAreas() {
+        this.areaMin = 0;
+        this.areaMax = 0;
+        this.areaMean = 0;
+        this.areaMinCountry = '';
+        this.areaMaxCountry = '';
+        Object.keys(this.countries).forEach((c) => {
+            var country = this.countries[c];
+            if (this.areaMin == 0 || this.areaMin > country.area) {
+                this.areaMin = country.area;
+                this.areaMinCountry = c;
+            }
+            if (this.areaMax < country.area) {
+                this.areaMax = country.area;
+                this.areaMaxCountry = c;
+            }
+            this.areaMean += country.area;
+        });
+        this.areaMean /= Object.keys(this.countries).length;
+        this.areaRatio = Math.floor(Math.log2(this.areaMax / this.areaMin));
+    }
+
+    /**
+     * Indicates relative area (area divided by country, squared)
+     */
+    private establishNumberOfPoints() {
+        Object.keys(this.countries).forEach((c) => {
+            var country = this.countries[c];
+            // Change the power for more or less points
+            country.numPoints = Math.ceil(Math.pow(country.area / this.areaMean, 2));
+        });
+    }
+
+
+    /**
+     * Add world population
+     */
+    private worldPopulation() {
+        
+        let world = this;
+
+        this.gameState.populationWorld = Object.keys(this.countries).map(function (c) {
+            return world.countries[c].pop_est;
+        }).reduce((a, c) => {
+            return a + parseInt(c);
+        }, 0);
+    }
+
+    setupCountries() { 
+
+        let world = this;
+
+        this.initialiseCountries();
+
+        this.sortCountriesByCoordinates();
+
+        this.establishNeighbours();
+
+        this.establishDensities();
+
+        this.establishAreas();
+
+        this.establishNumberOfPoints();
+
+        this.worldPopulation();
+
+    }
+
+
+
 
     /**
      * Generates min, max coordinates
@@ -234,9 +478,26 @@ export class World {
 
     }
 
+    /*
+     * Gauss shoelace algorithm - https://gamedev.stackexchange.com/questions/151034/how-to-compute-the-area-of-an-irregular-shape
+     */
+    areas(pa: Point[][]) { 
+
+        let area = 0;
+        
+        for (let i = 0; i < pa.length; i++) {
+
+            let p = pa[i];
+            area += this.regionalArea(p);
+
+        }
+
+        return area;
+
+    }
 
     /**
-     * Create country centroids.
+     * Get country centroids.
      */
     centroids(pa: Point[][]) { 
 
@@ -276,295 +537,6 @@ export class World {
     }
 
 
-    /*
-     * Gauss shoelace algorithm - https://gamedev.stackexchange.com/questions/151034/how-to-compute-the-area-of-an-irregular-shape
-     */
-    areas(pa: Point[][]) { 
-
-        let area = 0;
-        
-        for (let i = 0; i < pa.length; i++) {
-
-            let p = pa[i];
-            area += this.regionalArea(p);
-
-        }
-
-        return area;
-
-    }
-
-
-    initCountries() { 
-
-        let world = this;
-
-        this.countries = Object.values(this.countriesJson).reduce((map, obj) => {  
-
-            if (!map[obj.iso_a3]) {
-
-                let country = new Country();
-                
-                country.name = obj.name,
-                country.points = obj.points.map((pa) => { return pa.map((p) => { return new Point(parseFloat(p.x), parseFloat(p.y)); }); }),
-                country.extremes = this.extremes(country.points),
-                country.centroid = this.centroids(country.points),
-                country.area = this.areas(country.points),
-                
-                country.affected_chance = 1.0,
-                country.pop_est = parseInt(obj.pop_est),
-                country.pop_aware = 0,
-                country.pop_aware_percent = 0,
-                country.pop_prepared = 0,
-                country.pop_prepared_percent = 0,
-
-                country.gdp_est = parseInt(obj.gdp_md_est),
-                country.iso_a2 = obj.iso_a2,
-                country.iso_a3 = obj.iso_a3,
-                country.subregion = obj.subregion,
-                country.economy = obj.economy,
-                country.income_grp = obj.income_grp,
-                country.income_grp_num = parseInt(obj.income_grp.charAt(0)),
-                country.equator_dist = obj.equatorDist,
-                country.offsetX = obj.offsetX,
-                country.offsetY = obj.offsetY,
-
-                country.policy = 0,
-                country.previousLoss = this.gameState.previousLoss,
-                country.loss = this.gameState.previousLoss,
-                country.neighbours = [],
-                country.points_shared = 0,
-                country.points_total = 0,
-                country.shared_border_percentage = 0,
-                country.policyPoints = [],
-                country.policyDots = [],
-                country.destructionPoints = [],
-                country.destructionDots = [],
-                country.selected = false   
-                country.places = new Map<string, Place>();
-                obj.places.forEach( (p) => {
-                    let place = new Place();
-                    place.points = p.points;
-                    place.name = p.NAME;
-                    place.iso_a2 = p.ISO_A2;
-                    place.iso_a3 = p.ADM0_A3;
-                    place.latitute = p.LATITUDE;
-                    place.longitude = p.LONGITUDE;
-                    place.pop_max = p.POP_MAX;
-                    place.pop_min = p.POP_MIN;
-                    country.places[place.name] = place;
-                });
-
-                map[obj.iso_a3] = country;
-
-            } 
-
-            return map; 
-
-        }, {});
-
-        /**
-         * Sorts objects by their relative screen position, to avoid overlapping tiles.
-         */
-        this.sortedObjs = Object.values(this.countries).sort((a, b) => { 
-
-            return (a.points[0][0].y * this.gameState.height + a.points[0][0].x) - (b.points[0][0].y * this.gameState.height + b.points[0][0].x);  
-
-        });
-
-        // Add proportion of main land mass with shared borders
-        let allPoints = {};
-        Object.keys(this.countries).forEach(k => {
-            
-            var c = this.countries[k];
-            
-            c.points.forEach((p) => {
-            
-                var pStr = p.x +"-"+p.y;
-
-                if (allPoints[pStr]) {
-            
-                    allPoints[pStr].push(c.iso_a3);
-            
-                }
-                else {
-            
-                    allPoints[pStr] = [c.iso_a3];
-            
-                }
-            
-            });
-
-        });
-
-        Object.keys(allPoints).forEach( (k) => {
-
-            var countries = allPoints[k];
-
-            countries.forEach( (c1) => {
-
-                var country = this.countries[c1];
-                countries.forEach( (c2) => {
-
-                    if (c1 != c2) {
-                    
-                        if (country.neighbours.indexOf(c2) == -1) {
-                    
-                            country.neighbours.push(c2);
-                    
-                        }
-
-                        country.points_shared += 1;
-
-                    }
-
-                });
-
-                country.points_total += 1;
-
-            });
-
-        });
-
-
-        Object.keys(this.countries).forEach( (c) => {
-        
-            var country = this.countries[c];
-            country.shared_border_percentage = country.points_shared / country.points_total;
-            
-            if (country.shared_border_percentage > 1.0) {
-
-                country.shared_border_percentage = 1.0;
-                
-            }
-
-        });
-        
-
-        // Add population density
-        Object.keys(this.countries).forEach( (c) => { 
-        
-            var country = this.countries[c];
-            country.density = country.pop_est / country.area;
-
-        } );
-
-        this.areaMin = 0;
-        this.areaMax = 0;
-        this.areaMean = 0;
-        this.areaMinCountry = '';
-        this.areaMaxCountry = '';
-        
-        Object.keys(this.countries).forEach( (c) => {
-
-            var country = this.countries[c];
-            
-            if (this.areaMin == 0 || this.areaMin > country.area) {
-            
-                this.areaMin = country.area;
-                this.areaMinCountry = c;
-            
-            }
-
-            if (this.areaMax < country.area) {
-            
-                this.areaMax = country.area;
-                this.areaMaxCountry = c; 
-            
-            }
-            
-            this.areaMean += country.area;
-
-        });
-
-        this.areaMean /= Object.keys(this.countries).length;
-        this.areaRatio = Math.floor(Math.log2(this.areaMax / this.areaMin));
-
-        Object.keys(this.countries).forEach( (c) => {
-
-            var country = this.countries[c];
-            // Change the power for more or less points
-            country.numPoints = Math.ceil(Math.pow(country.area / this.areaMean, 2));
-
-        });
-
-        // Add world populations
-        this.gameState.populationWorld = Object.keys(this.countries).map(function(c) { 
-
-            return world.countries[c].pop_est; 
-
-        }).reduce( (a, c) => {
-
-            return a + parseInt(c);
-
-        }, 0);
-
-    }
-
-
-
-    /**
-     * Update time variables.
-     */
-    updateTimeVars(interval) {
-
-        let world = this;
-
-        world.gameState.timeInterval = interval;
-        world.gameState.tutorialInterval = world.gameState.timeInterval * world.res.TUTORIAL_INTERVAL_MULTIPLIER;
-        world.gameState.resourceInterval = world.gameState.timeInterval * world.res.RESOURCE_INTERVAL_MULTIPLIER; 
-        world.gameState.crisisInterval = world.gameState.timeInterval * world.res.CRISIS_INTERVAL_MULTIPLIER;
-
-    }
-
-
-    /**
-     * Sets up game parameters at the start of play
-     */
-    calculatePolicyConnections() {
-
-        let world = this;
-
-        world.gameState.policyOptions = {};
-        let policyLen = 0;
-    
-        Object.keys(world.res.RESOURCES).forEach(key => {
-    
-            world.res.RESOURCES[key].policyOptions.forEach(pol => {
-    
-                world.gameState.policyOptions[pol.id] = pol;
-                if (policyLen < pol.id)
-                    policyLen = pol.id;
-    
-            });
-        });
-        
-        world.gameState.policyRelations = {};
-        
-        for (let i = 0; i < policyLen; i++){
-    
-            const source = world.gameState.policyOptions[i+1];
-            world.gameState.policyRelations[source.id] = {};
-    
-            // for (let j = i + 1; j < policyLen; j++){
-            for (let j = 0; j < policyLen; j++){
-                if (j == i)
-                    continue;
-
-                const target = world.gameState.policyOptions[j+1];
-                if (world.gameState.policyRelations[target.id] === undefined)
-                    world.gameState.policyRelations[target.id] = {};
-                
-                let val = world.res.RESOURCE_MATRIX[i][j];
-                val = val == undefined ? 0 : val;
-                world.gameState.policyRelations[source.id][target.id] = val;
-                
-    
-            }
-    
-        }
-    
-    }
 
 
     /**
@@ -667,9 +639,74 @@ export class World {
 
         }
 
-        this.updateTimeVars(world.res.MONTH_INTERVAL);
+        this.updateTimeVariables(world.res.MONTH_INTERVAL);
         this.calculatePolicyConnections();
         
+    }
+
+
+
+    /**
+     * Update time variables.
+     */
+    updateTimeVariables(interval) {
+
+        let world = this;
+
+        world.gameState.timeInterval = interval;
+        world.gameState.tutorialInterval = world.gameState.timeInterval * world.res.TUTORIAL_INTERVAL_MULTIPLIER;
+        world.gameState.resourceInterval = world.gameState.timeInterval * world.res.RESOURCE_INTERVAL_MULTIPLIER; 
+        world.gameState.crisisInterval = world.gameState.timeInterval * world.res.CRISIS_INTERVAL_MULTIPLIER;
+
+    }
+
+
+    /**
+     * Sets up game parameters at the start of play
+     */
+    calculatePolicyConnections() {
+
+        let world = this;
+
+        world.gameState.policyOptions = {};
+        let policyLen = 0;
+    
+        Object.keys(world.res.RESOURCES).forEach(key => {
+    
+            world.res.RESOURCES[key].policyOptions.forEach(pol => {
+    
+                world.gameState.policyOptions[pol.id] = pol;
+                if (policyLen < pol.id)
+                    policyLen = pol.id;
+    
+            });
+        });
+        
+        world.gameState.policyRelations = {};
+        
+        for (let i = 0; i < policyLen; i++){
+    
+            const source = world.gameState.policyOptions[i+1];
+            world.gameState.policyRelations[source.id] = {};
+    
+            // for (let j = i + 1; j < policyLen; j++){
+            for (let j = 0; j < policyLen; j++){
+                if (j == i)
+                    continue;
+
+                const target = world.gameState.policyOptions[j+1];
+                if (world.gameState.policyRelations[target.id] === undefined)
+                    world.gameState.policyRelations[target.id] = {};
+                
+                let val = world.res.RESOURCE_MATRIX[i][j];
+                val = val == undefined ? 0 : val;
+                world.gameState.policyRelations[source.id][target.id] = val;
+                
+    
+            }
+    
+        }
+    
     }
 
 
@@ -917,28 +954,6 @@ export class World {
     }
 
 
-    /**
-     * Returns a decayed value of a percentile (0-100),
-     * between Math.E (2.78...) and 1. 
-     * The inflectionPoint parameter, also 0-100, indicates the point of fastest decay.
-     * The decay fundtion is roughly sigmoidal around the inflection point.
-     */
-    sigmoidalDecay(percent, inflectionPoint) {
-
-        let world = this;
-
-        if (!world.res.SIGMOIDAL_DECAY)
-            return 1.0;
-
-        inflectionPoint = (inflectionPoint === undefined) ? 50 : inflectionPoint;
-
-        // Some value between 0.0 and 1.0 (where inflectionPoint = 50.0)
-        let normedInverse = 1.0 - Math.abs(( percent - inflectionPoint ) / inflectionPoint);
-        // Some value between e (2.78...) and 1 / e (0.367) (or lower if inflection point != 50.0)
-        return Math.pow(Math.E, normedInverse);
-
-    }
-
 
     calculatePolicyBalanceOnPreparedness() {
 
@@ -1077,20 +1092,6 @@ export class World {
 
     }
 
-    /**
-     * Scales a percentile from E down to 1, based on the rateOfDecay parameter.
-     * @param percent 
-     * @param rateOfDecay 
-     */
-    exponentialDecay(percent, rateOfDecay) {
-
-        // return Math.pow(Math.sqrt(Math.E), Math.pow((100 - percent) / 100, rateOfDecay));
-        // return Math.pow(Math.E, 1 / (100 * (percent + 0.01) ));
-        let percentDenom = percent > 1.0 ? 100 : 1;
-        return Math.pow(3*Math.E, (1 - percent) / (percentDenom ));
-
-    }
-
     calculatePolicyImpactOnPreparedness(country) {
         
         let world = this;
@@ -1107,8 +1108,6 @@ export class World {
 
         }
         
-        // Add sigmoidal decay
-        // let decayInfluence = world.sigmoidalDecay(country.pop_prepared_percent, world.res.DECAY_PREPAREDNESS);
         // Add exponential decay
         let decayInfluence = world.exponentialDecay(country.pop_prepared_percent, world.res.DECAY_PREPAREDNESS);      
         severityEffect = Math.pow(severityEffect, decayInfluence);
@@ -1363,7 +1362,6 @@ export class World {
         world.gameState.populationPrepared = populationPrepared;
         world.gameState.populationAwarePercent = 100 * world.gameState.populationAware / world.gameState.populationWorld;
         world.gameState.populationPreparedPercent = 100 * world.gameState.populationPrepared / world.gameState.populationWorld;
-
 
     }
 

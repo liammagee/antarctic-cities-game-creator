@@ -6,7 +6,6 @@ const chalk = require('chalk');
 const { program } = require('commander');
 
 import {World} from '../assets/Script/WorldScene/World';
-import { symlinkSync } from 'fs';
 
 const json = require('../assets/resources/scripts/json-equal-greyscale.json')
 let log = console.log;
@@ -46,7 +45,7 @@ log(chalk.red(`Running Sim with strategy: '${program.strategy}' and these polici
 
 const PRINT_ANNUAL_STATS = true;
 const PRINT_RUN_STATS = true;
-const RUNS = 1;
+const RUNS = 10;
 const PARALLEL = false;
 
 let resourcesById = {};
@@ -59,7 +58,7 @@ const init = () => {
     world = new World()
     world.initGameState('Easy', 'eng', true, true, 1334, 750);
     world.countriesJson = json;
-    world.initCountries();
+    world.setupCountries();
     world.gameState.state = world.res.GAME_STATES.PREPARED;
     world.gameState.tutorialMode = false;
     let antCountries = ["NZL", "AUS", "ZAF", "ARG", "CHL"];
@@ -76,7 +75,7 @@ const init = () => {
     world.res.CRISIS_CHANCE = CRISIS_CHANCE;
     world.res.MONTH_INTERVAL = TIME_INTERVAL;
 
-    world.updateTimeVars(world.res.MONTH_INTERVAL);
+    world.updateTimeVariables(world.res.MONTH_INTERVAL);
 
     Object.values(world.res.RESOURCES).forEach((grp) => { grp.policyOptions.forEach((po) => { resourcesById[po.id] = po; })})
     

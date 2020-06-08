@@ -162,33 +162,36 @@ CCProgram fs %{
       float alpha = 1. - randForCell(-coord, vec2(0., 0.)) * u_randAlpha;
       return alpha * texture(texture, v_uv0).a;
   }
-  float cellIntensity(vec2 coord, vec2 offset, vec2 shift) {
+  float cellIntensity(vec2 coord, vec2 offset, vec2 shift, float val) {
       float ci = cell(coord, offset, shift) * textureAlpha(coord + offset);
+      
       float r = randForCell2(coord, offset);
-      float v1 = ( 1.0 - u_percentageLoss / 100.0 );
-      v1 = 1.0 - pow(v1, u_dimPower);
-      v1 = step(v1, 1.-r);
+      float v1 = ( val / 100.0 );
+      v1 = 1.0-pow(v1, u_dimPower);
+      v1 = step(v1, .99-r);
+      // v1 = step(v1, .5);
       ci *= v1;
+
       return ci;
   }
 
   // Intensity of the dot
-  float dotIntensity(vec2 coord, vec2 shift) {
+  float dotIntensity(vec2 coord, vec2 shift, float val) {
       coord -= shift;
       
       // Get a float value representing dot intensity 
       float di = 0.;
-      di += cellIntensity(coord, vec2(0., 0.), shift);
+      di += cellIntensity(coord, vec2(0., 0.), shift, val);
       // To allow for dots to spill over into neighbouring cells,
       // accumulate neighbouring cell values
-      di += cellIntensity(coord, vec2(0., u_cellSize), shift);
-      di += cellIntensity(coord, vec2(0., -u_cellSize), shift);
-      di += cellIntensity(coord, vec2(u_cellSize, 0.), shift);
-      di += cellIntensity(coord, vec2(-u_cellSize, 0.), shift);
-      di += cellIntensity(coord, vec2(u_cellSize, u_cellSize), shift);
-      di += cellIntensity(coord, vec2(u_cellSize, -u_cellSize), shift);
-      di += cellIntensity(coord, vec2(-u_cellSize, u_cellSize), shift);
-      di += cellIntensity(coord, vec2(-u_cellSize, -u_cellSize), shift);
+      di += cellIntensity(coord, vec2(0., u_cellSize), shift, val);
+      di += cellIntensity(coord, vec2(0., -u_cellSize), shift, val);
+      di += cellIntensity(coord, vec2(u_cellSize, 0.), shift, val);
+      di += cellIntensity(coord, vec2(-u_cellSize, 0.), shift, val);
+      di += cellIntensity(coord, vec2(u_cellSize, u_cellSize), shift, val);
+      di += cellIntensity(coord, vec2(u_cellSize, -u_cellSize), shift, val);
+      di += cellIntensity(coord, vec2(-u_cellSize, u_cellSize), shift, val);
+      di += cellIntensity(coord, vec2(-u_cellSize, -u_cellSize), shift, val);
 
       return di;
   }
@@ -246,9 +249,9 @@ CCProgram fs %{
     // Do the dots
     vec2 st = gl_FragCoord.xy - u_location.xy / u_zoom;
     // One set of dots
-    float di1 = dotIntensity(st, vec2(0., 0.));
+    float di1 = dotIntensity(st, vec2(0., 0.), u_percentageLoss);
     // Another set of dots
-    float di2 = dotIntensity(st, vec2(u_cellSize * 0.5, u_cellSize * 0.5));
+    float di2 = dotIntensity(st, vec2(u_cellSize * 0.5, u_cellSize * 0.5), u_percentagePrep);
 
     // Fill values
     float v1 = ( 1.0 - u_percentageLoss / 100.0 );
@@ -265,25 +268,28 @@ CCProgram fs %{
     // float rred = 1.0-dotIntensity(st, vec2(0., 0.));
     float rgreen = randForCell(-st, vec2(-u_cellSize * 0.5, -u_cellSize * 0.5));
     vec4 af_test = vec4(1.0);
-    // vec4 af_red = vec4(153.0 / 255.0, 51.0 / 255.0, 51.0 / 255.0, 1.0);
-    vec4 af_red = vec4(255.0 / 255.0, 51.0 / 255.0, 51.0 / 255.0, 1.0);
+    vec4 af_red = vec4(153.0 / 255.0, 51.0 / 255.0, 51.0 / 255.0, 1.0);
+    vec3 af_red3 = vec3(153.0 / 255.0, 51.0 / 255.0, 51.0 / 255.0);
+    // vec4 af_red = vec4(255.0 / 255.0, 51.0 / 255.0, 51.0 / 255.0, 1.0);
     vec4 af_green = vec4(153.0 / 255.0, 204.0 / 255.0, 102.0 / 255.0, 1.0);
-    vec4 color1 = af_red * di1;
+    vec3 af_green3 = vec3(153.0 / 255.0, 204.0 / 255.0, 102.0 / 255.0);
+    // vec4 color1 = af_red * di1;
+    vec4 color1 = vec4(af_red3 * step(1.0-di1, 0.5), step(1.0-di1, 0.5) *.8);
+    
     // color1 *= smoothstep(di1*.1, di1*.1, 1. - v1);
     // color1 *= step(1. - v1, di1*.5);
     // color1 *= smoothstep(rred, rred, 1. - v1);
     // color1 *= smoothstep(di1 * rred, di1 * rred, 1. - v1);
     // color1 *= step( 1. - v1, rred);
     // vec4 color2 = vec4(0., di2, 0., di2);
-    vec4 color2 = af_green * di2;
+    // vec4 color2 = af_green * di2;
+    vec4 color2 = vec4(af_green3 * step(1.0-di2, 0.5), step(1.0-di2, 0.5) *.8);
     // color2 *= 1. - v2;
-    color2 *= smoothstep(rgreen, rgreen, 1. - v2);
+    // color2 *= smoothstep(rgreen, rgreen, 1. - v2);
+    mask = overlay(mask, color2);
     mask = overlay(mask, color1);
-    // mask = overlay(mask, color2);
 
-    ALPHA_TEST(o);
 
     gl_FragColor = mask;
-    // gl_FragColor = vec4(mask.r, 0.0, 0.0, 1.0);
   }
 }%

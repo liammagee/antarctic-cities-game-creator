@@ -76,6 +76,8 @@ export default class NewClass extends cc.Component {
             cc.sys.localStorage.level = 'Easy';
         if (cc.sys.localStorage.greyscale === undefined)
             cc.sys.localStorage.greyscale = true;
+        if (cc.sys.localStorage.countryMask === undefined)
+            cc.sys.localStorage.countryMask = 'default';
 
         cc.director.loadScene("WorldScene");
 

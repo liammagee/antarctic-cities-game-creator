@@ -5,13 +5,13 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-const {ccclass, property} = cc._decorator;
+const { ccclass, property } = cc._decorator;
 
-import {Resources} from './Resources';
-import {Point, CrisisCountry, Shader, AutomatedScript, GameState, Country, Place, World} from './World';
-import {Colors} from './Colors';
+import { Resources } from './Resources';
+import { Point, CrisisCountry, Shader, AutomatedScript, GameState, Country, Place, World } from './World';
+import { Colors } from './Colors';
 
-class TimedNode extends cc.Node  {
+class TimedNode extends cc.Node {
     placedAt: number = 0.0
     id: number = 0.0
 }
@@ -23,10 +23,14 @@ export default class GameController extends cc.Component {
 
     @property({
         type: cc.AudioClip// use 'type:' to declare Texture2D object directly
-      })
+    })
     audio: cc.AudioClip = null;
     @property(cc.Material)
     defaultMaterial: cc.Material = null;
+    @property(cc.Material)
+    materialA: cc.Material = null;
+    @property(cc.Material)
+    materialB: cc.Material = null;
     @property(cc.Node)
     messageBox: cc.Node = null;
     @property(cc.Node)
@@ -41,7 +45,7 @@ export default class GameController extends cc.Component {
     backgroundGreyscale: cc.Node = null;
     @property(cc.Node)
     backgroundColour: cc.Node = null;
-    
+
     controller: GameController = null;
     world: World = null;
 
@@ -51,7 +55,7 @@ export default class GameController extends cc.Component {
     countries: Country[] = []
     automateID: number = 0
     automateScripts: AutomatedScript[] = []
-    
+
     btnQuit: cc.Node = null
     btnSettings: cc.Node = null
     btnSound: cc.Node = null
@@ -90,19 +94,19 @@ export default class GameController extends cc.Component {
     collisionDetection(points, test) {
 
         let crossed = false;
-        
+
         // Double check the detection is within the widest bounds
         let maxx = Math.max(...points.map(p => p.x));
 
         for (let i = 0; i < points.length; i++) {
 
             let p1 = points[i];
-            let p2 = (i == points.length - 1) ? points[0] : points[i+1];
+            let p2 = (i == points.length - 1) ? points[0] : points[i + 1];
 
             // Make floating, and jitter to avoid boundary issues with integers.
-            let x1 = parseFloat(p1.x) + 0.001, y1 = parseFloat(p1.y) - 0.001, 
+            let x1 = parseFloat(p1.x) + 0.001, y1 = parseFloat(p1.y) - 0.001,
                 x2 = parseFloat(p2.x) + 0.001, y2 = parseFloat(p2.y) - 0.001;
-            
+
             if ((y1 < test.y && y2 >= test.y) || (y1 > test.y && y2 <= test.y)) {
 
                 if ((x1 + x2) / 2.0 < test.x && test.x < maxx) {
@@ -116,9 +120,9 @@ export default class GameController extends cc.Component {
         }
 
         return crossed;
-        
+
     }
-    
+
 
     /**
      * Message box
@@ -149,8 +153,8 @@ export default class GameController extends cc.Component {
 
         let buttons = [];
         buttons.push(btn1);
-        if (message === null || typeof(message) === "undefined" || message === '') {
-        
+        if (message === null || typeof (message) === "undefined" || message === '') {
+
             if (prompt2 !== undefined) {
 
                 btn1.node.x = -0.25 * controller.messageBox.width;
@@ -167,7 +171,7 @@ export default class GameController extends cc.Component {
                 btn2.node.opacity = 0;
                 btn2.interactable = false;
                 btn2.enabled = false;
-                
+
             }
         }
         else {
@@ -206,7 +210,7 @@ export default class GameController extends cc.Component {
 
         };
         btn1.node.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
-        
+
         let btn2Func = (event) => {
 
             controller.messageBox.opacity = 0;
@@ -225,7 +229,7 @@ export default class GameController extends cc.Component {
             btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
 
         buttons.push(btn1);
-        
+
         if (btn2 !== undefined)
             buttons.push(btn2);
 
@@ -270,7 +274,7 @@ export default class GameController extends cc.Component {
         btn1.getChildByName("Background").getChildByName("optContents").getComponent(cc.Label).string = rightAnswer;
         btn2.getChildByName("Background").getChildByName("optContents").getComponent(cc.Label).string = wrongAnswer;
 
-        let btn1Func = function(event) {
+        let btn1Func = function (event) {
 
             controller.quizBox.opacity = 0;
             controller.quizBox.zIndex = -1;
@@ -280,8 +284,8 @@ export default class GameController extends cc.Component {
             controller.world.gameState.modal = false;
             event.stopPropagation();
 
-            controller.showMessageBox(parent, "CRISIS RESPONSE", "Great response to this crisis!", "OK!", function() {
-                
+            controller.showMessageBox(parent, "CRISIS RESPONSE", "Great response to this crisis!", "OK!", function () {
+
                 const res = Math.floor(1 + Math.random() * 3);
                 controller.world.gameState.resources += res;
 
@@ -291,8 +295,8 @@ export default class GameController extends cc.Component {
 
         };
         btn1.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
-        
-        let btn2Func = function(event) {
+
+        let btn2Func = function (event) {
 
             controller.quizBox.opacity = 0;
             controller.quizBox.zIndex = -1;
@@ -302,14 +306,14 @@ export default class GameController extends cc.Component {
             controller.world.gameState.modal = false;
             event.stopPropagation();
 
-            controller.showMessageBox(parent, "CRISIS RESPONSE", "Good try, but this won't be enough to preserve the future of Antarctica!", "OK!", function() {
-                
+            controller.showMessageBox(parent, "CRISIS RESPONSE", "Good try, but this won't be enough to preserve the future of Antarctica!", "OK!", function () {
+
                 const res = Math.floor(1 + Math.random() * 3);
                 if (controller.world.gameState.resources - res > 0)
                     controller.world.gameState.resources -= res;
                 else
                     controller.world.gameState.resources = 0;
-                
+
                 controller.world.gameState.state = controller.world.res.GAME_STATES.STARTED;
 
 
@@ -320,7 +324,7 @@ export default class GameController extends cc.Component {
 
         buttons.push(btn1);
         buttons.push(btn2);
-        
+
         return buttons;
 
     }
@@ -353,11 +357,14 @@ export default class GameController extends cc.Component {
         let eng = (cc.sys.localStorage.language == 'eng')
         controller.settingsBox.getChildByName("toggleLanguage").getChildByName("toggle1").getComponent(cc.Toggle).isChecked = eng;
         controller.settingsBox.getChildByName("toggleLanguage").getChildByName("toggle2").getComponent(cc.Toggle).isChecked = !eng;
+        let countryMask = (cc.sys.localStorage.countryMask === undefined || cc.sys.localStorage.countryMask === 'default')
+        controller.settingsBox.getChildByName("toggleCountryMask").getChildByName("toggle1").getComponent(cc.Toggle).isChecked = countryMask;
+        controller.settingsBox.getChildByName("toggleCountryMask").getChildByName("toggle2").getComponent(cc.Toggle).isChecked = !countryMask;
 
-        let btn1Func = function(event) {
+        let btn1Func = function (event) {
 
+            // Change background
             let gsChecked = controller.settingsBox.getChildByName("toggleContainer").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
-
             cc.sys.localStorage.greyscale = gsChecked;
             world.gameState.greyscale = gsChecked;
 
@@ -369,13 +376,14 @@ export default class GameController extends cc.Component {
 
             }
             else {
-                
+
                 controller.backgroundGreyscale.opacity = 0;
                 controller.backgroundColour.opacity = 255;
                 controller.node.color = controller.colors.COLOR_LICORICE;
 
             }
 
+            // Change language
             let engChecked = controller.settingsBox.getChildByName("toggleLanguage").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
             if (engChecked) {
                 cc.sys.localStorage.language = 'eng';
@@ -383,9 +391,19 @@ export default class GameController extends cc.Component {
             else {
                 cc.sys.localStorage.language = 'esp';
             }
-            // TODO: Trigger game-wide language update
-            controller.updateLanguageSettings()
+            controller.updateLanguageSettings();
 
+            // Change country mask
+            let defChecked = controller.settingsBox.getChildByName("toggleCountryMask").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
+            if (defChecked) {
+                cc.sys.localStorage.countryMask = 'default';
+            }
+            else {
+                cc.sys.localStorage.countryMask = 'experimental';
+            }
+            controller.updateCountryMask();
+
+            // Hide settings
             controller.settingsBox.opacity = 0;
             controller.settingsBox.zIndex = -1;
             world.gameState.modal = false;
@@ -393,8 +411,8 @@ export default class GameController extends cc.Component {
 
         };
         btn1.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
-        
-        let btn2Func = function(event) {
+
+        let btn2Func = function (event) {
 
             btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
@@ -404,7 +422,7 @@ export default class GameController extends cc.Component {
             controller.settingsBox.zIndex = -1;
             world.gameState.modal = false;
             world.gameState.state = world.res.GAME_STATES.STARTED;
-            
+
         };
         btn2.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
 
@@ -421,7 +439,7 @@ export default class GameController extends cc.Component {
         let scene = cc.director.getScene();
         let layout = scene.getChildByName('Canvas').getChildByName('layout');
         let bottomBar = layout.getChildByName('bottomBar');
-        
+
         bottomBar.getChildByName('btnDesignPolicy').getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = world.res.lang.commands_policy[cc.sys.localStorage.language];
         bottomBar.getChildByName('lblLossLabel').getComponent(cc.Label).string = world.res.lang.commands_loss[cc.sys.localStorage.language];
         bottomBar.getChildByName('lblPreparednessLabel').getComponent(cc.Label).string = world.res.lang.commands_prepared[cc.sys.localStorage.language];
@@ -435,6 +453,71 @@ export default class GameController extends cc.Component {
 
     }
 
+    /**
+     * Updates country images with new material
+     */
+    updateCountryMask() {
+
+        let controller = this.controller;
+        let world = this.world;
+        let scene = cc.director.getScene();
+        let layout = scene.getChildByName('Canvas').getChildByName('layout');
+
+        let material: cc.Material = null;
+        if (cc.sys.localStorage.countryMask == 'default') {
+
+            controller.defaultMaterial = controller.materialA;
+
+        }
+        else {
+
+            controller.defaultMaterial = controller.materialB;
+
+        }
+
+        controller.loadCountrySprites();
+        // Reload country sprites to update actual materials
+
+    }
+
+    loadCountrySprites() {
+
+        let controller = this;
+        let world = controller.world;
+        let mapBack = controller.node.getChildByName('mapBack');
+        // mapBack.removeAllChildren();
+
+        // loading all resource in the test assets directory
+        cc.loader.loadResDir("countries", cc.SpriteFrame, function (err, assets, urls) {
+
+            for (var i = 0; i < assets.length; i++) {
+
+                const spriteNode = new cc.Node('Sprite ');
+                const sp = spriteNode.addComponent(cc.Sprite);
+                sp.spriteFrame = assets[i];
+                let materialVariant = cc.MaterialVariant.create(controller.defaultMaterial, sp);
+                materialVariant.setProperty('u_selected', 0.0);
+                materialVariant.setProperty('u_percentageLoss', 0.0);
+                materialVariant.setProperty('u_percentagePrep', 0.0);
+                sp.setMaterial(0, materialVariant);
+                let url = urls[i];
+                let iso = url.match('/([A-Z]*)_')[1];
+                controller.countryNodes[iso] = spriteNode;
+                let country = world.countries[iso];
+                if (country !== undefined) {
+
+                    spriteNode.setAnchorPoint(0.0, 0.0);
+                    spriteNode.setPosition((country.offsetX) - mapBack.x,
+                        (cc.winSize.height - (1 * world.res.Y_OFFSET) - country.offsetY) - mapBack.y);
+                    spriteNode.parent = mapBack;
+                    spriteNode.zIndex = 202;
+
+                }
+
+            }
+
+        });
+    }
 
     /**
      * Post data to server
@@ -453,8 +536,8 @@ export default class GameController extends cc.Component {
         // xhr.open("POST", "http://localhost:8000/game_data");
 
         // Set Content-type "text/plain;charset=UTF-8" to post plain text
-        xhr.setRequestHeader("Content-Type","application/json;charset=UTF-8");
-        const gameLog = Object.assign({}, world.gameState, { 
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        const gameLog = Object.assign({}, world.gameState, {
 
             policyOptions: undefined,
             policyRelations: undefined,
@@ -468,37 +551,38 @@ export default class GameController extends cc.Component {
         });
 
         let countries = {};
-        Object.values(world.countries).forEach(c => { 
+        Object.values(world.countries).forEach(c => {
             countries[c.iso_a3] = Object.assign({}, c, {
-            
-                points: undefined, 
-                points_shared: undefined, 
-                points_total: undefined, 
-                selected: undefined, 
-                shared_border_percentage: undefined, 
-                subregion: undefined, 
-                destructionPoints: undefined, 
-                destructionDots: undefined, 
-                policyPoints: undefined, 
-                policyDots: undefined, 
-                offsetX: undefined, 
-                offsetY: undefined, 
-                neighbours: undefined, 
-                income_grp: undefined, 
-                income_grp_num: undefined, 
-                iso_a2: undefined, 
-                gdp: undefined, 
-                extremes: undefined, 
-                equator_dist: undefined, 
-                centroid: undefined, 
-                area: undefined, 
-                density: undefined, 
+
+                points: undefined,
+                points_shared: undefined,
+                points_total: undefined,
+                selected: undefined,
+                shared_border_percentage: undefined,
+                subregion: undefined,
+                destructionPoints: undefined,
+                destructionDots: undefined,
+                policyPoints: undefined,
+                policyDots: undefined,
+                offsetX: undefined,
+                offsetY: undefined,
+                neighbours: undefined,
+                income_grp: undefined,
+                income_grp_num: undefined,
+                iso_a2: undefined,
+                gdp: undefined,
+                extremes: undefined,
+                equator_dist: undefined,
+                centroid: undefined,
+                area: undefined,
+                density: undefined,
                 economy: undefined
-    
-        }) });
-        
+
+            })
+        });
+
         // gameLog.countries = countries;
-        
+
         xhr.send(JSON.stringify(gameLog));
 
     }
@@ -511,17 +595,17 @@ export default class GameController extends cc.Component {
      * @param {*} prompt 
      */
     gameOver(parent, message, prompt) {
-        
+
         let controller = this.controller;
         let world = this.world;
 
         controller.postResultsToServer();
 
         // parent.pauseAllActions(); 
-        window.clearTimeout(world.gameState.timeoutID );
+        window.clearTimeout(world.gameState.timeoutID);
         world.gameState.state = world.res.GAME_STATES.PAUSED;
-        
-        controller.showMessageBox(parent, "Game Over", message, prompt, function() {
+
+        controller.showMessageBox(parent, "Game Over", message, prompt, function () {
 
             world.initGameState(cc.sys.localStorage.level,
                 cc.sys.localStorage.language,
@@ -529,7 +613,7 @@ export default class GameController extends cc.Component {
                 cc.sys.isMobile,
                 cc.winSize.width,
                 cc.winSize.height);
-            
+
             world.gameState.state = world.res.GAME_STATES.GAME_OVER;
             world.gameState.startCountry = null;
             world.gameState.policies = new Map<number, number>();
@@ -548,30 +632,30 @@ export default class GameController extends cc.Component {
 
         if (cc.sys.isMobile) {
 
-            target.on(cc.Node.EventType.TOUCH_START, function ( event ) {
-            
+            target.on(cc.Node.EventType.TOUCH_START, function (event) {
+
                 target.TOUCHED = true;
                 event.stopPropagation();
-    
+
             }.bind(target));
-    
+
         }
 
-        target.on(cc.Node.EventType.TOUCH_END, function ( event ) {
-            
+        target.on(cc.Node.EventType.TOUCH_END, function (event) {
+
             if (!cc.sys.isMobile || target.TOUCHED) {
 
                 callback(target);
                 event.stopPropagation();
                 target.TOUCHED = false;
-    
+
             }
 
         }.bind(target));
 
     }
 
-    initControls()  {
+    initControls() {
 
         let controller = this.controller;
         let world = this.world;
@@ -596,29 +680,29 @@ export default class GameController extends cc.Component {
         controller.settingsBox = cc.director.getScene().getChildByName('Canvas').getChildByName("layerSettings");
 
         // Handlers
-        controller.handleMouseTouchEvent(controller.topBar.getChildByName("btnQuit"), function() {
+        controller.handleMouseTouchEvent(controller.topBar.getChildByName("btnQuit"), function () {
 
             world.gameState.modal = true;
             world.gameState.state = world.res.GAME_STATES.PAUSED;
 
-            controller.showMessageBox(controller.node.parent, "Quit Game", '', 
+            controller.showMessageBox(controller.node.parent, "Quit Game", '',
                 "Quit Game", () => {
-                
+
                     controller.postResultsToServer();
 
                     world.gameState.state = world.res.GAME_STATES.GAME_OVER;
                     // cc.director.loadScene("LoadingScene");
                     cc.director.loadScene("SelectOptions");
 
-                }, 
+                },
                 "Return to Game", () => {
 
                     world.gameState.modal = false;
                     world.gameState.state = world.res.GAME_STATES.STARTED;
 
-                });            
+                });
         });
-        controller.topBar.getChildByName("btnSettings").on(cc.Node.EventType.TOUCH_END, function() {
+        controller.topBar.getChildByName("btnSettings").on(cc.Node.EventType.TOUCH_END, function () {
 
             world.gameState.modal = true;
             world.gameState.state = world.res.GAME_STATES.PAUSED;
@@ -627,8 +711,8 @@ export default class GameController extends cc.Component {
 
         }, this);
 
-        controller.handleMouseTouchEvent(controller.topBar.getChildByName("btnSound"), function() {
-            
+        controller.handleMouseTouchEvent(controller.topBar.getChildByName("btnSound"), function () {
+
             controller.topBar.getChildByName("btnSound").getComponent(cc.Button).interactable = !(cc.sys.localStorage.isPlaying == "true");
             if (cc.sys.localStorage.isPlaying == "true") {
 
@@ -637,7 +721,7 @@ export default class GameController extends cc.Component {
 
             }
             else {
-                
+
                 cc.sys.localStorage.isPlaying = true;
                 cc.audioEngine.resumeAll();
                 controller.topBar.getChildByName("btnSound").getComponent(cc.Button).interactable = true;
@@ -645,7 +729,7 @@ export default class GameController extends cc.Component {
             }
 
         });
-        controller.topBar.getChildByName("btnSnapshot").on(cc.Node.EventType.TOUCH_END, function() {
+        controller.topBar.getChildByName("btnSnapshot").on(cc.Node.EventType.TOUCH_END, function () {
 
             world.gameState.state = world.res.GAME_STATES.PAUSED;
 
@@ -654,7 +738,7 @@ export default class GameController extends cc.Component {
             world.gameState.state = world.res.GAME_STATES.STARTED;
 
         }, this);
-        controller.handleMouseTouchEvent(controller.topBar.getChildByName("btnPause"), function() {
+        controller.handleMouseTouchEvent(controller.topBar.getChildByName("btnPause"), function () {
 
             world.gameState.state = world.res.GAME_STATES.PAUSED;
             controller.btnPause.getComponent(cc.Button).interactable = false;
@@ -663,9 +747,9 @@ export default class GameController extends cc.Component {
             controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).pause();
 
         });
-        controller.handleMouseTouchEvent(controller.topBar.getChildByName("btnPlay"), function() {
-            
-            world.updateTimeVars(world.res.MONTH_INTERVAL);
+        controller.handleMouseTouchEvent(controller.topBar.getChildByName("btnPlay"), function () {
+
+            world.updateTimeVariables(world.res.MONTH_INTERVAL);
             world.gameState.state = world.res.GAME_STATES.STARTED;
             controller.btnPause.getComponent(cc.Button).interactable = true;
             controller.btnPlay.getComponent(cc.Button).interactable = false;
@@ -673,9 +757,9 @@ export default class GameController extends cc.Component {
             controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).play();
 
         });
-        controller.handleMouseTouchEvent(controller.topBar.getChildByName("btnFF"), function() {
+        controller.handleMouseTouchEvent(controller.topBar.getChildByName("btnFF"), function () {
 
-            world.updateTimeVars(world.res.MONTH_INTERVAL_FF);
+            world.updateTimeVariables(world.res.MONTH_INTERVAL_FF);
             world.gameState.state = world.res.GAME_STATES.STARTED;
             controller.btnPause.getComponent(cc.Button).interactable = true;
             controller.btnPlay.getComponent(cc.Button).interactable = true;
@@ -693,8 +777,8 @@ export default class GameController extends cc.Component {
 
 
         // Add handling for bottom bar buttons
-        btnDesignPolicy.on(cc.Node.EventType.TOUCH_END, function() {
-            
+        btnDesignPolicy.on(cc.Node.EventType.TOUCH_END, function () {
+
             world.gameState.modal = true;
             world.gameState.state = world.res.GAME_STATES.PAUSED;
             designPolicy.zIndex = 105;
@@ -704,7 +788,7 @@ export default class GameController extends cc.Component {
             let policyDescription = layerDesignPolicy.getChildByName("policyDescription");
             let policyCostLabel = layerDesignPolicy.getChildByName("policyCostLabel");
             let btnPolicyInvest = layerDesignPolicy.getChildByName("btnPolicyInvest");
-            
+
             policyLabel.opacity = 0;
             policyLabel.getComponent(cc.Label).string = "<< Select";
             policyDescription.opacity = 255;
@@ -713,26 +797,26 @@ export default class GameController extends cc.Component {
             policyCostLabel.opacity = 0;
             btnPolicyInvest.getComponent(cc.Button).interactable = true;
             btnPolicyInvest.opacity = 0;
-    
+
         });
         let btnDesignPolicyQuit = designPolicy.getChildByName("btnDesignPolicyQuit");
-        btnDesignPolicyQuit.on(cc.Node.EventType.TOUCH_END, function() {
+        btnDesignPolicyQuit.on(cc.Node.EventType.TOUCH_END, function () {
             world.gameState.state = world.res.GAME_STATES.STARTED;
             designPolicy.zIndex = -1;
             resourceScore.zIndex = 101;
         }, btnDesignPolicyQuit);
 
-        btnStats.on(cc.Node.EventType.TOUCH_END, function() {
-            
+        btnStats.on(cc.Node.EventType.TOUCH_END, function () {
+
             world.gameState.modal = true;
             world.gameState.state = world.res.GAME_STATES.PAUSED;
             stats.zIndex = 105;
             let page1 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_1");
             let page2 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_2");
             let page3 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_3");
-    
+
             // Functions
-            let drawSegment = function(pt1, pt2, width, color) {
+            let drawSegment = function (pt1, pt2, width, color) {
                 graphics.lineWidth = width;
                 graphics.strokeColor = color;
                 graphics.fillColor = color;
@@ -740,9 +824,9 @@ export default class GameController extends cc.Component {
                 graphics.lineTo(pt2.x + 1, pt2.y);
                 graphics.stroke();
                 graphics.fill();
-    
+
             };
-            const makeString = function(num) { return (Math.round(num * 10) / 10).toString() + '%'; };
+            const makeString = function (num) { return (Math.round(num * 10) / 10).toString() + '%'; };
 
             // World
             page1.getChildByName("lblYear").getComponent(cc.Label).string = world.res.lang.stats_year[cc.sys.localStorage.language] + world.gameState.currentDate.getFullYear();
@@ -756,12 +840,12 @@ export default class GameController extends cc.Component {
             // Countries
             // Sort countries
             const countriesSorted = Object.values(world.countries).sort((a, b) => {
-                if(a.name < b.name) { return -1; }
-                if(a.name > b.name) { return 1; }
-                return 0;            
+                if (a.name < b.name) { return -1; }
+                if (a.name > b.name) { return 1; }
+                return 0;
             });
             let txtCountry = '', txtLoss = '', txtPreparedness = '';
-            
+
             let content = page2.getChildByName("scrollview").getChildByName("view").getChildByName("content");
             content.destroyAllChildren();
 
@@ -805,7 +889,7 @@ export default class GameController extends cc.Component {
                 cnpn.x = 780;
                 cnpn.y = -40 + counter * -24;
                 cnpn.parent = content;
-                
+
             });
 
             // Trends
@@ -813,14 +897,14 @@ export default class GameController extends cc.Component {
             let graphics = drawNode.getComponent(cc.Graphics);
             graphics.clear();
             drawNode.destroyAllChildren();
-            
+
             let x_o = 0, yP_o = 0, yL_o = 0, x = 0, yP = 0, yL = 0;
-            const colorD =  new cc.Color(controller.colors.COLOR_RED.r, 
-                                        controller.colors.COLOR_RED.g, 
-                                        controller.colors.COLOR_RED.b);
-            const colorP =  new cc.Color(controller.colors.COLOR_GREEN.r, 
-                                        controller.colors.COLOR_GREEN.g, 
-                                        controller.colors.COLOR_GREEN.b);
+            const colorD = new cc.Color(controller.colors.COLOR_RED.r,
+                controller.colors.COLOR_RED.g,
+                controller.colors.COLOR_RED.b);
+            const colorP = new cc.Color(controller.colors.COLOR_GREEN.r,
+                controller.colors.COLOR_GREEN.g,
+                controller.colors.COLOR_GREEN.b);
 
             const graphX = 4;
             const graphY = 0;
@@ -829,42 +913,42 @@ export default class GameController extends cc.Component {
             const graphIncrementX = page3.width * scaleFactor / years;
             const graphIncrementY = page3.height * scaleFactor / 100;
             const graphOffset = 0;
-            const lineOffset = -10;    
+            const lineOffset = -10;
             drawSegment(new cc.Vec2(graphX, graphOffset + lineOffset), new cc.Vec2(graphX + page3.width * scaleFactor, graphOffset + lineOffset), 1, controller.colors.COLOR_ICE);
             drawSegment(new cc.Vec2(graphX, graphOffset + lineOffset), new cc.Vec2(graphX, graphOffset + page3.height * scaleFactor), 1, controller.colors.COLOR_ICE);
-    
+
             for (let i = world.gameState.startDate.getFullYear(); i < world.gameState.targetDate.getFullYear(); i++) {
-    
+
                 const index = i - world.gameState.startDate.getFullYear();
 
                 const stats = world.gameState.stats[i];
 
                 if (stats === undefined)
                     continue;
-    
+
                 const loss = stats.loss;
                 const prepared = stats.prepared;
                 x = graphX + index * graphIncrementX;
                 yL = graphOffset + (100 - Math.round(loss)) * graphIncrementY;
                 yP = graphOffset + Math.round(prepared) * graphIncrementY;
-    
+
                 if (index > 0) {
-    
+
                     // Line 
                     // drawNode.drawSegment(cc.p(x_o, yL_o), cc.p(x, yL), 2, controller.colors.COLOR_RED);
                     // drawNode.drawSegment(cc.p(x_o, yP_o), cc.p(x, yP), 2, controller.colors.COLOR_GREEN);
-    
+
                     // Staircase
                     drawSegment(new cc.Vec2(x_o, yL_o), new cc.Vec2(x - 1, yL_o), 1, colorD);
                     drawSegment(new cc.Vec2(x, yL_o), new cc.Vec2(x, yL), 1, colorD);
                     drawSegment(new cc.Vec2(x_o, yP_o), new cc.Vec2(x - 1, yP_o), 1, colorP);
                     drawSegment(new cc.Vec2(x, yP_o), new cc.Vec2(x, yP), 1, colorP);
-    
+
                 }
                 x_o = x, yL_o = yL, yP_o = yP;
-    
+
             }
-    
+
             let lblDestructionScoreNode = new cc.Node();
             let lblDestructionScore = lblDestructionScoreNode.addComponent(cc.Label);
             lblDestructionScore.string = makeString(world.gameState.totalLoss);
@@ -889,8 +973,8 @@ export default class GameController extends cc.Component {
         }, btnStats);
 
         let btnStatsQuit = stats.getChildByName("btnStatsQuit");
-        btnStatsQuit.on(cc.Node.EventType.TOUCH_END, function() {
-            
+        btnStatsQuit.on(cc.Node.EventType.TOUCH_END, function () {
+
             world.gameState.modal = false;
             world.gameState.state = world.res.GAME_STATES.STARTED;
             stats.zIndex = -1;
@@ -902,7 +986,7 @@ export default class GameController extends cc.Component {
 
         // Update tweet label
         controller.tweetLabel.string = world.gameState.scenarioName;
-        
+
     }
 
     initPolicyDesign() {
@@ -940,12 +1024,12 @@ export default class GameController extends cc.Component {
             btn.getChildByName("Label").color = controller.colors.COLOR_UMBER;
 
             if (prevButton != null && prevButton != btn) {
-                
+
                 prevButton.getComponent(cc.Button).interactable = true;
                 prevButton.getChildByName("Label").color = controller.colors.COLOR_ICE;
 
             }
-            
+
             prevButton = btn;
 
             policyLabel.opacity = 0;
@@ -956,58 +1040,58 @@ export default class GameController extends cc.Component {
 
         };
 
-        const makeButton = function(text, point, index) {
+        const makeButton = function (text, point, index) {
 
             let btn = allButtons[index];
             btn.getChildByName("Label").getComponent(cc.Label).string = text;
-            
-            btn.on(cc.Node.EventType.TOUCH_END, function(event) {
+
+            btn.on(cc.Node.EventType.TOUCH_END, function (event) {
                 switchPage(btn, index);
             }, layerDesignPolicy);
 
             // Select the first button only
             if (index == 0) {
-            
+
                 btn.getComponent(cc.Button).interactable = false;
                 btn.getChildByName("Label").color = controller.colors.COLOR_UMBER;
                 prevButton = btn;
-            
+
             }
-            
+
             return btn;
 
         };
 
         //btnPolicyInvest.off(cc.Node.EventType.TOUCH_END);
-        btnPolicyInvest.on(cc.Node.EventType.TOUCH_END,  () => {
+        btnPolicyInvest.on(cc.Node.EventType.TOUCH_END, () => {
 
             let policySelected = btnPolicyInvest['policy'];
             const cost = world.costCalculation(policySelected);
 
-            if (world.gameState.resources - cost >= 0 && 
+            if (world.gameState.resources - cost >= 0 &&
                 world.gameState.policies[policySelected.id] === undefined) {
 
-                world.gameState.resources -= cost;  
+                world.gameState.resources -= cost;
                 world.gameState.policies[policySelected.id] = 1;
                 resourceScoreLabel.string = (world.gameState.resources.toString());
                 levelButtons[policySelected.id * 100 + 1].getComponent(cc.Sprite).spriteFrame = controller.dotOff;
                 levelButtons[policySelected.id * 100 + 1].color = controller.colors.COLOR_UMBER;
 
             }
-            else if (world.gameState.resources - cost >= 0 && 
+            else if (world.gameState.resources - cost >= 0 &&
                 world.gameState.policies[policySelected.id] === 1) {
 
-                world.gameState.resources -= cost;  
+                world.gameState.resources -= cost;
                 world.gameState.policies[policySelected.id] = 2;
                 resourceScoreLabel.string = (world.gameState.resources.toString());
                 levelButtons[policySelected.id * 100 + 2].getComponent(cc.Sprite).spriteFrame = controller.dotOff;
                 levelButtons[policySelected.id * 100 + 2].color = controller.colors.COLOR_UMBER;
 
             }
-            else if (world.gameState.resources - cost >= 0 && 
+            else if (world.gameState.resources - cost >= 0 &&
                 world.gameState.policies[policySelected.id] == 2) {
 
-                world.gameState.resources -= cost;  
+                world.gameState.resources -= cost;
                 world.gameState.policies[policySelected.id] = 3;
                 resourceScoreLabel.string = (world.gameState.resources.toString());
                 levelButtons[policySelected.id * 100 + 3].getComponent(cc.Sprite).spriteFrame = controller.dotOff;
@@ -1039,27 +1123,27 @@ export default class GameController extends cc.Component {
 
         }, this);
         Object.values(world.res.RESOURCES).forEach((res, index) => {
-            
+
             let btn = makeButton(res[cc.sys.localStorage.language].name, new cc.Vec2(300 + 200 * index, 80), index);
             //allButtons.push(btn);
-        
+
         });
 
         const pageCount = 4;
         const levelButtons = {};
         let currentOptNode = null;
-       
+
         for (let i = 0; i < pageCount; ++i) {
 
             let resourceGrp = world.res.RESOURCES[Object.keys(world.res.RESOURCES)[i]];
-            let xLoc = 0, yLoc = 0, policyOptionCounter = 0; 
+            let xLoc = 0, yLoc = 0, policyOptionCounter = 0;
             let page = pageView.node.getChildByName("view").getChildByName("content").children[i];
             page.removeAllChildren();
 
             for (let j = 0; j < resourceGrp.policyOptions.length; j++) {
 
                 let opt = resourceGrp.policyOptions[j];
-                
+
                 xLoc = (policyOptionCounter % 2) * page.width / 2;
                 yLoc = (1 - Math.floor(policyOptionCounter / 2)) * page.height / 2;
                 policyOptionCounter++;
@@ -1100,10 +1184,10 @@ export default class GameController extends cc.Component {
 
                     policyLabel.getComponent(cc.Label).string = (opt[cc.sys.localStorage.language].text_long);
                     policyDescription.getComponent(cc.Label).string = (opt[cc.sys.localStorage.language].description);
-                    
+
                     const cost = world.costCalculation(opt);
                     policyCostLabel.getComponent(cc.Label).string = world.res.lang.policy_platform_cost[cc.sys.localStorage.language] + cost.toString();
-                    btnPolicyInvest.attr({'policy': opt});
+                    btnPolicyInvest.attr({ 'policy': opt });
 
                     if (world.gameState.policies[opt.id] == 3) {
 
@@ -1136,22 +1220,22 @@ export default class GameController extends cc.Component {
 
                 };
 
-                const enterBtn = function(event) {
+                const enterBtn = function (event) {
                     // if (!optNode.enabled)
                     //     return;
                     btnNodeBgd.color = controller.colors.COLOR_UMBER;
                     btnLabelNode.color = controller.colors.COLOR_UMBER;
                 };
-                const exitBtn = function(event) {
+                const exitBtn = function (event) {
                     if (currentOptNode == optNode)
                         return;
                     btnNodeBgd.color = controller.colors.COLOR_ICE;
                     btnLabelNode.color = controller.colors.COLOR_ICE;
                 };
-                
-                [optNode, btnNodeBgd, btnLabelNode].forEach((node) => { node.on(cc.Node.EventType.TOUCH_END, policySelector, optNode);  } );
-                [optNode, btnNodeBgd, btnLabelNode].forEach((node) => { node.on(cc.Node.EventType.MOUSE_ENTER, enterBtn, optNode);  } );
-                [optNode, btnNodeBgd, btnLabelNode].forEach((node) => { node.on(cc.Node.EventType.MOUSE_LEAVE, exitBtn, optNode);  } );
+
+                [optNode, btnNodeBgd, btnLabelNode].forEach((node) => { node.on(cc.Node.EventType.TOUCH_END, policySelector, optNode); });
+                [optNode, btnNodeBgd, btnLabelNode].forEach((node) => { node.on(cc.Node.EventType.MOUSE_ENTER, enterBtn, optNode); });
+                [optNode, btnNodeBgd, btnLabelNode].forEach((node) => { node.on(cc.Node.EventType.MOUSE_LEAVE, exitBtn, optNode); });
 
                 let btnLvl1Node = new cc.Node();
                 let btnLvl1 = btnLvl1Node.addComponent(cc.Sprite);
@@ -1167,53 +1251,53 @@ export default class GameController extends cc.Component {
                 btnLvl3.setMaterial(1, controller.defaultMaterial);
 
                 if (world.gameState.policies[opt.id] === undefined) {
-                    
+
                     btnLvl1.spriteFrame = controller.dotOff;
                     btnLvl2.spriteFrame = controller.dotOff;
                     btnLvl3.spriteFrame = controller.dotOff;
 
                 }
                 else if (world.gameState.policies[opt.id] === 1) {
-                    
+
                     btnLvl1.spriteFrame = controller.dotOn;
                     btnLvl2.spriteFrame = controller.dotOff;
                     btnLvl3.spriteFrame = controller.dotOff;
 
                 }
                 else if (world.gameState.policies[opt.id] === 2) {
-                    
+
                     btnLvl1.spriteFrame = controller.dotOn;
                     btnLvl2.spriteFrame = controller.dotOn;
                     btnLvl3.spriteFrame = controller.dotOff;
 
                 }
                 else if (world.gameState.policies[opt.id] === 3) {
-                    
+
                     btnLvl1.spriteFrame = controller.dotOn;
                     btnLvl2.spriteFrame = controller.dotOn;
                     btnLvl3.spriteFrame = controller.dotOn;
 
                 }
 
-                btnLvl1Node.setPosition(0 , 50);
+                btnLvl1Node.setPosition(0, 50);
                 btnLvl1Node.setContentSize(25, 25);
                 btnLvl1Node.setAnchorPoint(new cc.Vec2(0.0, 0.0));
-                btnLvl2Node.setPosition(0 , btnLvl1Node.y + 35);
+                btnLvl2Node.setPosition(0, btnLvl1Node.y + 35);
                 btnLvl2Node.setContentSize(25, 25);
                 btnLvl2Node.setAnchorPoint(new cc.Vec2(0.0, 0.0));
-                btnLvl3Node.setPosition(0 , btnLvl2Node.y + 35);
+                btnLvl3Node.setPosition(0, btnLvl2Node.y + 35);
                 btnLvl3Node.setAnchorPoint(new cc.Vec2(0.0, 0.0));
                 btnLvl3Node.setContentSize(25, 25);
                 btnLvl1Node.parent = optNode;
                 btnLvl2Node.parent = optNode;
                 btnLvl3Node.parent = optNode;
-                
+
                 levelButtons[opt.id * 100 + 1] = btnLvl1Node;
                 levelButtons[opt.id * 100 + 2] = btnLvl2Node;
                 levelButtons[opt.id * 100 + 3] = btnLvl3Node;
 
             }
-        }        
+        }
 
         btnEconomy.on(cc.Node.EventType.TOUCH_END, (event) => {
             switchPage(btnEconomy, 0);
@@ -1264,35 +1348,35 @@ export default class GameController extends cc.Component {
             btn.getChildByName("Label").color = controller.colors.COLOR_UMBER;
 
             if (prevButton != null && prevButton != btn) {
-                
+
                 prevButton.getComponent(cc.Button).interactable = true;
                 prevButton.getChildByName("Label").color = controller.colors.COLOR_ICE;
 
             }
-            
+
             prevButton = btn;
 
         };
 
-        btnWorld.on(cc.Node.EventType.TOUCH_END, function(event) {
+        btnWorld.on(cc.Node.EventType.TOUCH_END, function (event) {
             switchPage(btnWorld, 0);
         });
-        btnCountries.on(cc.Node.EventType.TOUCH_END, function(event) {
+        btnCountries.on(cc.Node.EventType.TOUCH_END, function (event) {
             switchPage(btnCountries, 1);
         });
-        btnTrends.on(cc.Node.EventType.TOUCH_END, function(event) {
+        btnTrends.on(cc.Node.EventType.TOUCH_END, function (event) {
             switchPage(btnTrends, 2);
         });
 
-        pageView.node.on('page-turning', function(pv) {
+        pageView.node.on('page-turning', function (pv) {
             let index = pv.getCurrentPageIndex();
             let btn = allButtons[index];
             switchPage(btn, index);
-        }, world);        
+        }, world);
     }
-        
+
     processResourceSelection(event) {
-        
+
         let controller = this.controller;
         let world = this.world;
 
@@ -1306,14 +1390,14 @@ export default class GameController extends cc.Component {
         event.target.destroy();
 
         if (!world.gameState.resourcesAdded) {
-            
+
             world.gameState.state = world.res.GAME_STATES.PAUSED;
             world.gameState.resourcesAdded = true;
-            
+
             if (world.gameState.tutorialMode) {
-                
-                controller.showMessageBox(world, "HINT:", world.res.TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language], "OK!", function() {
-                    
+
+                controller.showMessageBox(world, "HINT:", world.res.TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language], "OK!", function () {
+
                     world.gameState.tutorialHints.push(world.res.TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language]);
                     world.gameState.state = world.res.GAME_STATES.STARTED;
 
@@ -1321,7 +1405,7 @@ export default class GameController extends cc.Component {
 
             }
             else {
-                
+
                 world.gameState.state = world.res.GAME_STATES.STARTED;
 
             }
@@ -1354,26 +1438,26 @@ export default class GameController extends cc.Component {
         }
 
         event.target.destroy();
-        
+
         if (!world.gameState.alertCrisis && world.gameState.tutorialMode) {
 
             world.gameState.state = world.res.GAME_STATES.PAUSED;
             world.gameState.alertCrisis = true;
-            
-            controller.showMessageBox(world, 
-                world.res.lang.crisis_title[cc.sys.localStorage.language], 
-                world.res.lang.crisis_message[cc.sys.localStorage.language] + crisis[cc.sys.localStorage.language] + "!", "OK!", function() {
 
-                world.gameState.state = world.res.GAME_STATES.STARTED;
+            controller.showMessageBox(world,
+                world.res.lang.crisis_title[cc.sys.localStorage.language],
+                world.res.lang.crisis_message[cc.sys.localStorage.language] + crisis[cc.sys.localStorage.language] + "!", "OK!", function () {
 
-            }, undefined, undefined);
+                    world.gameState.state = world.res.GAME_STATES.STARTED;
+
+                }, undefined, undefined);
 
         }
         else {
 
             // Add Crisis Quiz, 50% of the time
             if (Math.random() < 0.5) {
-            // if (Math.random() < 1.0) {
+                // if (Math.random() < 1.0) {
 
                 // Show quiz
                 let qindex = Math.floor(Math.random() * world.res.quizzes.length);
@@ -1395,7 +1479,7 @@ export default class GameController extends cc.Component {
         }
 
     }
-    
+
     /**
      * Update month / year in the interface
      * @param {*} world 
@@ -1426,11 +1510,11 @@ export default class GameController extends cc.Component {
         const lossPercent = Math.floor(country.loss);
         const preparedPercent = Math.floor(country.pop_prepared_percent);
 
-        controller.countryLoss.string = (lossPercent + "%" );
+        controller.countryLoss.string = (lossPercent + "%");
         controller.countryLossProgress.progress = lossPercent / 100.0;
-        
+
         if (lossPercent >= world.res.LOSS_TOTAL)
-        controller.countryLossProgress.node.opacity = 255;
+            controller.countryLossProgress.node.opacity = 255;
         else if (lossPercent >= world.res.LOSS_PARTIAL)
             controller.countryLossProgress.node.opacity = 191;
         controller.countryAwarePrepared.string = (preparedPercent + "%");
@@ -1453,7 +1537,7 @@ export default class GameController extends cc.Component {
         const lossPercent = Math.round(world.gameState.totalLoss);
         const preparedPercent = Math.round(world.gameState.populationPreparedPercent);
 
-        controller.countryLoss.string = (lossPercent + "%" );
+        controller.countryLoss.string = (lossPercent + "%");
         controller.countryAwarePrepared.string = (preparedPercent + "%");
 
         controller.countryLossProgress.progress = lossPercent / 100.0;
@@ -1471,7 +1555,7 @@ export default class GameController extends cc.Component {
 
         if (world.gameState.state !== world.res.GAME_STATES.PREPARED && world.gameState.state !== world.res.GAME_STATES.STARTED && world.gameState.state !== world.res.GAME_STATES.PAUSED)
             return;
-        
+
         const target = event.getCurrentTarget();
         const locationInNode = target.convertToNodeSpaceAR(location);
         controller.lastLayerID = -1;
@@ -1492,7 +1576,7 @@ export default class GameController extends cc.Component {
         for (let j = start; j < end; j++) {
 
             const poly = world.sortedObjs[j];
-            const mousePoint = {x: locationInNode.x + node.x, y: cc.winSize.height - locationInNode.y - (1 * world.res.Y_OFFSET) - node.y};
+            const mousePoint = { x: locationInNode.x + node.x, y: cc.winSize.height - locationInNode.y - (1 * world.res.Y_OFFSET) - node.y };
             const cd = controller.collisionDetection(poly.points[0], mousePoint);
 
             if (cd) {
@@ -1516,7 +1600,7 @@ export default class GameController extends cc.Component {
         if (selectedCountry != null) {
 
             if (world.gameState.currentCountry != null) {
-                
+
                 world.countries[world.gameState.currentCountry].selected = false;
 
             }
@@ -1525,12 +1609,12 @@ export default class GameController extends cc.Component {
             if (world.gameState.currentCountry != null)
                 world.countries[world.gameState.currentCountry].selected = true;
             world.gameState.currentCountry = selectedCountry;
-            
+
             controller.printCountryStats();
 
         }
         else {
-            
+
             if (world.gameState.currentCountry != null)
                 world.countries[world.gameState.currentCountry].selected = false;
             world.gameState.currentCountry = null;
@@ -1553,7 +1637,7 @@ export default class GameController extends cc.Component {
         let policyIndex = world.generateWeightedPolicyIndex(Math.random());
         let icon = '';
 
-        switch(policyIndex) {
+        switch (policyIndex) {
             case 0:
                 icon = world.res.res.resource_economy_1;
                 break;
@@ -1604,10 +1688,10 @@ export default class GameController extends cc.Component {
                 break;
         }
 
-        
+
         return policyIndex;
     }
-                            
+
     // Add chance of new resource
     addResource() {
 
@@ -1620,12 +1704,12 @@ export default class GameController extends cc.Component {
         const sp = btnRes.addComponent(cc.Sprite);
         const policyIcon = controller.generatePolicyIcon();
         sp.spriteFrame = controller.policyIcons[policyIcon];
-        
+
         const ind = Math.floor(Math.random() * Object.keys(world.countries).length);
         const countryRand = world.countries[Object.keys(world.countries)[ind]];
         const pt = countryRand.centroid;
         // btnRes.color = controller.colors.COLOR_SKY;
-        btnRes.setPosition( pt.x - map.x, (controller.node.height - (1 * world.res.Y_OFFSET) ) - pt.y - map.y);// + world.res.RESOURCE_SIZE_H );
+        btnRes.setPosition(pt.x - map.x, (controller.node.height - (1 * world.res.Y_OFFSET)) - pt.y - map.y);// + world.res.RESOURCE_SIZE_H );
         btnRes.setContentSize(cc.size(world.res.RESOURCE_SIZE_W, world.res.RESOURCE_SIZE_H));
         btnRes.placedAt = world.gameState.counter;
         btnRes.setAnchorPoint(0.5, 0.0);
@@ -1651,12 +1735,12 @@ export default class GameController extends cc.Component {
         if (!world.gameState.alertResources) {
 
             if (world.gameState.tutorialMode) {
-                
+
                 world.gameState.state = world.res.GAME_STATES.PAUSED;
                 world.gameState.alertResources = true;
 
-                controller.showMessageBox(world, "HINT:",world.res.TUTORIAL_MESSAGES.FIRST_RESOURCE_SHOWN[cc.sys.localStorage.language], "OK!", function(that) {
-                
+                controller.showMessageBox(world, "HINT:", world.res.TUTORIAL_MESSAGES.FIRST_RESOURCE_SHOWN[cc.sys.localStorage.language], "OK!", function (that) {
+
                     world.gameState.tutorialHints.push(world.res.TUTORIAL_MESSAGES.FIRST_RESOURCE_SHOWN[cc.sys.localStorage.language]);
                     //world.gameState.state = world.res.GAME_STATES.STARTED;
                     world.gameState.state = world.res.GAME_STATES.PAUSED_TUTORIAL;
@@ -1700,7 +1784,7 @@ export default class GameController extends cc.Component {
 
         const pt = country.centroid;
         // btnCrisis.color = controller.colors.COLOR_RED;
-        btnCrisis.setPosition(pt.x - map.x, (controller.node.height - (1 * world.res.Y_OFFSET) ) - pt.y - map.y);// + world.res.RESOURCE_SIZE_H / 2 );
+        btnCrisis.setPosition(pt.x - map.x, (controller.node.height - (1 * world.res.Y_OFFSET)) - pt.y - map.y);// + world.res.RESOURCE_SIZE_H / 2 );
         btnCrisis.setContentSize(cc.size(world.res.RESOURCE_SIZE_W, world.res.RESOURCE_SIZE_H));
         // btnCrisis.setColor(controller.colors.COLOR_RED);
         btnCrisis.placedAt = world.gameState.counter;
@@ -1714,11 +1798,11 @@ export default class GameController extends cc.Component {
         btnCrisis.on(cc.Node.EventType.TOUCH_END, controller.processCrisisSelection, this);
 
         // After the third crisis, add notifications to the news feed
-        let message = world.res.lang.crisis_prefix[cc.sys.localStorage.language] + 
-                        crisis[cc.sys.localStorage.language] + 
-                        world.res.lang.crisis_suffix[cc.sys.localStorage.language] + 
-                        country.name + "."; 
-        
+        let message = world.res.lang.crisis_prefix[cc.sys.localStorage.language] +
+            crisis[cc.sys.localStorage.language] +
+            world.res.lang.crisis_suffix[cc.sys.localStorage.language] +
+            country.name + ".";
+
         if (world.gameState.crisisCount < 4) {
 
             world.gameState.state = world.res.GAME_STATES.PAUSED;
@@ -1737,16 +1821,16 @@ export default class GameController extends cc.Component {
 
                 //fireClickOnTarget(buttons[0]);
 
-            }                    
+            }
 
         }
         else {
-            
+
             // if (world.gameState.messageOverride == null)
             //     world.gameState.messageOverride = message;
 
         }
-        
+
         world.gameState.lastCrisis = world.gameState.counter;
 
     }
@@ -1764,7 +1848,7 @@ export default class GameController extends cc.Component {
 
         world.gameState.state = world.res.GAME_STATES.PAUSED;
         let message = null;
-        switch(world.gameState.tutorialHints.length) {
+        switch (world.gameState.tutorialHints.length) {
             case 2:
             default:
                 message = world.res.TUTORIAL_MESSAGES.RANDOM_1[cc.sys.localStorage.language];
@@ -1780,8 +1864,8 @@ export default class GameController extends cc.Component {
                 break;
         }
 
-        controller.showMessageBox(world, "HINT:", message, "OK", function() {
-            
+        controller.showMessageBox(world, "HINT:", message, "OK", function () {
+
             world.gameState.tutorialHints.push(message);
             world.gameState.state = world.res.GAME_STATES.STARTED;
 
@@ -1858,9 +1942,9 @@ export default class GameController extends cc.Component {
         for (let row = 0; row < height; row++) {
             let srow = height - 1 - row;
             let imageData = ctx.createImageData(width, 1);
-            let start = srow*width*4;
+            let start = srow * width * 4;
             for (let i = 0; i < rowBytes; i++) {
-                imageData.data[i] = data[start+i];
+                imageData.data[i] = data[start + i];
             }
 
             ctx.putImageData(imageData, 0, row);
@@ -1868,11 +1952,11 @@ export default class GameController extends cc.Component {
 
         let dataURL = canvas.toDataURL("image/jpeg");
         let img = document.createElement("img");
-        img.src = dataURL;  
-        
+        img.src = dataURL;
+
         var href = dataURL.replace(/^data:image[^;]*/, "data:image/octet-stream");
         document.location.href = href;
-        
+
     }
 
     showAntarcticCities(radius) {
@@ -1909,23 +1993,23 @@ export default class GameController extends cc.Component {
 
     // LIFE-CYCLE CALLBACKS:
     onLoad() {
-        
+
         let Y_OFFSET = 55;
         this._time = 0;
         let controller = window.controller = this.controller = this;
         controller.world = new World();
         let world = controller.world;
-        
+
         controller.messageBox.opacity = 0;
-        
+
         world.automateScripts = world.res.automateScripts;
         world.automateID = -1;
         // if (automateID !== undefined)
         //     world.automateID = automateID;
-        
-        if (cc.sys.localStorage.language === undefined) 
+
+        if (cc.sys.localStorage.language === undefined)
             cc.sys.localStorage.language = 'eng';
-        if (cc.sys.localStorage.level === undefined) 
+        if (cc.sys.localStorage.level === undefined)
             cc.sys.localStorage.level = 'Easy';
 
         world.initGameState(cc.sys.localStorage.level,
@@ -1933,21 +2017,21 @@ export default class GameController extends cc.Component {
             cc.sys.localStorage.greyscale,
             cc.sys.isMobile,
             cc.winSize.width,
-            cc.winSize.height);        
-        
+            cc.winSize.height);
+
         if (cc.sys.localStorage.isPlaying === undefined)
             cc.sys.localStorage.isPlaying = true;
         controller.topBar.getChildByName("btnSound").getComponent(cc.Button).interactable = (cc.sys.localStorage.isPlaying === "true");
 
-        cc.loader.loadRes( 'singleColor', cc.SpriteFrame, function( err, asset) {
-            
+        cc.loader.loadRes('singleColor', cc.SpriteFrame, function (err, asset) {
+
             controller.singleColor = asset;
 
         });
 
-        cc.loader.loadRes( 'icons/DOT_ON', cc.SpriteFrame, function( err, asset) {
+        cc.loader.loadRes('icons/DOT_ON', cc.SpriteFrame, function (err, asset) {
             controller.dotOn = asset;
-            cc.loader.loadRes( 'icons/DOT_OFF', cc.SpriteFrame, function( err, asset) {
+            cc.loader.loadRes('icons/DOT_OFF', cc.SpriteFrame, function (err, asset) {
                 controller.dotOff = asset;
 
                 // Initialise policy screen
@@ -1959,10 +2043,10 @@ export default class GameController extends cc.Component {
 
         // Load policy icons
         controller.policyIcons = [];
-        Object.keys(world.res.res).forEach(function(r) {
+        Object.keys(world.res.res).forEach(function (r) {
 
             let resUrl = world.res.res[r];
-            cc.loader.loadRes(resUrl, cc.SpriteFrame, function(err, asset) {
+            cc.loader.loadRes(resUrl, cc.SpriteFrame, function (err, asset) {
 
                 controller.policyIcons.push(asset);
 
@@ -1971,10 +2055,10 @@ export default class GameController extends cc.Component {
         });
 
         controller.crisisIcons = new Map<string, cc.SpriteFrame>();
-        Object.keys(world.res.CRISES).forEach(function(r) {
+        Object.keys(world.res.CRISES).forEach(function (r) {
 
             let resUrl = world.res.CRISES[r].image;
-            cc.loader.loadRes(resUrl, cc.SpriteFrame, function(err, asset) {
+            cc.loader.loadRes(resUrl, cc.SpriteFrame, function (err, asset) {
 
                 controller.crisisIcons[r] = (asset);
 
@@ -1983,55 +2067,24 @@ export default class GameController extends cc.Component {
         });
 
         var url = 'scripts/json-equal-greyscale';
-        cc.loader.loadRes( url, ( err, res) => {
+        cc.loader.loadRes(url, (err, res) => {
 
             if (err == null) {
 
+                // Set up countries and their
                 controller.world.countriesJson = res.json;
-                controller.world.initCountries();            
-
-                // loading all resource in the test assets directory
-                cc.loader.loadResDir("countries", cc.SpriteFrame, function (err, assets, urls) {
-                    
-                    let mapBack = controller.node.getChildByName('mapBack');
-
-                    for (var i = 0; i < assets.length; i++) {
-                        
-                        const spriteNode = new cc.Node('Sprite ');
-                        const sp = spriteNode.addComponent(cc.Sprite);
-                        sp.spriteFrame = assets[i];
-                        let materialVariant = cc.MaterialVariant.create(controller.defaultMaterial, sp);
-                        materialVariant.setProperty('u_selected', 0.0);
-                        materialVariant.setProperty('u_percentageLoss', 0.0);
-                        materialVariant.setProperty('u_percentagePrep', 0.0);
-                        sp.setMaterial(0, materialVariant);
-                        let url = urls[i];
-                        let iso = url.match('/([A-Z]*)_')[1];
-                        controller.countryNodes[iso] = spriteNode;
-                        let country = world.countries[iso];
-                        if (country !== undefined) {
-                            
-                            spriteNode.setAnchorPoint(0.0, 0.0);
-                            spriteNode.setPosition((country.offsetX) - mapBack.x, 
-                                                    (cc.winSize.height - ( 1 * world.res.Y_OFFSET  ) - country.offsetY) - mapBack.y);
-                            spriteNode.parent = mapBack;
-                            spriteNode.zIndex = 202;
-                            
-                        }
-
-                    }
-            
-                });
-
+                controller.world.setupCountries();
+                // controller.defaultMaterial = cc.sys.localStorage.countryMask = 'default' ? controller.materialA : controller.materialB;
+                controller.loadCountrySprites();
 
                 // Initialise controls
                 controller.initControls();
 
                 let map = controller.node.getChildByName('mapFront');
                 map.on(cc.Node.EventType.MOUSE_MOVE, (event) => {
-                    
+
                     controller.selectCountry(event, event.getLocation());
-                                                        
+
                 });
 
                 const beginSim = () => {
@@ -2051,17 +2104,17 @@ export default class GameController extends cc.Component {
 
                     if (world.gameState.modal)
                         return false;
-                
+
                     const mapBack = controller.node.getChildByName('mapBack');
                     const delta = cc.sys.isNative ? event.getScrollY() * 6 : -event.getScrollY();
                     const newScale = mapBack.scale * (1 + delta / 1000.0);
                     // Calculate margins adjusted for size
                     const marginX = mapBack.width / (2 / (1e-06 + newScale - 1));
                     const allowance = 200;
-                
+
                     // &&  node.x < (marginX + allowance) && node.x > (-marginX - allowance)
                     if (newScale <= 10.0 && newScale >= 1.0) {
-                        
+
                         mapBack.setScale(newScale);
                         mapFront.setScale(newScale);
 
@@ -2090,10 +2143,10 @@ export default class GameController extends cc.Component {
                         //     node.y + event.getDeltaY() < (marginY + allowance) && 
                         //     node.y + event.getDeltaY() > (-marginY - allowance) ) {
 
-                            mapBack.x += event.getDeltaX();
-                            mapBack.y += event.getDeltaY();
-                            mapFront.x += event.getDeltaX();
-                            mapFront.y += event.getDeltaY();
+                        mapBack.x += event.getDeltaX();
+                        mapBack.y += event.getDeltaY();
+                        mapFront.x += event.getDeltaX();
+                        mapFront.y += event.getDeltaY();
 
                         // }
 
@@ -2104,9 +2157,9 @@ export default class GameController extends cc.Component {
                 let antCountries = ["NZL", "AUS", "ZAF", "ARG", "CHL"];
                 let startCountry = antCountries[Math.floor(Math.random() * antCountries.length)];
 
-                controller.showMessageBox(world, 
-                    world.res.scenarioData[cc.sys.localStorage.language].popup_1_title, 
-                    world.res.scenarioData[cc.sys.localStorage.language].popup_1_description, 
+                controller.showMessageBox(world,
+                    world.res.scenarioData[cc.sys.localStorage.language].popup_1_title,
+                    world.res.scenarioData[cc.sys.localStorage.language].popup_1_description,
                     world.res.lang.start_tutorial[cc.sys.localStorage.language], (that) => {
 
                         world.gameState.tutorialMode = true;
@@ -2115,18 +2168,18 @@ export default class GameController extends cc.Component {
                         world.gameState.statsCountry = startCountry;
                         world.gameState.currentCountry = startCountry;
                         const countryName = world.countries[world.gameState.startCountry].name;
-                        
-                        controller.showMessageBox(world, 
-                            world.res.lang.start_prepare[cc.sys.localStorage.language], 
-                            world.res.lang.start_mission_a[cc.sys.localStorage.language]  + 
-                            countryName + 
-                            world.res.lang.start_mission_b[cc.sys.localStorage.language], 
-                            world.res.scenarioData[cc.sys.localStorage.language].popup_2_title, 
+
+                        controller.showMessageBox(world,
+                            world.res.lang.start_prepare[cc.sys.localStorage.language],
+                            world.res.lang.start_mission_a[cc.sys.localStorage.language] +
+                            countryName +
+                            world.res.lang.start_mission_b[cc.sys.localStorage.language],
+                            world.res.scenarioData[cc.sys.localStorage.language].popup_2_title,
                             (that) => {
-                            
+
                                 beginSim();
 
-                        }, undefined, undefined);
+                            }, undefined, undefined);
 
                     },
 
@@ -2139,19 +2192,19 @@ export default class GameController extends cc.Component {
                         world.gameState.currentCountry = startCountry;
                         const countryName = world.countries[world.gameState.startCountry].name;
 
-                        controller.showMessageBox(world, 
-                            world.res.lang.start_prepare[cc.sys.localStorage.language], 
-                            world.res.lang.start_mission_a[cc.sys.localStorage.language]  + 
-                            countryName + 
-                            world.res.lang.start_mission_b[cc.sys.localStorage.language], 
-                            world.res.scenarioData[cc.sys.localStorage.language].popup_2_title, 
+                        controller.showMessageBox(world,
+                            world.res.lang.start_prepare[cc.sys.localStorage.language],
+                            world.res.lang.start_mission_a[cc.sys.localStorage.language] +
+                            countryName +
+                            world.res.lang.start_mission_b[cc.sys.localStorage.language],
+                            world.res.scenarioData[cc.sys.localStorage.language].popup_2_title,
                             (that) => {
 
                                 beginSim();
 
                             }, undefined, undefined);
                     }
-                );        
+                );
 
             }
 
@@ -2159,22 +2212,22 @@ export default class GameController extends cc.Component {
 
     }
 
-    start () {
+    start() {
 
         if (cc.sys.localStorage.isPlaying == undefined)
             cc.sys.localStorage.isPlaying = true;
-        
+
         this.currentAudioId = cc.audioEngine.play(this.audio, true, 0.5);
         let time = cc.audioEngine.getDuration(this.currentAudioId);
         let start = Math.floor(Math.random() * time);
         cc.audioEngine.setCurrentTime(this.currentAudioId, start);
-        if (cc.sys.localStorage.isPlaying != "true" )
+        if (cc.sys.localStorage.isPlaying != "true")
             cc.audioEngine.pauseAll();
-        
+
     }
 
     onDestroy() {
-        
+
         cc.audioEngine.stop(this.currentAudioId);
 
     }
@@ -2242,12 +2295,12 @@ export default class GameController extends cc.Component {
         if (world.gameState.counter % world.gameState.timeInterval == 0) {
 
             world.updateGameTime((message) => {
-                
+
                 world.gameState.state = world.res.GAME_STATES.PAUSED;
                 const currentYear = world.gameState.currentDate.getFullYear();
-                controller.showMessageBox(world, 
-                    world.res.lang.bulletin[cc.sys.localStorage.language] + currentYear, 
-                    message, "OK", function() {
+                controller.showMessageBox(world,
+                    world.res.lang.bulletin[cc.sys.localStorage.language] + currentYear,
+                    message, "OK", function () {
                         world.gameState.state = world.res.GAME_STATES.STARTED;
                     }, undefined, undefined);
 
@@ -2276,10 +2329,10 @@ export default class GameController extends cc.Component {
 
 
         // Various events
-        let ci = world.isItTimeForNewCrisis();     
+        let ci = world.isItTimeForNewCrisis();
 
         // Check enough time has elapsed to generate a new resource with some probability (1 / RESOURCE_CHANCE)
-        if (world.gameState.counter - world.gameState.lastCrisis >= ci  && Math.random() < world.res.CRISIS_CHANCE) {
+        if (world.gameState.counter - world.gameState.lastCrisis >= ci && Math.random() < world.res.CRISIS_CHANCE) {
 
             controller.addCrisis();
 
@@ -2294,9 +2347,9 @@ export default class GameController extends cc.Component {
             world.gameState.resourceInterval *= 1.1;
 
         }
-        
+
         if (world.gameState.tutorialMode && world.gameState.counter % world.gameState.tutorialInterval == 0) {
-            
+
             controller.addTutorial();
 
         }
@@ -2316,11 +2369,11 @@ export default class GameController extends cc.Component {
                 newButtons.push(button);
 
             }
-                
+
 
         }
         controller.buttons = newButtons;
-        
+
         // Update labels
         controller.resourceScoreLabel.string = world.gameState.resources.toString();
         controller.refreshDate(world);
@@ -2329,7 +2382,7 @@ export default class GameController extends cc.Component {
         if (world.gameState.totalLoss >= 100) {
 
             // Sort narratives by loss for comparison
-            const narratives = Object.values(world.res.NARRATIVES.n2070).sort((o1, o2) => {return o2.loss - o1.loss});
+            const narratives = Object.values(world.res.NARRATIVES.n2070).sort((o1, o2) => { return o2.loss - o1.loss });
             const n = narratives[0];
             const index = Math.floor(Math.random() * n[cc.sys.localStorage.language].length);
             const message = n[cc.sys.localStorage.language][index];
@@ -2340,8 +2393,8 @@ export default class GameController extends cc.Component {
 
             let message = '';
             // Sort narratives by loss for comparison
-            const narratives = Object.values(world.res.NARRATIVES.n2070).sort((o1, o2) => {return o2.loss - o1.loss});
-            
+            const narratives = Object.values(world.res.NARRATIVES.n2070).sort((o1, o2) => { return o2.loss - o1.loss });
+
             for (let i = 0; i < narratives.length; i++) {
 
                 const n = narratives[i];
@@ -2362,7 +2415,7 @@ export default class GameController extends cc.Component {
 
     }
 
-    update (dt) {
+    update(dt) {
 
         let controller = this.controller;
         let world = this.world;
@@ -2383,7 +2436,7 @@ export default class GameController extends cc.Component {
                     mv.setProperty('u_percentagePrep', country.pop_prepared_percent);
 
                 }
-    
+
             });
 
         }
@@ -2396,6 +2449,6 @@ export default class GameController extends cc.Component {
             this.updateLive();
 
         }
-        
+
     }
 }
