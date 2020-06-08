@@ -1,0 +1,48 @@
+#!/bin/bash
+
+rm -rvf *-10m.json *-50m.json *-110m.json
+mkdir -p build
+
+countries_shp() {
+  if [ ! -f build/ne_$1_admin_0_countries.shp ]; then
+    curl -o build/ne_$1_admin_0_countries.zip https://naciscdn.org/naturalearth/$1/cultural/ne_$1_admin_0_countries.zip
+    unzip -od build build/ne_$1_admin_0_countries.zip
+    chmod a-x build/ne_$1_admin_0_countries.*
+  fi
+}
+
+land_shp() {
+  if [ ! -f build/ne_$1_land.shp ]; then
+    curl -o build/ne_$1_land.zip https://naciscdn.org/naturalearth/$1/physical/ne_$1_land.zip
+    unzip -od build build/ne_$1_land.zip
+    chmod a-x build/ne_$1_land.*
+  fi
+}
+
+countries() {
+  countries_shp $1
+  geo2topo -q 1e5 -n countries=<( \
+      shp2json --encoding utf8 -n build/ne_$1_admin_0_countries.shp \
+        | ndjson-map 'i = d.properties.ISO_N3, d.id = i === "-99" ? (d.properties.SOV_A3 === "NOR" ? "578" : undefined) : i, d.properties = {name: d.properties.NAME}, d' \
+        | geostitch -n) \
+    | topomerge land=countries \
+    > countries-$1.json
+}
+
+land() {
+  land_shp $1
+  geo2topo -q 1e5 -n land=<( \
+      shp2json --encoding utf8 -n build/ne_$1_land.shp \
+        | ndjson-map 'delete d.properties, d' \
+        | geostitch -n) \
+    | topomerge land=land \
+    > land-$1.json
+}
+
+countries 10m
+countries 50m
+countries 110m
+
+land 10m
+land 50m
+land 110m

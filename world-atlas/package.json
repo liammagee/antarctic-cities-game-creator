@@ -1,0 +1,41 @@
+{
+  "name": "world-atlas",
+  "version": "1.1.4",
+  "description": "Pre-built TopoJSON from Natural Earth.",
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "topojson",
+    "geojson",
+    "shapefile"
+  ],
+  "author": {
+    "name": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/topojson/world-atlas.git"
+  },
+  "scripts": {
+    "prepare": "bash prepublish",
+    "postpublish": "git push && git push --tags && cd ../d3.github.com && git pull && cp -v ../world-atlas/world/110m.json world-110m.v1.json && cp -v ../world-atlas/world/110m.tsv world-110m.v1.tsv && cp -v ../world-atlas/world/50m.json world-50m.v1.json && cp -v ../world-atlas/world/50m.tsv world-50m.v1.tsv && git add world-110m.v1.json world-110m.v1.tsv world-50m.v1.json world-50m.v1.tsv && git commit -m \"world-atlas ${npm_package_version}\" && git push && cd -"
+  },
+  "devDependencies": {
+    "d3-dsv": "^1.1.1",
+    "d3-geo-projection": "^2.6.0",
+    "ndjson-cli": "^0.3.0",
+    "shapefile": "^0.6.1",
+    "topojson-client": "^3.1.0",
+    "topojson-server": "^3.0.1",
+    "topojson-simplify": "^3.0.3"
+  },
+  "dependencies": {
+    "canvas": "^2.6.1",
+    "commander": "^5.0.0",
+    "country-json": "1.0.8",
+    "d3": "4.13.0",
+    "d3-geo": "1.11.3",
+    "geojson": "0.5.0",
+    "requires": "^1.0.2"
+  }
+}
