@@ -1,4 +1,7 @@
-# World Atlas
+
+# Antarctic Futures
+
+## World Atlas
 
 *world.js* generates a tile map XML file, and associatedimages from world maps for the game.
 

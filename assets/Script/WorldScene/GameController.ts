@@ -246,6 +246,121 @@ export default class GameController extends cc.Component {
      * @param {*} prompt 
      * @param {*} callback 
      */
+    showGameOverBox(parent, title, message, prompt1, callback1, prompt2, callback2) {
+
+        let controller = this.controller;
+
+        controller.world.gameState.modal = true;
+        controller.world.gameState.state = controller.world.res.GAME_STATES.PAUSED;
+
+        let layerGameOver = controller.node.parent.getChildByName('layerGameOver');
+        layerGameOver.zIndex = 104;
+        layerGameOver.opacity = 255;
+        let lblTitle = layerGameOver.getChildByName("messageBoxTitle").getComponent(cc.Label);
+        let lblContents = layerGameOver.getChildByName("messageBoxContents").getComponent(cc.Label);
+        let btn1 = layerGameOver.getChildByName("btn1").getComponent(cc.Button);
+        let btn2 = layerGameOver.getChildByName("btn2").getComponent(cc.Button);
+        lblContents = layerGameOver.getChildByName("messageBoxContents").getComponent(cc.Label);
+        lblTitle.string = title;
+        lblContents.string = message;
+        btn1.node.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = prompt1;
+        btn2.node.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = prompt2;
+
+        let buttons = [];
+        buttons.push(btn1);
+        if (message === null || typeof (message) === "undefined" || message === '') {
+
+            if (prompt2 !== undefined) {
+
+                btn1.node.x = -0.25 * layerGameOver.width;
+                btn2.node.x = 0.25 * layerGameOver.width;
+                btn2.node.opacity = 255;
+                btn2.interactable = true;
+                btn2.enabled = true;
+                buttons.push(btn2);
+
+            }
+            else {
+
+                btn1.node.x = 0.0 * layerGameOver.width;
+                btn2.node.opacity = 0;
+                btn2.interactable = false;
+                btn2.enabled = false;
+
+            }
+        }
+        else {
+
+            if (prompt2 !== undefined) {
+
+                btn1.node.x = -0.2 * layerGameOver.width;
+                btn2.node.x = 0.2 * layerGameOver.width;
+                btn2.node.opacity = 255;
+                btn2.interactable = true;
+                btn2.enabled = true;
+                buttons.push(btn2);
+
+            }
+            else {
+
+                btn1.node.x = 0.0 * layerGameOver.width;
+                btn2.node.opacity = 0;
+                btn2.interactable = false;
+                btn2.enabled = false;
+
+            }
+
+        }
+
+        let btn1Func = (event) => {
+
+            layerGameOver.opacity = 0;
+            layerGameOver.zIndex = -1;
+            btn1.node.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
+            btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
+            //parent.node.resumeAllActions(); 
+            controller.world.gameState.modal = false;
+            callback1();
+            event.stopPropagation();
+
+        };
+        btn1.node.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
+
+        let btn2Func = (event) => {
+
+            layerGameOver.opacity = 0;
+            layerGameOver.zIndex = -1;
+            btn1.node.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
+            btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
+            //parent.node.resumeAllActions(); 
+            controller.world.gameState.modal = false;
+            callback2();
+            event.stopPropagation();
+
+        };
+        if (btn2.interactable)
+            btn2.node.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
+        else
+            btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
+
+        buttons.push(btn1);
+
+        if (btn2 !== undefined)
+            buttons.push(btn2);
+
+        return buttons;
+
+    }
+
+
+    /**
+     * Message box
+     * @param {*} parent 
+     * @param {*} title
+     * @param {*} message 
+     * @param {*} prompt 
+     * @param {*} callback 
+     */
     showQuizBox(parent, title, message, wrongAnswer, rightAnswer) {
 
         let controller = this.controller;
@@ -348,23 +463,26 @@ export default class GameController extends cc.Component {
 
         controller.settingsBox.opacity = 255;
         controller.settingsBox.zIndex = 106;
+        let content = controller.settingsBox.getChildByName("pageview").getChildByName("view").getChildByName("content"); 
+        let page1 = content.getChildByName("page_1"); 
+        let page2 = content.getChildByName("page_2"); 
 
         let btn1 = controller.settingsBox.getChildByName("apply");
         let btn2 = controller.settingsBox.getChildByName("cancel");
         let gs = (cc.sys.localStorage.greyscale == 'true')
-        controller.settingsBox.getChildByName("toggleContainer").getChildByName("toggle1").getComponent(cc.Toggle).isChecked = gs;
-        controller.settingsBox.getChildByName("toggleContainer").getChildByName("toggle2").getComponent(cc.Toggle).isChecked = !gs;
+        page1.getChildByName("toggleContainer").getChildByName("toggle1").getComponent(cc.Toggle).isChecked = gs;
+        page1.getChildByName("toggleContainer").getChildByName("toggle2").getComponent(cc.Toggle).isChecked = !gs;
         let eng = (cc.sys.localStorage.language == 'eng')
-        controller.settingsBox.getChildByName("toggleLanguage").getChildByName("toggle1").getComponent(cc.Toggle).isChecked = eng;
-        controller.settingsBox.getChildByName("toggleLanguage").getChildByName("toggle2").getComponent(cc.Toggle).isChecked = !eng;
+        page1.getChildByName("toggleLanguage").getChildByName("toggle1").getComponent(cc.Toggle).isChecked = eng;
+        page1.getChildByName("toggleLanguage").getChildByName("toggle2").getComponent(cc.Toggle).isChecked = !eng;
         let countryMask = (cc.sys.localStorage.countryMask === undefined || cc.sys.localStorage.countryMask === 'default')
-        controller.settingsBox.getChildByName("toggleCountryMask").getChildByName("toggle1").getComponent(cc.Toggle).isChecked = countryMask;
-        controller.settingsBox.getChildByName("toggleCountryMask").getChildByName("toggle2").getComponent(cc.Toggle).isChecked = !countryMask;
+        page1.getChildByName("toggleCountryMask").getChildByName("toggle1").getComponent(cc.Toggle).isChecked = countryMask;
+        page1.getChildByName("toggleCountryMask").getChildByName("toggle2").getComponent(cc.Toggle).isChecked = !countryMask;
 
         let btn1Func = function (event) {
 
             // Change background
-            let gsChecked = controller.settingsBox.getChildByName("toggleContainer").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
+            let gsChecked = page1.getChildByName("toggleContainer").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
             cc.sys.localStorage.greyscale = gsChecked;
             world.gameState.greyscale = gsChecked;
 
@@ -384,7 +502,7 @@ export default class GameController extends cc.Component {
             }
 
             // Change language
-            let engChecked = controller.settingsBox.getChildByName("toggleLanguage").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
+            let engChecked = page1.getChildByName("toggleLanguage").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
             if (engChecked) {
                 cc.sys.localStorage.language = 'eng';
             }
@@ -394,7 +512,7 @@ export default class GameController extends cc.Component {
             controller.updateLanguageSettings();
 
             // Change country mask
-            let defChecked = controller.settingsBox.getChildByName("toggleCountryMask").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
+            let defChecked = page1.getChildByName("toggleCountryMask").getChildByName("toggle1").getComponent(cc.Toggle).isChecked;
             if (defChecked) {
                 cc.sys.localStorage.countryMask = 'default';
             }
@@ -605,7 +723,7 @@ export default class GameController extends cc.Component {
         window.clearTimeout(world.gameState.timeoutID);
         world.gameState.state = world.res.GAME_STATES.PAUSED;
 
-        controller.showMessageBox(parent, "Game Over", message, prompt, function () {
+        controller.showGameOverBox(parent, "Game Over", message, prompt, function () {
 
             world.initGameState(cc.sys.localStorage.level,
                 cc.sys.localStorage.language,
