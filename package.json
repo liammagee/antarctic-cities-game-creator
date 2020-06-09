@@ -4,9 +4,8 @@
   "description": "Antarctic Futures is a Plague-inspired game built on Cocos Creator, for simulating climate change and policies to address it.",
   "main": "index.js",
   "dependencies": {
-    "@types/node": "^14.0.9",
-    "async": "^3.2.0",
-    "chalk": "^4.0.0",
+    "@types/node": "^14.0.12",
+    "chalk": "^4.1.0",
     "commander": "^5.1.0",
     "simple-statistics": "^7.1.0"
   },
@@ -31,8 +30,8 @@
     "change",
     "sustainability"
   ],
-  "author": "Liam Magee, Andrea Pollio",
-  "license": "ISC",
+  "author": "Liam Magee, Andrea Pollio, Marina Khan",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/liammagee/antarctic-cities-game-creator/issues"
   },

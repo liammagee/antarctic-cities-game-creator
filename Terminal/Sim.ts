@@ -1,3 +1,4 @@
+#!/usr/bin/env ts-node-script
 
 const fs = require('fs');
 const { Worker } = require('worker_threads');

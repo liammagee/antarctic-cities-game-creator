@@ -1,6 +1,51 @@
 
 # Antarctic Futures
 
+[Antarctic Futures](http://game.antarctic-cities.org) is an online game developed to research and engage with young people in Antarctic cities, part of the wider [Antarctic Cities ARC (Australian Research Council)](http://antarctic-cities.org) project.
+
+The game is closely modelled on [Plague Inc.](https://www.ndemiccreations.com/en/22-plague-inc), and developed on the [Cocos Creator](https://www.cocos.com/en/products) platform.
+
+This repository contains the source code and associated assets for the game. It also a utility, located under the ./world-atlas directory and documented below, for generating game images of the world and associated countries.
+
+## Installation
+
+1. Install the [Cocos Creator](https://www.cocos.com/en/products) platform.
+2. Run *Cocos Dashboard*, and under *Projects*, click *Add* and choose the directory containing this repository.
+3. Once the project is loaded, click *Project > Play on Device*, or hit the Play button.
+
+To run unit tests and other utilities, install [node.js](https://nodejs.org/). Then open a command line or terminal window, naviate to the repository directory, and run:
+
+    npm i -D typescript
+    npm i -D ts-node
+    npm i
+
+These instructions will install *TypeScript*, the *TypeScript* mode for *node.js*, and dependencies for *Antarctic Futures*.
+
+## Unit Testing
+
+Unit tests, developed using the [Jest](https://jestjs.io/) testing framework, cover parts of the *World* model.
+
+To run the unit tests, open a command line or terminal window, navigate to the repository directory, and run:
+
+    npm t
+
+## Running the Terminal Simulator
+
+The repository includes a utility that runs a version of the simulator from the terminal. To execute, run:
+
+    ts-node Terminal/Sim.ts
+
+or
+
+    ./Terminal/Sim.ts
+
+The simulator takes a *strategy* argument, which can be one of *none*, *musk*, *soc-dem*, *eco*, *contra* or *mil*, which employ and evaluate different policy strategies.
+
+Examples:
+
+    ts-node Terminal/Sim.ts --strategy musk
+    ./Terminal/Sim.ts -s soc-dem
+
 ## World Atlas
 
 *world.js* generates a tile map XML file, and associatedimages from world maps for the game.
@@ -16,8 +61,7 @@ The steps below are adapted from a series of posts by creator of [D3](https://d3
 - [Command-Line Cartography, Part 3](https://medium.com/@mbostock/command-line-cartography-part-3-1158e4c55a1e)
 - [Command-Line Cartography, Part 4](https://medium.com/@mbostock/command-line-cartography-part-4-82d0d26df0cf)
 
-
-## Generate tile map and images
+### Generate tile map and images
 
 To generate the tile map, first download one of three shape files, available from [Natural Earth](http://www.naturalearthdata.com/):
 
@@ -50,7 +94,6 @@ Low resolution:
 For cities:
 
     ogr2ogr -f GeoJSON -t_srs crs:84 10m-pop-places.json ne_10m_populated_places.shp
-
 
 Then, run one of the following to extract just the features:
 
@@ -95,3 +138,13 @@ Copy the generated tile map and other files to the resources folder:
     cp cp background-stereographic-greyscale.png ../res/
     cp tmx-test-stereographic.tmx ../res/
 
+## Customising *Antarctic Futures*
+
+To modify the *Antarctic Futures* code, install [Visual Studio Code](https://code.visualstudio.com/), and follow the [instructions](https://docs.cocos.com/creator/1.9/manual/en/getting-started/coding-setup.html) provided by the Cocos Creator developers.
+
+The code base is developed entirely in [TypeScript](https://www.typescriptlang.org/). The code is organised according to a *Model-View-Controller* framework. Key classes containing much of the logic for the game are in the following files:
+
+- *assets/Script/World.js*: contains the logic of the game.
+- *assets/Script/GameController.js*: handles control flow, screen rendering and user interaction with the *World* model.
+
+*Cocos Creator* components are used for the *View* aspect of the framework.
