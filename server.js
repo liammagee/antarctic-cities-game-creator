@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+/*jshint esversion: 6 */
 const fs = require("fs");
 const express = require('express')
 const app = express()
