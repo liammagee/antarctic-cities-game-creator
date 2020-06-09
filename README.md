@@ -46,6 +46,17 @@ Examples:
     ts-node Terminal/Sim.ts --strategy musk
     ./Terminal/Sim.ts -s soc-dem
 
+## Customising *Antarctic Futures*
+
+To modify the *Antarctic Futures* code, install [Visual Studio Code](https://code.visualstudio.com/), and follow the [instructions](https://docs.cocos.com/creator/1.9/manual/en/getting-started/coding-setup.html) provided by the Cocos Creator developers.
+
+The code base is developed entirely in [TypeScript](https://www.typescriptlang.org/). The code is organised according to a *Model-View-Controller* framework. Key classes containing much of the logic for the game are in the following files:
+
+- *assets/Script/World.js*: contains the logic of the game.
+- *assets/Script/GameController.js*: handles control flow, screen rendering and user interaction with the *World* model.
+
+*Cocos Creator* components are used for the *View* aspect of the framework.
+
 ## World Atlas
 
 *world.js* generates a tile map XML file, and associatedimages from world maps for the game.
@@ -138,13 +149,17 @@ Copy the generated tile map and other files to the resources folder:
     cp cp background-stereographic-greyscale.png ../res/
     cp tmx-test-stereographic.tmx ../res/
 
-## Customising *Antarctic Futures*
+## Acknowledgements
 
-To modify the *Antarctic Futures* code, install [Visual Studio Code](https://code.visualstudio.com/), and follow the [instructions](https://docs.cocos.com/creator/1.9/manual/en/getting-started/coding-setup.html) provided by the Cocos Creator developers.
+*Antarctic Futures* is developed as part of an Australian Research Council (ARC) project, "Antarctic Cities and the Global Commons: Rethinking the Gateways" (LP160100210). The authors acknowledge the generous support of the ARC and project partners to make the game possible.
 
-The code base is developed entirely in [TypeScript](https://www.typescriptlang.org/). The code is organised according to a *Model-View-Controller* framework. Key classes containing much of the logic for the game are in the following files:
+In addition, we thank the following contributors:
 
-- *assets/Script/World.js*: contains the logic of the game.
-- *assets/Script/GameController.js*: handles control flow, screen rendering and user interaction with the *World* model.
+- Dr Sebastián Martin Valdez for supplying Spanish language translations.
+- The *Antarctic Cities* research team for their support, feedback and encouragement (see <https://antarctic-cities.org/the-partners/> for the project team).
+- Co-researchers in Hobart, Christchurch, Punta Arenas, Ushuaia and Cape Town, who generously gave their time and ideas through a series of game workshops between 2017 and 2019.
+- Daniel Birch, for the composition [Environmental Disaster Zone](https://freemusicarchive.org/music/Daniel_Birch/MUSIC_FOR_TV_FILM__GAMES_VOL3/Environmental_Disaster_Zone). The composition is credited as follows:
 
-*Cocos Creator* components are used for the *View* aspect of the framework.
+*Environmental Disaster Zone* by Daniel Birch (<www.danielbirchmusic.com>)
+Licensed under Creative Commons: By [Attribution-NonCommercial 4.0 International
+(CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/)
