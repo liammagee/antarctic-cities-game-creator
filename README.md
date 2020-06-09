@@ -21,6 +21,38 @@ To run unit tests and other utilities, install [node.js](https://nodejs.org/). T
 
 These instructions will install *TypeScript*, the *TypeScript* mode for *node.js*, and dependencies for *Antarctic Futures*.
 
+## Deployment
+
+To simplify deployment, *Antarctic Futures* includes the *Cocos Creator* 'Web Mobile' build. This enables new builds to be deployed easily.
+
+### Basic server
+
+The simplest way to deploy the game is to clone the repository to a server, and running a basic web server such as [http-server](https://www.npmjs.com/package/http-server) in the build directory:
+
+    http-server -p 8000 build/web-mobile
+
+or
+
+    npm run basic
+
+To check the game loads correctly, visit http://localhost:8000 (if testing from another machne, replace localhost with the server's IP address).
+
+### Logging server
+
+For research purposes, each completed game can also be saved on the server. A customised script, *server.js*, includes a hook for client state to be saved as JSON output. To run this version:
+
+    ./server.js
+
+or
+
+    npm run log
+
+### Lifecycle management
+
+The server can also be run via [foreman](https://www.npmjs.com/package/foreman):
+
+    npm run foreman
+
 ## Unit Testing
 
 Unit tests, developed using the [Jest](https://jestjs.io/) testing framework, cover parts of the *World* model.
@@ -28,6 +60,17 @@ Unit tests, developed using the [Jest](https://jestjs.io/) testing framework, co
 To run the unit tests, open a command line or terminal window, navigate to the repository directory, and run:
 
     npm t
+
+## Documentation
+
+The *docs/* directory includes two PDFs:
+
+- [Learn-with-Antarctic-Futures.pdf](docs/Learn-with-Antarctic-Futures.pdf): a resource pack for teachers and facilitators to use the game in group settings.
+- [model.pdf](docs/model.pdf): documentation about the underlying model the game (and terminal simulator) use.
+
+Code-level (API) documentation can be generated
+
+    npm run doc
 
 ## Running the Terminal Simulator
 

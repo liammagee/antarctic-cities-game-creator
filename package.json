@@ -17,7 +17,11 @@
     "typescript": "^3.9.5"
   },
   "scripts": {
-    "test": "jest --detectOpenHandles --colors"
+    "test": "jest --detectOpenHandles --colors",
+    "basic": "$(which http-server) -o -p 8000 ./build/web-mobile",
+    "log": "server.js",
+    "foreman": "forever start \"$(which npm)\" run log",
+    "doc": "typedoc --out docs/api --ignoreCompilerErrors assets/Script/"
   },
   "repository": {
     "type": "git",
