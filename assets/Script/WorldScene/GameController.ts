@@ -604,6 +604,9 @@ export default class GameController extends cc.Component {
         let world = controller.world;
         let mapBack = controller.node.getChildByName('mapBack');
         // mapBack.removeAllChildren();
+        Object.values(controller.countryNodes).forEach((node) => {
+            node.removeFromParent();
+        });
 
         // loading all resource in the test assets directory
         cc.loader.loadResDir("countries", cc.SpriteFrame, function (err, assets, urls) {

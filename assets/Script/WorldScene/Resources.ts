@@ -7,7 +7,7 @@
 export class Resources  {
 
     // Version
-    VERSION_ANTARCTIC_FUTURES = "Build: 1021";
+    VERSION_ANTARCTIC_FUTURES = "Build: 1022";
 
     // LANGUAGES
     LANGUAGES = ['eng', 'esp'];
@@ -1094,7 +1094,7 @@ export class Resources  {
         },
         start_tutorial_skip: {
             eng: "Straight to Game",
-            esp: "Straight to Game"
+            esp: "Directo al juego"
         },
         start_prepare: {
             eng: "Prepare the world...",
@@ -1557,75 +1557,75 @@ export class Resources  {
                 id: 3,
                 quiz: {
                     eng: "Because of a global shortage in key minerals, a few nations have started investigating resource potential and extraction technologies in Antarctica, thinly veiled under the guise of scientific exploration. Environmental experts are worried that secret mines will appear on the continent, endangering the ecosystem. What can be done?",
-                    esp: "Because of a global shortage in key minerals, a few nations have started investigating resource potential and extraction technologies in Antarctica, thinly veiled under the guise of scientific exploration. Environmental experts are worried that secret mines will appear on the continent, endangering the ecosystem. What can be done?",
+                    esp: "Debido a la escasez mundial de minerales clave, algunas naciones han comenzado a investigar el potencial de recursos y las tecnologías de extracción en la Antártida, apenas veladas bajo el pretexto de la exploración científica. A los expertos en medio ambiente les preocupa que aparezcan minas secretas en el continente, poniendo en peligro el ecosistema. ¿Qué se puede hacer?",
                 },
                 wrong_answer: {
                     eng: "Call upon the Antarctic Treaty parties to rescind Article 7 of the Protocol on Environmental Protection to the Antarctic Treaty?",
-                    esp: "Call upon the Antarctic Treaty parties to rescind Article 7 of the Protocol on Environmental Protection to the Antarctic Treaty?"
+                    esp: "Llamar a las partes del Tratado Antártico a rescindir el artículo 7 del Protocolo de Protección Ambiental del Tratado Antártico?"
                 },
                 right_answer: {
                     eng: "Call upon the Antarctic Treaty parties to reinforce Article 7 of the Protocol on Environmental Protection to the Antarctic Treaty?",
-                    esp: "Call upon the Antarctic Treaty parties to reinforce Article 7 of the Protocol on Environmental Protection to the Antarctic Treaty?"
+                    esp: "Llamar a las partes del Tratado Antártico a reforzar el artículo 7 del Protocolo de Protección Ambiental del Tratado Antártico?"
                 }
             },
             {
                 id: 4,
                 quiz: {
                     eng: "Mass loss from the melting Antarctic Ice Sheet is contributing to global sea level rise and continues to accelerate. Antarctica now makes the largest contribution to the rise in global mean sea level, exceeding the contribution from thermal expansion, the retreat of mountain glaciers and melting of the Greenland Ice Sheet. What can be done?",
-                    esp: "Mass loss from the melting Antarctic Ice Sheet is contributing to global sea level rise and continues to accelerate. Antarctica now makes the largest contribution to the rise in global mean sea level, exceeding the contribution from thermal expansion, the retreat of mountain glaciers and melting of the Greenland Ice Sheet. What can be done?",
+                    esp: "La pérdida masiva de la capa de hielo antártico en proceso de derretimiento está contribuyendo a la elevación del nivel del mar a nivel mundial y continúa acelerándose. La Antártida es ahora la mayor contribución al aumento del nivel medio del mar mundial, superando la contribución de la expansión térmica, el retroceso de los glaciares montañosos y el derretimiento de la capa de hielo de Groenlandia. ¿Qué se puede hacer?",
                 },
                 wrong_answer: {
                     eng: "Lobby the Antarctic treaty parties to test a geoengineering solution that delays sea level rise by pumping seawater onto the Antarctic continent to be stored as ice, with power supplied by 850,000 1.5-MW wind turbines?",
-                    esp: "Lobby the Antarctic treaty parties to test a geoengineering solution that delays sea level rise by pumping seawater onto the Antarctic continent to be stored as ice, with power supplied by 850,000 1.5-MW wind turbines?"
+                    esp: "Presionar a las partes del tratado antártico para probar una solución de geoingeniería que retrase la subida del nivel del mar bombeando agua de mar al continente antártico para almacenarla como hielo, con la energía suministrada por 850.000 turbinas eólicas de 1,5 MW?"
                 },
                 right_answer: {
                     eng: "Lobby the UN to adopt a stricter temperature increase target and a moratorium on new fossil fuel explorations?",
-                    esp: "Lobby the UN to adopt a stricter temperature increase target and a moratorium on new fossil fuel explorations?"
+                    esp: "¿Presionar a la ONU para que adopte un objetivo de aumento de temperatura más estricto y una moratoria en las nuevas exploraciones de combustibles fósiles?"
                 }
             },
             {
                 id: 5,
                 quiz: {
                     eng: "With the increase of tourism to Antarctica, and the construction of hotels in the Antarctic Peninsula, alien plants have spread, threatening the local ecosystem. What can be done?",
-                    esp: "With the increase of tourism to Antarctica, and the construction of hotels in the Antarctic Peninsula, alien plants have spread, threatening the local ecosystem. What can be done?",
+                    esp: "Con el aumento del turismo hacia la Antártida y la construcción de hoteles en la Península Antártica, las plantas exóticas se han extendido, amenazando el ecosistema local. ¿Qué se puede hacer?",
                 },
                 wrong_answer: {
                     eng: "Start a social media campaign to ban tourism and non-scientific presence in Antarctica?",
-                    esp: "Start a social media campaign to ban tourism and non-scientific presence in Antarctica?"
+                    esp: "¿Empezar una campaña en los medios sociales para prohibir el turismo y la presencia no científica en la Antártida?"
                 },
                 right_answer: {
                     eng: "Call upon the Antarctic Treaty to include a limit on human presence in the Protocol on Environmental Protection, and enact a systematic surveillance system for alien species?",
-                    esp: "Call upon the Antarctic Treaty to include a limit on human presence in the Protocol on Environmental Protection, and enact a systematic surveillance system for alien species?"
+                    esp: "Exhortar al Tratado Antártico a que incluya un límite a la presencia humana en el Protocolo de Protección Ambiental, y a que promulgue un sistema de vigilancia sistemática de las especies exóticas?"
                 }
             },
             {
                 id: 6,
                 quiz: {
                     eng: "Changes in food availability is endangering the survival of several penguin species, which have to compete with large-scale krill fishing in the North of Antarctica. What can be done?",
-                    esp: "Changes in food availability is endangering the survival of several penguin species, which have to compete with large-scale krill fishing in the North of Antarctica. What can be done? ",
+                    esp: "Los cambios en la disponibilidad de alimentos están poniendo en peligro la supervivencia de varias especies de pingüinos, que tienen que competir con la pesca de krill a gran escala en el norte de la Antártida. ¿Qué se puede hacer?",
                 },
                 wrong_answer: {
                     eng: "Establish a marine protected area?",
-                    esp: "Establish a marine protected area?"
+                    esp: "Establecer un área marina protegida?"
                 },
                 right_answer: {
                     eng: "Lobby the parties to the Antarctic Treaty to secure Antarctica as a natural reserve and establish a moratorium on fishing in the Southern Ocean?",
-                    esp: "Lobby the parties to the Antarctic Treaty to secure Antarctica as a natural reserve and establish a moratorium on fishing in the Southern Ocean?"
+                    esp: "¿Presionar a las partes en el Tratado Antártico para asegurar la Antártida como reserva natural y establecer una moratoria de la pesca en el Océano Austral?"
                 }
             },
             {
                 id: 7,
                 quiz: {
                     eng: "Owing to tremendous pressure for food to support the ever-growing world population, bioprospecting experiments have identified the possibility to harvest several krill species in the Southern Ocean. Scientists  fear that high levels of fishing will cause irreparable damage to the whole Antarctic ecosystem, whilst several nations are fighting for the apportionment of the krill population. What can be done?",
-                    esp: "Owing to tremendous pressure for food to support the ever-growing world population, bioprospecting experiments have identified the possibility to harvest several krill species in the Southern Ocean. Scientists  fear that high levels of fishing will cause irreparable damage to the whole Antarctic ecosystem, whilst several nations are fighting for the apportionment of the krill population. What can be done?",
+                    esp: "Debido a la tremenda presión por alimentos para sostener la población mundial en constante crecimiento, los experimentos de bioprospección han identificado la posibilidad de cosechar varias especies de krill en el Océano Austral. Los científicos temen que los altos niveles de pesca causen un daño irreparable a todo el ecosistema antártico, mientras que varias naciones luchan por el reparto de la población de krill. ¿Qué se puede hacer?",
                 },
                 wrong_answer: {
                     eng: "Establish marine protected areas within the Protocol on Environmental Protection of the Antarctic Treaty, and apportion the remainder of the Southern Ocean area to countries that most need food supplies?",
-                    esp: "Establish marine protected areas within the Protocol on Environmental Protection of the Antarctic Treaty, and apportion the remainder of the Southern Ocean area to countries that most need food supplies?"
+                    esp: "Establecer áreas marinas protegidas dentro del Protocolo sobre Protección Ambiental del Tratado Antártico, y repartir el resto de la superficie del Océano Austral entre los países que más necesitan suministros de alimentos?"
                 },
                 right_answer: {
                     eng: "Lobby the Antarctic Treaty parties and the UN to adopt an ecosystem-based approach to the conservation of krill in the Southern Ocean, including a possible moratorium on fishing?",
-                    esp: "Lobby the Antarctic Treaty parties and the UN to adopt an ecosystem-based approach to the conservation of krill in the Southern Ocean, including a possible moratorium on fishing?"
+                    esp: "Presionar a las partes del Tratado Antártico y a las Naciones Unidas para que adopten un enfoque basado en el ecosistema para la conservación del krill en el Océano Austral, incluyendo una posible moratoria de la pesca?"
                 }
             }
 
