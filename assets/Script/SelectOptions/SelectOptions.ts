@@ -79,7 +79,17 @@ export default class NewClass extends cc.Component {
         if (cc.sys.localStorage.countryMask === undefined)
             cc.sys.localStorage.countryMask = 'default';
 
-        cc.director.loadScene("WorldScene");
+        if (cc.sys.isMobile) {
+
+            cc.screen['requestFullScreen'](null, () => {
+                cc.log('now fullscreen');
+            });
+
+        }
+
+
+        cc.director.loadScene("ConsentScene");
+        // cc.director.loadScene("WorldScene");
 
     }
 

@@ -44,8 +44,8 @@ else if (program.strategy == 'mil')
 log(chalk.red(`Running Sim with strategy: '${program.strategy}' and these policies: ${POLICY_FILTER.join(', ')}.`));
 
 
-const PRINT_ANNUAL_STATS = true;
-const PRINT_RUN_STATS = true;
+const PRINT_ANNUAL_STATS = false;
+const PRINT_RUN_STATS = false;
 const RUNS = 10;
 const PARALLEL = false;
 

@@ -372,7 +372,7 @@ export default class GameController extends cc.Component {
         controller.quizBox.zIndex = 104;
 
         controller.quizBox.getChildByName("quizTitle").getComponent(cc.Label).string = title;
-        controller.quizBox.getChildByName("quizContents").getComponent(cc.Label).string = message;
+        controller.quizBox.getChildByName("quizContents").getComponent(cc.RichText).string = message;
 
         let btn1 = controller.quizBox.getChildByName("btn1");
         let btn2 = controller.quizBox.getChildByName("btn2");
@@ -386,8 +386,8 @@ export default class GameController extends cc.Component {
 
         }
 
-        btn1.getChildByName("Background").getChildByName("optContents").getComponent(cc.Label).string = rightAnswer;
-        btn2.getChildByName("Background").getChildByName("optContents").getComponent(cc.Label).string = wrongAnswer;
+        btn1.getChildByName("Background").getChildByName("optContents").getComponent(cc.RichText).string = rightAnswer;
+        btn2.getChildByName("Background").getChildByName("optContents").getComponent(cc.RichText).string = wrongAnswer;
 
         let btn1Func = function (event) {
 
@@ -584,12 +584,13 @@ export default class GameController extends cc.Component {
         let material: cc.Material = null;
         if (cc.sys.localStorage.countryMask == 'default') {
 
-            controller.defaultMaterial = controller.materialA;
+            // 'B' was experimental...
+            controller.defaultMaterial = controller.materialB;
 
         }
         else {
 
-            controller.defaultMaterial = controller.materialB;
+            controller.defaultMaterial = controller.materialA;
 
         }
 
@@ -667,7 +668,7 @@ export default class GameController extends cc.Component {
             timeoutID: undefined,
             tutorialHints: undefined,
             tutorialInterval: undefined,
-            countries: []
+            countries: {}
 
         });
 
@@ -702,7 +703,7 @@ export default class GameController extends cc.Component {
             })
         });
 
-        // gameLog.countries = countries;
+        //gameLog.countries = countries;
 
         xhr.send(JSON.stringify(gameLog));
 
@@ -740,7 +741,7 @@ export default class GameController extends cc.Component {
             world.gameState.policies = new Map<number, number>();
             controller.tweetLabel.string = (world.gameState.scenarioName);
 
-            cc.director.loadScene("SelectOptions");
+            cc.director.loadScene("OptionsScene");
 
         }, undefined, undefined);
 
@@ -2038,7 +2039,7 @@ export default class GameController extends cc.Component {
 
         // Create a new RenderTexture and set this new RenderTexture to the camera's targetTexture so that the camera content will be rendered to this new RenderTexture
         let texture = new cc.RenderTexture();
-        let gl = cc.game._renderContext;
+        let gl = cc.game['_renderContext'];
         // If the Mask component is not included in the screenshot, you don't need to pass the third parameter.
         // texture.initWithSize(cc.visibleRect.width, cc.visibleRect.height, gl.STENCIL_INDEX8);
         texture.initWithSize(cc.visibleRect.width, cc.visibleRect.height, gl.STENCIL_INDEX8);
@@ -2117,7 +2118,7 @@ export default class GameController extends cc.Component {
 
         let Y_OFFSET = 55;
         this._time = 0;
-        let controller = window.controller = this.controller = this;
+        let controller = window['controller'] = this.controller = this;
         controller.world = new World();
         let world = controller.world;
 
@@ -2432,8 +2433,6 @@ export default class GameController extends cc.Component {
                 }
             });
 
-            world.updateGameStats();
-
 
             if (world.gameState.currentCountry != null) {
 
@@ -2447,6 +2446,8 @@ export default class GameController extends cc.Component {
             }
 
         }
+
+        world.updateGameStats();
 
 
         // Various events
@@ -2554,6 +2555,8 @@ export default class GameController extends cc.Component {
                     let mv = countryNode.getComponent(cc.Sprite).materials[0];
                     mv.setProperty('u_selected', (country.selected ? 1.0 : 0.0));
                     mv.setProperty('u_percentageLoss', country.loss);
+                    if (country.iso_a3 == 'AUS')
+                        console.log(`AUS: ${country.loss}`)
                     mv.setProperty('u_percentagePrep', country.pop_prepared_percent);
 
                 }

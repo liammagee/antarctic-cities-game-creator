@@ -1316,39 +1316,51 @@ export class World {
         let totalPolicy = 0, totalLoss = 0;
         let countriedAffected = 0, populationAware = 0, populationPrepared = 0;
         
-        Object.keys(world.countries).forEach( key => {
+        let interval = world.gameState.timeInterval;
+        let keys = Object.keys(world.countries);
 
+
+        for (let i = 0; i < keys.length; i++) {
+            
+            let key = keys[i];
+        // keys.forEach( key => {
             const country = world.countries[key];
-            const loss = world.evaluateLoss(country);
 
-            if (loss > 0.0) {
-                country.previousLoss = country.loss;
-                country.loss = loss;
-            }
 
-            if (country.affected_chance) {
+            if (i % interval === world.gameState.counter % interval) {
 
-                world.transmitFrom(country);
-                world.infectWithin(country);
-                world.registerPreparednessWithin(country);
-
-                countriedAffected++;
-                populationAware += country.pop_aware;
-                populationPrepared += country.pop_prepared;
-
-                country.pop_aware_percent = 100 * country.pop_aware / country.pop_est;
-                let existingConvincedPercentage = country.pop_prepared_percent;
-                country.pop_prepared_percent = 100 * country.pop_prepared / country.pop_est;
-
-                let imin = (existingConvincedPercentage > 0.5) ? parseInt(existingConvincedPercentage) : 0;
-                let imax = (country.pop_prepared_percent > 0.5) ? parseInt(country.pop_prepared_percent) : 0;
-
+                const loss = world.evaluateLoss(country);
+    
+                if (loss > 0.0) {
+                    country.previousLoss = country.loss;
+                    country.loss = loss;
+                }
+    
+                if (country.affected_chance) {
+    
+                    world.transmitFrom(country);
+                    world.infectWithin(country);
+                    world.registerPreparednessWithin(country);
+    
+                    countriedAffected++;
+                    populationAware += country.pop_aware;
+                    populationPrepared += country.pop_prepared;
+    
+                    country.pop_aware_percent = 100 * country.pop_aware / country.pop_est;
+                    let existingConvincedPercentage = country.pop_prepared_percent;
+                    country.pop_prepared_percent = 100 * country.pop_prepared / country.pop_est;
+    
+                    let imin = (existingConvincedPercentage > 0.5) ? parseInt(existingConvincedPercentage) : 0;
+                    let imax = (country.pop_prepared_percent > 0.5) ? parseInt(country.pop_prepared_percent) : 0;
+    
+                }
+    
             }
 
             totalPolicy += country.policy;
             totalLoss += country.loss;
 
-        });
+        };
 
         totalPolicy /= Object.keys(world.countries).length;
         world.gameState.policy = totalPolicy;
