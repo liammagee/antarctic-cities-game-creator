@@ -38,7 +38,8 @@ export default class Consent extends cc.Component {
         let layout = this.node.getChildByName('layout');
         let lblWelcome = layout.getChildByName('lblWelcome').getComponent(cc.Label);
         let lblAbout = layout.getChildByName('lblAbout').getComponent(cc.Label);
-        let lblAgree = layout.getChildByName('consentHolder').getChildByName('chbAgree').getChildByName('Background').getChildByName('lblAgree').getComponent(cc.Label);
+        let chbAgree = layout.getChildByName('consentHolder').getChildByName('chbAgree').getComponent(cc.Toggle);
+        let lblAgree = chbAgree.node.getChildByName('Background').getChildByName('lblAgree').getComponent(cc.Label);
         let lblPlayGame = layout.getChildByName('btnPlayGame').getChildByName('Background').getChildByName('Label').getComponent(cc.Label);
         let lblLearnMore = layout.getChildByName('btnLearnMore').getChildByName('Background').getChildByName('Label').getComponent(cc.Label);
 
@@ -62,18 +63,18 @@ export default class Consent extends cc.Component {
         }
 
         let consented = (cc.sys.localStorage.consent === 'true');
-        this.consent.isChecked = consented;
+        chbAgree.isChecked = consented;
         this.play.interactable = consented;
 
-        this.lblConsent.node.on(cc.Node.EventType.TOUCH_END, (event) => {
+        lblAgree.node.on(cc.Node.EventType.TOUCH_END, (event) => {
             
-            this.consent.node.emit(cc.Node.EventType.TOUCH_END, event);
+            chbAgree.node.emit(cc.Node.EventType.TOUCH_END, event);
  
         }, this);
 
     }
 
-    
+
     togglePlay(consent: cc.Toggle) {
 
         cc.sys.localStorage.consent = consent.isChecked;

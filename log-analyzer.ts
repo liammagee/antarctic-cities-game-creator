@@ -45,43 +45,51 @@ Reader.open('/Users/liam/Downloads/GeoLite2-City_20200609/GeoLite2-City.mmdb', r
 
     lineReader.on('line', function (line) {
         counter++;
-        // console.log(line);
         let obj = JSON.parse(line);
         totalLoss += obj.totalLoss;
 
         let ip = obj.ip.split('::ffff:')[1]
-        let loc = reader.city(ip);
-        if (countries[loc.country.names.en] === undefined) {
-            countries[loc.country.names.en] = {}
-            countries[loc.country.names.en].loss = [];
-        }
 
-        countries[loc.country.names.en].loss.push(obj.totalLoss);
-
-        if (loc.city.names !== undefined) {
-            if (cities[loc.city.names.en] === undefined) {
-                cities[loc.city.names.en] = {}
-                cities[loc.city.names.en].loss = [];
-            }
-            cities[loc.city.names.en].loss.push(obj.totalLoss);
+        try {
+            let loc = reader.city(ip);
+            console.log(loc);
     
+    
+            if (countries[loc.country.names.en] === undefined) {
+                countries[loc.country.names.en] = {}
+                countries[loc.country.names.en].loss = [];
+            }
+    
+            countries[loc.country.names.en].loss.push(obj.totalLoss);
+    
+            if (loc.city.names !== undefined) {
+                if (cities[loc.city.names.en] === undefined) {
+                    cities[loc.city.names.en] = {}
+                    cities[loc.city.names.en].loss = [];
+                }
+                cities[loc.city.names.en].loss.push(obj.totalLoss);
+        
+            }
+    
+            // (async () => {
+            //     let promise = new Promise((resolve, reject) => {
+            //         setTimeout(() => {
+            //             let result = ipLocation(obj.ip.split('::ffff:')[1]);
+            //             resolve(result);
+            //         }, 1000);
+            //     });
+            //     let loc = await promise;
+            //     //=> { latitude: -33.8591, longitude: 151.2002, region: { name: "New South Wales" ... } ... }
+            //     console.log(`${loc['country']['name']}`)
+            // })();
+            // console.log(`${obj.ip.strip('::ffff:')}`)
+            // console.log(`${new Date(obj.currentDate).toLocaleDateString(undefined, options)} ${obj.totalLoss}`);
+            // console.log(`${new Date(obj.currentDate).toLocaleDateString(undefined, options)} ${obj.totalLoss}`);
+            // console.log(`${new Date(obj.currentDate).toLocaleDateString(undefined, options)} ${obj.totalLoss}`);
+                
+        } catch (error) {
+            
         }
-
-        // (async () => {
-        //     let promise = new Promise((resolve, reject) => {
-        //         setTimeout(() => {
-        //             let result = ipLocation(obj.ip.split('::ffff:')[1]);
-        //             resolve(result);
-        //         }, 1000);
-        //     });
-        //     let loc = await promise;
-        //     //=> { latitude: -33.8591, longitude: 151.2002, region: { name: "New South Wales" ... } ... }
-        //     console.log(`${loc['country']['name']}`)
-        // })();
-        // console.log(`${obj.ip.strip('::ffff:')}`)
-        // console.log(`${new Date(obj.currentDate).toLocaleDateString(undefined, options)} ${obj.totalLoss}`);
-        // console.log(`${new Date(obj.currentDate).toLocaleDateString(undefined, options)} ${obj.totalLoss}`);
-        // console.log(`${new Date(obj.currentDate).toLocaleDateString(undefined, options)} ${obj.totalLoss}`);
     });
 
     lineReader.on('close', function () {

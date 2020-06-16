@@ -100,6 +100,8 @@ export class GameState  {
     level: string = ''
     language: string = 'eng'
     greyscale: boolean = true
+    mouseZoom: boolean = true
+    mousePan: boolean = false
     difficultyMultiplier: number = 0
     state: number = 0
     modal: boolean = false
@@ -1326,8 +1328,8 @@ export class World {
         // keys.forEach( key => {
             const country = world.countries[key];
 
-
             if (i % interval === world.gameState.counter % interval) {
+            // if (true) {
 
                 const loss = world.evaluateLoss(country);
     
@@ -1407,12 +1409,12 @@ export class World {
                 if (isNaN(totalInfluence))
                     totalInfluence = 0.0;
                 
-                // if (totalInfluence > 0) {
+                if (totalInfluence > 0) {
                 
                     denom += totalInfluence;
                     probs.push(totalInfluence);
                 
-                // }
+                }
 
             });
 

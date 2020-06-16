@@ -368,15 +368,17 @@ export default class GameController extends cc.Component {
         controller.world.gameState.modal = true;
         controller.world.gameState.state = controller.world.res.GAME_STATES.PAUSED;
 
-        controller.quizBox.opacity = 255;
         controller.quizBox.zIndex = 104;
+
+        // cc.tween(controller.quizBox).to(0.5, { position: cc.v2(0, 0) });
+        cc.tween(controller.quizBox).to(0.5, { position: cc.v2(0, 0) }, { easing: 'backOut'}).start();
+        
 
         controller.quizBox.getChildByName("quizTitle").getComponent(cc.Label).string = title;
         controller.quizBox.getChildByName("quizContents").getComponent(cc.RichText).string = message;
 
         let btn1 = controller.quizBox.getChildByName("btn1");
         let btn2 = controller.quizBox.getChildByName("btn2");
-        let buttons = [];
 
         if (Math.random() > 0.5) {
 
@@ -389,13 +391,10 @@ export default class GameController extends cc.Component {
         btn1.getChildByName("Background").getChildByName("optContents").getComponent(cc.RichText).string = rightAnswer;
         btn2.getChildByName("Background").getChildByName("optContents").getComponent(cc.RichText).string = wrongAnswer;
 
-        let btn1Func = function (event) {
+        let btn1Func = (event) => {
 
-            controller.quizBox.opacity = 0;
-            controller.quizBox.zIndex = -1;
-            btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
-            btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
-            //parent.node.resumeAllActions(); 
+            cc.tween(controller.quizBox).to(0.5, { position: cc.v2(0, -750) }, { easing: 'backIn'}).start();
+
             controller.world.gameState.modal = false;
             event.stopPropagation();
 
@@ -409,15 +408,12 @@ export default class GameController extends cc.Component {
             }, undefined, undefined);
 
         };
-        btn1.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
+        btn1.getChildByName('button').on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
 
-        let btn2Func = function (event) {
+        let btn2Func = (event) => {
 
-            controller.quizBox.opacity = 0;
-            controller.quizBox.zIndex = -1;
-            btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
-            btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
-            //parent.node.resumeAllActions(); 
+            cc.tween(controller.quizBox).to(0.5, { position: cc.v2(0, -750) }, { easing: 'backIn'}).start();
+
             controller.world.gameState.modal = false;
             event.stopPropagation();
 
@@ -435,12 +431,7 @@ export default class GameController extends cc.Component {
             }, undefined, undefined);
 
         };
-        btn2.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
-
-        buttons.push(btn1);
-        buttons.push(btn2);
-
-        return buttons;
+        btn2.getChildByName('button').on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
 
     }
 
@@ -654,12 +645,15 @@ export default class GameController extends cc.Component {
         // Test posting data
         const xhr = cc.loader.getXMLHttpRequest();
 
-        xhr.open("POST", "http://43.240.98.94/game_data");
-        // xhr.open("POST", "http://localhost:8000/game_data");
+        // xhr.open("POST", "http://43.240.98.94/game_data");
+        xhr.open("POST", "/game_data");
 
         // Set Content-type "text/plain;charset=UTF-8" to post plain text
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        const gameLog = Object.assign({}, world.gameState, {
+        // const 
+
+        // Creates a copy, but with certain (verbose) properties emptied out
+        let gameLog = Object.assign({}, world.gameState, {
 
             policyOptions: undefined,
             policyRelations: undefined,
@@ -668,13 +662,14 @@ export default class GameController extends cc.Component {
             timeoutID: undefined,
             tutorialHints: undefined,
             tutorialInterval: undefined,
-            countries: {}
+            automateScript: undefined,
+            countries: []
 
         });
 
-        let countries = {};
+        let countriesCloned : Country[] = [];
         Object.values(world.countries).forEach(c => {
-            countries[c.iso_a3] = Object.assign({}, c, {
+            let clone = Object.assign({}, c, {
 
                 points: undefined,
                 points_shared: undefined,
@@ -700,12 +695,14 @@ export default class GameController extends cc.Component {
                 density: undefined,
                 economy: undefined
 
-            })
+            });
+
+            countriesCloned.push(clone);
+
         });
+        gameLog.countries = countriesCloned;
 
-        //gameLog.countries = countries;
-
-        xhr.send(JSON.stringify(gameLog));
+        xhr.send(JSON.stringify(world.gameState));
 
     }
 
@@ -814,7 +811,7 @@ export default class GameController extends cc.Component {
 
                     world.gameState.state = world.res.GAME_STATES.GAME_OVER;
                     // cc.director.loadScene("LoadingScene");
-                    cc.director.loadScene("SelectOptions");
+                    cc.director.loadScene("OptionsScene");
 
                 },
                 "Return to Game", () => {
@@ -1578,8 +1575,8 @@ export default class GameController extends cc.Component {
         else {
 
             // Add Crisis Quiz, 50% of the time
-            if (Math.random() < 0.5) {
-                // if (Math.random() < 1.0) {
+            // if (Math.random() < 0.5) {
+            if (Math.random() < 1.0) {
 
                 // Show quiz
                 let qindex = Math.floor(Math.random() * world.res.quizzes.length);
@@ -2119,7 +2116,7 @@ export default class GameController extends cc.Component {
         let Y_OFFSET = 55;
         this._time = 0;
         let controller = window['controller'] = this.controller = this;
-        controller.world = new World();
+        controller.world = window['world'] = new World();
         let world = controller.world;
 
         controller.messageBox.opacity = 0;
@@ -2224,7 +2221,7 @@ export default class GameController extends cc.Component {
                 let mapFront = controller.node.getChildByName('mapFront');
                 mapFront.on(cc.Node.EventType.MOUSE_WHEEL, (event) => {
 
-                    if (world.gameState.modal)
+                    if (world.gameState.modal || !world.gameState.mouseZoom)
                         return false;
 
                     const mapBack = controller.node.getChildByName('mapBack');
@@ -2246,7 +2243,7 @@ export default class GameController extends cc.Component {
 
                 mapFront.on(cc.Node.EventType.MOUSE_MOVE, (event) => {
 
-                    if (world.gameState.modal)
+                    if (world.gameState.modal || !world.gameState.mousePan)
                         return false;
 
                     if (event.getButton() == cc.Event.EventMouse.BUTTON_LEFT) {
@@ -2555,8 +2552,8 @@ export default class GameController extends cc.Component {
                     let mv = countryNode.getComponent(cc.Sprite).materials[0];
                     mv.setProperty('u_selected', (country.selected ? 1.0 : 0.0));
                     mv.setProperty('u_percentageLoss', country.loss);
-                    if (country.iso_a3 == 'AUS')
-                        console.log(`AUS: ${country.loss}`)
+                    // if (country.iso_a3 == 'AUS')
+                    //     console.log(`AUS: ${country.loss}`)
                     mv.setProperty('u_percentagePrep', country.pop_prepared_percent);
 
                 }

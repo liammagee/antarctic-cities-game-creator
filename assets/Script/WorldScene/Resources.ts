@@ -1526,31 +1526,31 @@ export class Resources  {
             {
                 id: 1,
                 quiz: {
-                    eng: `As access to the Antarctic coast has become easier, thanks to rising temperatures and ice melt, <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Krill')">Antarctic krill</on></color> is being fished to produce protein-rich animal feed. This is causing a decline in many other marine species around the continent. What can be done?`,
-                    esp: `A medida que el aumento de las temperaturas y el derretimiento del hielo han facilitado el acceso a la costa antártica, se está pescando krill antártico para producir alimentación animal rica en proteínas. Esto está llevando a la disminución en muchas otras especies marinas en todo el continente. ¿Qué se puede hacer?`,
+                    eng: `As access to the Antarctic coast has become easier, thanks to rising temperatures and ice melt, <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Krill'>Antarctic krill</color> is being fished to produce protein-rich animal feed. This is causing a decline in many other marine species around the continent. What can be done?`,
+                    esp: `A medida que el aumento de las temperaturas y el derretimiento del hielo han facilitado el acceso a la costa antártica, se está pescando <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Euphausiacea'>krill antártico</color> para producir alimentación animal rica en proteínas. Esto está llevando a la disminución en muchas otras especies marinas en todo el continente. ¿Qué se puede hacer?`,
                 },
                 wrong_answer: {
-                    eng: `Establish a <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Marine_protected_area')">marine protected area</on></color>?`,
-                    esp: `¿Establecer un <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Marine_protected_area')">área marina protegida?`
+                    eng: `Establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Marine_protected_area'>marine protected area</color>?`,
+                    esp: `¿Establecer un <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/%C3%81rea_marina_protegida'>área marina protegida</color>?`
                 },
                 right_answer: {
-                    eng: `Lobby the parties to the <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Antarctic_Treaty_System')">Antarctic Treaty</on></color> secure Antarctica as a natural reserve and establish a <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Moratorium_(law)')">moratorium</on></color> on fishing in the Southern Ocean?`,
-                    esp: `¿Ejercer presión sobre las partes del <color=#0000FF><on click="cc.sys.openURL('https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico')">Tratado Antártico</on></color> para asegurar la Antártida como reserva natural y establecer una moratoria sobre la pesca en el Océano Austral?`
+                    eng: `Lobby the parties to the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty</color> secure Antarctica as a natural reserve and establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing in the Southern Ocean?`,
+                    esp: `¿Ejercer presión sobre las partes del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> para asegurar la Antártida como reserva natural y establecer una <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratoria</color> sobre la pesca en el Océano Austral?`
               }
             },
             {
                 id: 2,
                 quiz: {
-                    eng: `Because of the <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Retreat_of_glaciers_since_1850#Antarctica')">retreat of glaciers</on></color> on the Antarctic peninsula, two <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Invasive_species')">invasive species</on></color> have been found to be spreading without control, threatening the local ecosystem. What can be done?`,
-                    esp: `Se ha descubierto que dos especies invasoras se extienden sin control y amenazan el ecosistema local, debido al retroceso de los glaciares en la península antártica. ¿Qué se puede hacer?`,
+                    eng: `Because of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Retreat_of_glaciers_since_1850#Antarctica'>retreat of glaciers</color> on the Antarctic peninsula, two <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Invasive_species'>invasive species</color> have been found to be spreading without control, threatening the local ecosystem. What can be done?`,
+                    esp: `Se ha descubierto que dos <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Especie_invasora'>especies invasoras</color> se extienden sin control y amenazan el ecosistema local, debido al <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Retroceso_de_los_glaciares_desde_1850#Ant%C3%A1rtida'>retroceso de los glaciares</color> en la península antártica. ¿Qué se puede hacer?`,
                 },
                 wrong_answer: {
-                    eng: `Start a social media campaign to support research on non-native invaders by the <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Antarctic_Treaty_System')">Antarctic Treaty’s</on></color> Committee for Environmental Protection?`,
-                    esp: `¿Iniciar una campaña en los medios de comunicación social para apoyar la investigación sobre invasores exóticos por parte del Comité para la Protección del Medio Ambiente del <color=#0000FF><on click="cc.sys.openURL('https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico')">Tratado Antártico</on></color>?`
+                    eng: `Start a social media campaign to support research on non-native invaders by the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty’s</color> Committee for Environmental Protection?`,
+                    esp: `¿Iniciar una campaña en los medios de comunicación social para apoyar la investigación sobre invasores exóticos por parte del Comité para la Protección del Medio Ambiente del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color>?`
                 },
                 right_answer: {
-                    eng: `Adopt a systematic, <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/DNA_barcoding')">DNA barcoding</on></color> and web-based surveillance system, which will enable rapid identification of other ‘unusual’ species in order to curb their spread on the peninsula?`,
-                    esp: `¿Adoptar un sistema de vigilancia sistemático, basado en códigos de barras de ADN y en la web, que permita la rápida identificación de otras especies ‘inusuales‘ para frenar su propagación en la península?`
+                    eng: `Adopt a systematic, <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/DNA_barcoding'>DNA barcoding</color> and web-based surveillance system, which will enable rapid identification of other ‘unusual’ species in order to curb their spread on the peninsula?`,
+                    esp: `¿Adoptar un sistema de vigilancia sistemático, basado en <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/%C3%81cido_desoxirribonucleico'>códigos de barras de ADN</color> y en la web, que permita la rápida identificación de otras especies ‘inusuales‘ para frenar su propagación en la península?`
                 }
             },
             {
@@ -1560,27 +1560,27 @@ export class Resources  {
                     esp: `Debido a la escasez mundial de minerales clave, algunas naciones han comenzado a investigar el potencial de los recursos y las tecnologías de extracción en la Antártida, apenas velado bajo el pretexto de la exploración científica. A los expertos en medio ambiente les preocupa que aparezcan minas secretas en el continente, poniendo en peligro el ecosistema. ¿Qué se puede hacer?`,
                 },
                 wrong_answer: {
-                    eng: `Call upon the Antarctic Treaty parties to rescind Article 7 of the <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty>Protocol on Environmental Protection to the Antarctic Treaty</on></color>?`,
-                    esp: `¿Llamar a las partes del Tratado Antártico a rescindir el artículo 7 del Protocolo de <color=#0000FF><on click="cc.sys.openURL('https://es.wikipedia.org/wiki/Protocolo_al_Tratado_Ant%C3%A1rtico_sobre_Protecci%C3%B3n_del_Medio_Ambiente')">Protección Ambiental del Tratado Antártico</on></color>?`
+                    eng: `Call upon the Antarctic Treaty parties to rescind Article 7 of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty>Protocol on Environmental Protection to the Antarctic Treaty</color>?`,
+                    esp: `¿Llamar a las partes del Tratado Antártico a rescindir el artículo 7 del Protocolo de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Protocolo_al_Tratado_Ant%C3%A1rtico_sobre_Protecci%C3%B3n_del_Medio_Ambiente'>Protección Ambiental del Tratado Antártico</color>?`
                 },
                 right_answer: {
-                    eng: `Call upon the Antarctic Treaty parties to reinforce Article 7 of the <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty>Protocol on Environmental Protection to the Antarctic Treaty</on></color>?`,
-                    esp: `¿Llamar a las partes del Tratado Antártico a reforzar el artículo 7 del Protocolo de <color=#0000FF><on click="cc.sys.openURL('https://es.wikipedia.org/wiki/Protocolo_al_Tratado_Ant%C3%A1rtico_sobre_Protecci%C3%B3n_del_Medio_Ambiente')">Protección Ambiental del Tratado Antártico</on></color>?`
+                    eng: `Call upon the Antarctic Treaty parties to reinforce Article 7 of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty>Protocol on Environmental Protection to the Antarctic Treaty</color>?`,
+                    esp: `¿Llamar a las partes del Tratado Antártico a reforzar el artículo 7 del Protocolo de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Protocolo_al_Tratado_Ant%C3%A1rtico_sobre_Protecci%C3%B3n_del_Medio_Ambiente'>Protección Ambiental del Tratado Antártico</color>?`
                 }
             },
             {
                 id: 4,
                 quiz: {
-                    eng: `Mass loss from the melting Antarctic Ice Sheet is contributing to global sea level rise and continues to accelerate. Antarctica now makes the largest contribution to the rise in global mean sea level, exceeding the contribution from thermal expansion, the retreat of mountain glaciers and melting of the Greenland Ice Sheet. What can be done?`,
-                    esp: `a pérdida masiva de la capa de hielo antártico en proceso de derretimiento está contribuyendo a la elevación del nivel del mar a nivel mundial y continúa acelerándose. El aporte antártico al aumento del nivel medio del mar mundial es actualmente el más importante, superando la contribución de la expansión térmica, el retroceso de los glaciares montañosos y el derretimiento de la capa de hielo de Groenlandia. ¿Qué se puede hacer?`,
+                    eng: `Mass loss from the melting Antarctic Ice Sheet is contributing to global sea level rise and continues to accelerate. Antarctica now makes the largest contribution to the rise in global mean sea level, exceeding the contribution from <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Thermal_expansion'>thermal expansion</color>, the retreat of mountain glaciers and melting of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Greenland_ice_sheet'>Greenland Ice Sheet</color>. What can be done?`,
+                    esp: `La pérdida masiva de la capa de hielo antártico en proceso de derretimiento está contribuyendo a la elevación del nivel del mar a nivel mundial y continúa acelerándose. El aporte antártico al aumento del nivel medio del mar mundial es actualmente el más importante, superando la contribución de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Expansi%C3%B3n_t%C3%A9rmica'>expansión térmica</color>, el retroceso de los glaciares montañosos y el derretimiento de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Capa_de_hielo_de_Groenlandia'>capa de hielo de Groenlandia</color>. ¿Qué se puede hacer?`,
                 },
                 wrong_answer: {
                     eng: `Lobby the Antarctic treaty parties to test a geoengineering solution that delays sea level rise by pumping seawater onto the Antarctic continent to be stored as ice, with power supplied by 850,000 1.5-MW wind turbines?`,
-                    esp: `¿Presionar a las partes del <color=#0000FF><on click="cc.sys.openURL('https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico')">Tratado Antártico</on></color> para probar una solución de geoingeniería que retrase la subida del nivel del mar bombeando agua de mar al continente antártico para almacenarla como hielo, con la energía suministrada por 850 000 turbinas eólicas de 1,5 MW?`
+                    esp: `¿Presionar a las partes del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> para probar una solución de geoingeniería que retrase la subida del nivel del mar bombeando agua de mar al continente antártico para almacenarla como hielo, con la energía suministrada por 850 000 turbinas eólicas de 1,5 MW?`
                 },
                 right_answer: {
-                    eng: `Lobby the UN to adopt a stricter temperature increase target and a moratorium on new fossil fuel explorations?`,
-                    esp: `¿Presionar a la ONU para que adopte un objetivo más estricto para limitar el  aumento de la temperatura y una moratoria de las nuevas exploraciones de hidrocarburos?`
+                    eng: `Lobby the UN to adopt a stricter temperature increase target and a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on new <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Fossil_fuel'>fossil fuel</color> explorations?`,
+                    esp: `¿Presionar a la ONU para que adopte un objetivo más estricto para limitar el aumento de la temperatura y una <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratoria</color> de las nuevas exploraciones de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Hidrocarburos'>hidrocarburos</color>?`
                 }
             },
             {
@@ -1594,38 +1594,38 @@ export class Resources  {
                     esp: `¿Empezar una campaña en los medios sociales para prohibir el turismo y la presencia no científica en la Antártida?`
                 },
                 right_answer: {
-                    eng: `Call upon the <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Antarctic_Treaty_System')">Antarctic Treaty</on></color> to include a limit on human presence in the Protocol on Environmental Protection, and enact a systematic surveillance system for alien species?`,
-                    esp: `¿Exhortar al <color=#0000FF><on click="cc.sys.openURL('https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico')">Tratado Antártico</on></color> a que incluya un límite a la presencia humana en el Protocolo de Protección Ambiental, y a que promulgue un sistema de vigilancia sistemática de las especies exóticas?`
+                    eng: `Call upon the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty</color> to include a limit on human presence in the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty'>Protocol on Environmental Protection</color>, and enact a systematic surveillance system for alien species?`,
+                    esp: `¿Exhortar al <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> a que incluya un límite a la presencia humana en el <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Protocolo_al_Tratado_Ant%C3%A1rtico_sobre_Protecci%C3%B3n_del_Medio_Ambiente'>Protocolo de Protección Ambiental</color>, y a que promulgue un sistema de vigilancia sistemática de las especies exóticas?`
                 }
             },
             {
                 id: 6,
                 quiz: {
-                    eng: `Changes in food availability is endangering the survival of several penguin species, which have to compete with large-scale krill fishing in the North of Antarctica. What can be done?`,
-                    esp: `Los cambios en la disponibilidad de alimentos están poniendo en peligro la supervivencia de varias especies de pingüinos, que tienen que competir con la pesca de krill a gran escala en el norte de la Antártida. ¿Qué se puede hacer?`,
+                    eng: `Changes in food availability is endangering the survival of several penguin species, which have to compete with large-scale <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Krill'>krill</color> fishing in the North of Antarctica. What can be done?`,
+                    esp: `Los cambios en la disponibilidad de alimentos están poniendo en peligro la supervivencia de varias especies de pingüinos, que tienen que competir con la pesca de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Euphausiacea'>krill</color> a gran escala en el norte de la Antártida. ¿Qué se puede hacer?`,
                 },
                 wrong_answer: {
-                    eng: `Establish a marine protected area?`,
-                    esp: `¿Establecer un área marina protegida?`
+                    eng: `Establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Marine_protected_area'>marine protected area</color>?`,
+                    esp: `¿Establecer un <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/%C3%81rea_marina_protegida'>área marina protegida</color>?`
                 },
                 right_answer: {
-                    eng: `Lobby the parties to the <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Antarctic_Treaty_System')">Antarctic Treaty</on></color> to secure Antarctica as a natural reserve and establish a moratorium on fishing in the Southern Ocean?`,
-                    esp: `¿Presionar a las partes del <color=#0000FF><on click="cc.sys.openURL('https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico')">Tratado Antártico</on></color> para asegurar la Antártida como reserva natural y establecer una moratoria de la pesca en el Océano Austral?`
+                    eng: `Lobby the parties to the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty</color> to secure Antarctica as a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Nature_reserve'>natural reserve</color> and establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing in the Southern Ocean?`,
+                    esp: `¿Presionar a las partes del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> para asegurar la Antártida como <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Reserva_natural'>reserva natural</color> y establecer una <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratoria</color> de la pesca en el Océano Austral?`
                 }
             },
             {
                 id: 7,
                 quiz: {
-                    eng: `Owing to tremendous pressure for food to support the ever-growing world population, bioprospecting experiments have identified the possibility to harvest several krill species in the Southern Ocean. Scientists  fear that high levels of fishing will cause irreparable damage to the whole Antarctic ecosystem, whilst several nations are fighting for the apportionment of the krill population. What can be done?`,
-                    esp: `Debido a la tremenda presión para obtener alimentos para sostener la creciente población mundial, los experimentos de bioprospección han identificado la posibilidad de cosechar varias especies de krill en el Océano Austral. Los científicos temen que los altos niveles de pesca causen un daño irreparable a todo el ecosistema antártico, mientras que varias naciones luchan por el reparto de la población de krill. ¿Qué se puede hacer?`,
+                    eng: `Owing to tremendous pressure for food to support the ever-growing world population, <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Bioprospecting'>bioprospecting</color> experiments have identified the possibility to harvest several <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Krill'>krill</color> species in the Southern Ocean. Scientists  fear that high levels of fishing will cause irreparable damage to the whole Antarctic ecosystem, whilst several nations are fighting for the apportionment of the krill population. What can be done?`,
+                    esp: `Debido a la tremenda presión para obtener alimentos para sostener la creciente población mundial, los experimentos de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Bioprospecci%C3%B3n'>bioprospección</color> han identificado la posibilidad de cosechar varias especies de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Euphausiacea'>krill</color> en el Océano Austral. Los científicos temen que los altos niveles de pesca causen un daño irreparable a todo el ecosistema antártico, mientras que varias naciones luchan por el reparto de la población de krill. ¿Qué se puede hacer?`,
                 },
                 wrong_answer: {
-                    eng: `Establish marine protected areas within the Protocol on Environmental Protection of the <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Antarctic_Treaty_System')">Antarctic Treaty</on></color>, and apportion the remainder of the Southern Ocean area to countries that most need food supplies?`,
-                    esp: `¿Establecer áreas marinas protegidas dentro del Protocolo sobre Protección Ambiental del <color=#0000FF><on click="cc.sys.openURL('https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico')">Tratado Antártico</on></color>, y repartir el resto de la superficie del Océano Austral entre los países que más necesitan los suministros alimentarios?`
+                    eng: `Establish <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Marine_protected_area'>marine protected areas</color> within the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty'>Protocol on Environmental Protection of the Antarctic Treaty</color>, and apportion the remainder of the Southern Ocean area to countries that most need food supplies?`,
+                    esp: `¿Establecer áreas marinas protegidas dentro del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Protocolo sobre Protección Ambiental del Tratado Antártico</color>, y repartir el resto de la superficie del Océano Austral entre los países que más necesitan los suministros alimentarios?`
                 },
                 right_answer: {
-                    eng: `Lobby the <color=#0000FF><on click="cc.sys.openURL('https://en.wikipedia.org/wiki/Antarctic_Treaty_System')">Antarctic Treaty</on></color> parties and the UN to adopt an ecosystem-based approach to the conservation of krill in the Southern Ocean, including a possible moratorium on fishing?`,
-                    esp: `¿Presionar a las partes del <color=#0000FF><on click="cc.sys.openURL('https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico')">Tratado Antártico</on></color> y a las Naciones Unidas para que adopten un enfoque basado en el ecosistema para la conservación del krill en el Océano Austral, incluyendo una posible moratoria de la pesca?`
+                    eng: `Lobby the Antarctic Treaty parties and the UN to adopt an <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Ecosystem-based_management'>ecosystem-based approach</color> to the conservation of krill in the Southern Ocean, including a possible <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing?`,
+                    esp: `¿Presionar a las partes del Tratado Antártico y a las Naciones Unidas para que adopten un enfoque basado en el <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Ecosistema'>ecosistema</color> para la conservación del krill en el Océano Austral, incluyendo una posible <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratoria</color> de la pesca?`
                 }
             }
 
