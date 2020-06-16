@@ -22,10 +22,15 @@
   },
   "scripts": {
     "test": "jest --detectOpenHandles --colors",
-    "basic": "$(which http-server) -o -p 8000 ./build/web-mobile",
-    "log": "server.js",
-    "foreman": "forever start \"$(which npm)\" run log",
-    "doc": "typedoc --out docs/api --ignoreCompilerErrors assets/Script/"
+    "build": "/Applications/CocosCreator/Creator/2.3.4/CocosCreator.app/Contents/MacOS/CocosCreator --path . --build 'platform=web-mobile;dest=./build'",
+    
+    "web": "$(which http-server) -o -p 8000 ./build/web-mobile",
+    "web-log": "node server.js",
+    "foreman": "forever start \"$(which npm)\" run web-log",
+
+    "doc": "typedoc --out docs/api --ignoreCompilerErrors assets/Script/",
+
+    "analyze": "ts-node log-analyzer.ts"
   },
   "repository": {
     "type": "git",

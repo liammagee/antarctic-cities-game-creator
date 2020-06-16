@@ -206,8 +206,8 @@ describe('country initialisation functions', () => {
         test('should update dependent variables correctly', () => {
             expect(world.gameState.timeInterval).toBe(INTERVAL);
             expect(world.gameState.tutorialInterval).toBe(INTERVAL * world.res.TUTORIAL_INTERVAL_MULTIPLIER);
-            expect(world.gameState.tutorialInterval).toBe(INTERVAL * world.res.RESOURCE_INTERVAL_MULTIPLIER);
-            expect(world.gameState.tutorialInterval).toBe(INTERVAL * world.res.CRISIS_INTERVAL_MULTIPLIER);
+            expect(world.gameState.resourceInterval).toBe(INTERVAL * world.res.RESOURCE_INTERVAL_MULTIPLIER);
+            expect(world.gameState.crisisInterval).toBe(INTERVAL * world.res.CRISIS_INTERVAL_MULTIPLIER);
         });
         
     });

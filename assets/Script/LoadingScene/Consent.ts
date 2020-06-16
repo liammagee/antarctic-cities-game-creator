@@ -28,6 +28,10 @@ export default class Consent extends cc.Component {
 
     onLoad () {
 
+    }
+
+    start () {
+
         if (cc.sys.localStorage.language === undefined)
             cc.sys.localStorage.language = 'eng';
 
@@ -69,6 +73,7 @@ export default class Consent extends cc.Component {
 
     }
 
+    
     togglePlay(consent: cc.Toggle) {
 
         cc.sys.localStorage.consent = consent.isChecked;
@@ -97,10 +102,6 @@ export default class Consent extends cc.Component {
     learnMove() {
 
         cc.sys.openURL("https://antarctic-cities.org/the-game/");
-
-    }
-
-    start () {
 
     }
 
