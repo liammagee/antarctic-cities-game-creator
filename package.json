@@ -26,7 +26,7 @@
     
     "web": "$(which http-server) -o -p 8000 ./build/web-mobile",
     "web-log": "node server.js",
-    "foreman": "forever start \"$(which npm)\" run web-log",
+    "forever": "forever start \"$(which npm)\" run web-log",
 
     "doc": "typedoc --out docs/api --ignoreCompilerErrors assets/Script/",
 
