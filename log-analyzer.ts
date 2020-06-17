@@ -7,6 +7,9 @@ const { program } = require('commander');
 const ipLocation = require("iplocation");
 const readline = require('readline');
 
+import {Resources} from './assets/Script/WorldScene/Resources';
+import {World, GameState} from './assets/Script/WorldScene/World';
+
 const options = { year: 'numeric', month: 'long', day: 'numeric' };
 
 program
@@ -15,20 +18,14 @@ program
 
 
 const Reader = require('@maxmind/geoip2-node').Reader;
-// Typescript:
-// import { Reader } from '@maxmind/geoip2-node';
 
 const readerOptions = {
   // you can use options like `cache` or `watchForUpdates`
 };
 
-// lineReader.on('line', function (line) {
-    // console.log(line);
-// });
+let gameStates: GameState[] = []
 
 Reader.open('/Users/liam/Downloads/GeoLite2-City_20200609/GeoLite2-City.mmdb', readerOptions).then(reader => {
-    //   console.log(reader.city('1.1.1.1'));
-    //  JM%V,-qN2D#Ps28
 
     let lineReader = readline.createInterface({
         //   input: fs.createReadStream('tmp/results.14042020.json'),
@@ -38,36 +35,62 @@ Reader.open('/Users/liam/Downloads/GeoLite2-City_20200609/GeoLite2-City.mmdb', r
         console: false
     });
     
+    let res : Resources = new Resources();
     let totalLoss = 0;
     let counter = 0;
     let countries = {};
     let cities = {};
+    let policyCounts : Map<number, number> = new Map<number, number>();
+    let policyLevels : Map<number, number> = new Map<number, number>();
+    let policyIds : Map<number, string> = new Map<number, string>();
+    
+
+    res.RESOURCES.economic.policyOptions.map((opt) => {
+        policyIds[opt.id] = opt.eng.text;
+    });
+    res.RESOURCES.politics.policyOptions.map((opt) => {
+        policyIds[opt.id] = opt.eng.text;
+    });
+    res.RESOURCES.cultural.policyOptions.map((opt) => {
+        policyIds[opt.id] = opt.eng.text;
+    });
+    res.RESOURCES.ecology.policyOptions.map((opt) => {
+        policyIds[opt.id] = opt.eng.text;
+    });
+    for (let id of Object.keys(policyIds)) {
+        policyCounts[id] = 0;
+        policyLevels[id] = 0;
+    }
 
     lineReader.on('line', function (line) {
         counter++;
-        let obj = JSON.parse(line);
-        totalLoss += obj.totalLoss;
+        let gameState = JSON.parse(line);
+        totalLoss += gameState.totalLoss;
+        
+        for (let id of Object.keys(gameState.policies)) {
+            let level = gameState.policies[id];
+            policyCounts[id] += 1;
+            policyLevels[id] += level;
+        }
 
-        let ip = obj.ip.split('::ffff:')[1]
+        let ip = gameState.ip.split('::ffff:')[1]
 
         try {
             let loc = reader.city(ip);
-            console.log(loc);
-    
     
             if (countries[loc.country.names.en] === undefined) {
                 countries[loc.country.names.en] = {}
                 countries[loc.country.names.en].loss = [];
             }
     
-            countries[loc.country.names.en].loss.push(obj.totalLoss);
+            countries[loc.country.names.en].loss.push(gameState.totalLoss);
     
             if (loc.city.names !== undefined) {
                 if (cities[loc.city.names.en] === undefined) {
                     cities[loc.city.names.en] = {}
                     cities[loc.city.names.en].loss = [];
                 }
-                cities[loc.city.names.en].loss.push(obj.totalLoss);
+                cities[loc.city.names.en].loss.push(gameState.totalLoss);
         
             }
     
@@ -93,6 +116,8 @@ Reader.open('/Users/liam/Downloads/GeoLite2-City_20200609/GeoLite2-City.mmdb', r
     });
 
     lineReader.on('close', function () {
+
+
         totalLoss /= counter;
         console.log(`Average loss: ${totalLoss}`);
         console.log();
@@ -106,9 +131,21 @@ Reader.open('/Users/liam/Downloads/GeoLite2-City_20200609/GeoLite2-City.mmdb', r
         for (let [key, value] of Object.entries(cities)) {
             console.log(`${key}: ${ss.mean(value['loss'])}`);
         }
+
+        console.log();
+        console.log(`POLICIES`);
+        for (let [key, value] of Object.entries(policyIds)) {
+            console.log(`${value}: `);
+            console.log(` - Count: ${policyCounts[key]}`);
+            console.log(` - Levels: ${policyLevels[key]}`);
+        }
+
     });
     
 });
+
+
+
 
 
 

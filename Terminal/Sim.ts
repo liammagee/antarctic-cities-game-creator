@@ -15,12 +15,13 @@ let world: World = undefined
 program.version('0.0.1');
 program
     .option('-s, --strategy <strategy>', 'one of 5 strategy options: none, musk, soc-dem, eco, contra', 'none')
+    .option('-r, --runs <runs>', 'the number of runs to execute', 1)
     .parse(process.argv);
 
 const TIME_INTERVAL = 15;
-const CHANCE_EACH_TICK_OF_ADDRESSING_CRISIS = 0.3  * 1 / TIME_INTERVAL;
-const CHANCE_EACH_TICK_OF_DESIGNING_POLICY = 0.3 * 1 / TIME_INTERVAL;
-const SLOWDOWN_RESOURCE = 0.1 * 1 / TIME_INTERVAL;
+const CHANCE_EACH_TICK_OF_ADDRESSING_CRISIS = 0.08;
+const CHANCE_EACH_TICK_OF_DESIGNING_POLICY = 0.08;
+const SLOWDOWN_RESOURCE = 0.1;
 const DECAY_LOSS = 50.0;
 const DECAY_PREPAREDNESS = 50.0;
 const CRISIS_CHANCE = 1.0;
@@ -46,7 +47,7 @@ log(chalk.red(`Running Sim with strategy: '${program.strategy}' and these polici
 
 const PRINT_ANNUAL_STATS = false;
 const PRINT_RUN_STATS = false;
-const RUNS = 10;
+const RUNS = program.runs;
 const PARALLEL = false;
 
 let resourcesById = {};
@@ -194,7 +195,6 @@ const runSim = () => {
             if (PRINT_ANNUAL_STATS)
                 console.log(message); 
         });
-        world.updateGameStats();
         const currentYear = world.gameState.currentDate.getFullYear();
         if (currentYear > previousYear) {
             if (PRINT_ANNUAL_STATS)
@@ -203,6 +203,7 @@ const runSim = () => {
 
     }
 
+    world.updateGameStats();
 
     // Check enough time has elapsed to generate a new resource with some probability (1 / RESOURCE_CHANCE)
     let ci = world.isItTimeForNewCrisis();

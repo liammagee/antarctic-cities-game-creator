@@ -705,7 +705,7 @@ export default class GameController extends cc.Component {
         });
         gameLog.countries = countriesCloned;
 
-        xhr.send(JSON.stringify(world.gameState));
+        xhr.send(JSON.stringify(gameLog));
 
     }
 
