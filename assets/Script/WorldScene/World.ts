@@ -1344,20 +1344,21 @@ export class World {
                     world.infectWithin(country);
                     world.registerPreparednessWithin(country);
     
-                    countriedAffected++;
-                    populationAware += country.pop_aware;
-                    populationPrepared += country.pop_prepared;
-    
-                    country.pop_aware_percent = 100 * country.pop_aware / country.pop_est;
-                    let existingConvincedPercentage = country.pop_prepared_percent;
-                    country.pop_prepared_percent = 100 * country.pop_prepared / country.pop_est;
-    
-                    let imin = (existingConvincedPercentage > 0.5) ? parseInt(existingConvincedPercentage) : 0;
-                    let imax = (country.pop_prepared_percent > 0.5) ? parseInt(country.pop_prepared_percent) : 0;
     
                 }
     
             }
+
+            countriedAffected++;
+            populationAware += country.pop_aware;
+            populationPrepared += country.pop_prepared;
+
+            country.pop_aware_percent = 100 * country.pop_aware / country.pop_est;
+            let existingConvincedPercentage = country.pop_prepared_percent;
+            country.pop_prepared_percent = 100 * country.pop_prepared / country.pop_est;
+
+            let imin = (existingConvincedPercentage > 0.5) ? parseInt(existingConvincedPercentage) : 0;
+            let imax = (country.pop_prepared_percent > 0.5) ? parseInt(country.pop_prepared_percent) : 0;
 
             totalPolicy += country.policy;
             totalLoss += country.loss;
