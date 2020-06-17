@@ -30,10 +30,11 @@ export default class NewClass extends cc.Component {
         
         let controller = cc.director.getScene().getChildByName('Canvas').getChildByName('layout').getComponent("GameController");
         let world = controller.world;
+
         let tweetLabel = controller.node.getChildByName("topBar").getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet");
         let gameState = world.gameState;
-        let message = gameState.scenarioName, 
-                    messageIndex = -1;
+        let message = gameState.scenarioName,  messageIndex = -1;
+
         if (gameState.messageOverride != null) {
             
             message = gameState.messageOverride;

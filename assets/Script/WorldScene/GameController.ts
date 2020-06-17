@@ -138,6 +138,7 @@ export default class GameController extends cc.Component {
 
         controller.world.gameState.modal = true;
         controller.world.gameState.state = controller.world.res.GAME_STATES.PAUSED;
+        controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).pause();
 
         controller.messageBox.zIndex = 104;
         controller.messageBox.opacity = 255;
@@ -206,6 +207,7 @@ export default class GameController extends cc.Component {
             //parent.node.resumeAllActions(); 
             controller.world.gameState.modal = false;
             callback1();
+            controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).resume();
             event.stopPropagation();
 
         };
@@ -220,6 +222,7 @@ export default class GameController extends cc.Component {
             //parent.node.resumeAllActions(); 
             controller.world.gameState.modal = false;
             callback2();
+            controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).resume();
             event.stopPropagation();
 
         };
@@ -366,14 +369,12 @@ export default class GameController extends cc.Component {
         let controller = this.controller;
 
         controller.world.gameState.modal = true;
+        controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).pause();
         controller.world.gameState.state = controller.world.res.GAME_STATES.PAUSED;
 
         controller.quizBox.zIndex = 104;
-
-        // cc.tween(controller.quizBox).to(0.5, { position: cc.v2(0, 0) });
         cc.tween(controller.quizBox).to(0.5, { position: cc.v2(0, 0) }, { easing: 'backOut'}).start();
         
-
         controller.quizBox.getChildByName("quizTitle").getComponent(cc.Label).string = title;
         controller.quizBox.getChildByName("quizContents").getComponent(cc.RichText).string = message;
 
@@ -396,6 +397,7 @@ export default class GameController extends cc.Component {
             cc.tween(controller.quizBox).to(0.5, { position: cc.v2(0, -750) }, { easing: 'backIn'}).start();
 
             controller.world.gameState.modal = false;
+            controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).resume();
             event.stopPropagation();
 
             controller.showMessageBox(parent, "CRISIS RESPONSE", "Great response to this crisis!", "OK!", function () {
@@ -415,6 +417,7 @@ export default class GameController extends cc.Component {
             cc.tween(controller.quizBox).to(0.5, { position: cc.v2(0, -750) }, { easing: 'backIn'}).start();
 
             controller.world.gameState.modal = false;
+            controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).resume();
             event.stopPropagation();
 
             controller.showMessageBox(parent, "CRISIS RESPONSE", "Good try, but this won't be enough to preserve the future of Antarctica!", "OK!", function () {
@@ -736,7 +739,7 @@ export default class GameController extends cc.Component {
             world.gameState.state = world.res.GAME_STATES.GAME_OVER;
             world.gameState.startCountry = null;
             world.gameState.policies = new Map<number, number>();
-            controller.tweetLabel.string = (world.gameState.scenarioName);
+            controller.tweetLabel.string = world.gameState.scenarioName;
 
             cc.director.loadScene("OptionsScene");
 
@@ -859,6 +862,9 @@ export default class GameController extends cc.Component {
         }, this);
         controller.handleMouseTouchEvent(controller.topBar.getChildByName("btnPause"), function () {
 
+            if (world.gameState.state === world.res.GAME_STATES.PAUSED)
+                return;
+
             world.gameState.state = world.res.GAME_STATES.PAUSED;
             controller.btnPause.getComponent(cc.Button).interactable = false;
             controller.btnPlay.getComponent(cc.Button).interactable = true;
@@ -873,7 +879,7 @@ export default class GameController extends cc.Component {
             controller.btnPause.getComponent(cc.Button).interactable = true;
             controller.btnPlay.getComponent(cc.Button).interactable = false;
             controller.btnFF.getComponent(cc.Button).interactable = true;
-            controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).play();
+            controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).resume();
 
         });
         controller.handleMouseTouchEvent(controller.topBar.getChildByName("btnFF"), function () {
@@ -883,7 +889,7 @@ export default class GameController extends cc.Component {
             controller.btnPause.getComponent(cc.Button).interactable = true;
             controller.btnPlay.getComponent(cc.Button).interactable = true;
             controller.btnFF.getComponent(cc.Button).interactable = false;
-            controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).play();
+            controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).resume();
 
         });
 
@@ -1575,8 +1581,8 @@ export default class GameController extends cc.Component {
         else {
 
             // Add Crisis Quiz, 50% of the time
-            // if (Math.random() < 0.5) {
-            if (Math.random() < 1.0) {
+            if (Math.random() < 0.5) {
+            // if (Math.random() < 1.0) {
 
                 // Show quiz
                 let qindex = Math.floor(Math.random() * world.res.quizzes.length);
@@ -1590,8 +1596,9 @@ export default class GameController extends cc.Component {
                 let quiz = qi.quiz[cc.sys.localStorage.language];
                 let wrong_answer = qi.wrong_answer[cc.sys.localStorage.language];
                 let right_answer = qi.right_answer[cc.sys.localStorage.language];
+                let title = world.res.lang.crisis_alert[cc.sys.localStorage.language];
 
-                controller.showQuizBox(world, "CRISIS ALERT!", quiz, wrong_answer, right_answer);
+                controller.showQuizBox(world, title, quiz, wrong_answer, right_answer);
 
             }
 

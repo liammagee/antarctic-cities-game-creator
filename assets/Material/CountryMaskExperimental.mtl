@@ -12,12 +12,12 @@
       "props": {
         "u_percentageLoss": 0,
         "u_percentagePrep": 0,
-        "u_randFactor": 0.8,
-        "u_randAlpha": 0.5,
+        "u_randFactor": 1,
+        "u_randAlpha": 0,
         "u_cellSize": 5,
-        "u_sizeMultiplier": 5,
-        "u_sizePower": 10,
-        "u_dimPower": 2,
+        "u_sizeMultiplier": 4,
+        "u_sizePower": 2,
+        "u_dimPower": 1.85,
         "u_stepMax": 0.5,
         "u_stepMin": 0.5
       },
