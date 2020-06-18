@@ -28,6 +28,8 @@ export default class GameController extends cc.Component {
     @property(cc.Material)
     defaultMaterial: cc.Material = null;
     @property(cc.Material)
+    countryMaterial: cc.Material = null;
+    @property(cc.Material)
     materialA: cc.Material = null;
     @property(cc.Material)
     materialB: cc.Material = null;
@@ -453,6 +455,7 @@ export default class GameController extends cc.Component {
         let world = this.world;
 
         world.gameState.modal = true;
+        let currentState = world.gameState.state;
         world.gameState.state = world.res.GAME_STATES.PAUSED;
         controller.settingsBox.zIndex = 106;
         cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, -750) }, { easing: 'backOut'}).start();
@@ -516,10 +519,8 @@ export default class GameController extends cc.Component {
             controller.updateCountryMask();
 
             // Hide settings
-            // controller.settingsBox.opacity = 0;
-            // controller.settingsBox.zIndex = -1;
             world.gameState.modal = false;
-            world.gameState.state = world.res.GAME_STATES.STARTED;
+            world.gameState.state = currentState;
             cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, 750) }, { easing: 'backIn'}).start();
 
         };
@@ -529,12 +530,11 @@ export default class GameController extends cc.Component {
 
             btn1.off(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
             btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
-            world.gameState.modal = false;
             event.stopPropagation();
-            // controller.settingsBox.opacity = 0;
-            // controller.settingsBox.zIndex = -1;
+
+            // Hide settings
             world.gameState.modal = false;
-            world.gameState.state = world.res.GAME_STATES.STARTED;
+            world.gameState.state = currentState;
             cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, 750) }, { easing: 'backIn'}).start();
 
         };
@@ -581,12 +581,12 @@ export default class GameController extends cc.Component {
         if (cc.sys.localStorage.countryMask == 'default') {
 
             // 'B' was experimental...
-            controller.defaultMaterial = controller.materialB;
+            controller.countryMaterial = controller.materialB;
 
         }
         else {
 
-            controller.defaultMaterial = controller.materialA;
+            controller.countryMaterial = controller.materialA;
 
         }
 
@@ -613,7 +613,7 @@ export default class GameController extends cc.Component {
                 const spriteNode = new cc.Node('Sprite ');
                 const sp = spriteNode.addComponent(cc.Sprite);
                 sp.spriteFrame = assets[i];
-                let materialVariant = cc.MaterialVariant.create(controller.defaultMaterial, sp);
+                let materialVariant = cc.MaterialVariant.create(controller.countryMaterial, sp);
                 materialVariant.setProperty('u_selected', 0.0);
                 materialVariant.setProperty('u_percentageLoss', 0.0);
                 materialVariant.setProperty('u_percentagePrep', 0.0);
@@ -829,9 +829,6 @@ export default class GameController extends cc.Component {
         });
         controller.topBar.getChildByName("btnSettings").on(cc.Node.EventType.TOUCH_END, function () {
 
-            world.gameState.modal = true;
-            world.gameState.state = world.res.GAME_STATES.PAUSED;
-
             controller.showSettingsBox();
 
         }, this);
@@ -980,6 +977,8 @@ export default class GameController extends cc.Component {
 
         let allButtons = [btnEconomy, btnPolitics, btnCulture, btnEcology];
         let prevButton = btnEconomy;
+        const pageCount = 4;
+        let currentOptNode = null;
 
         // Changes buttons with switching pages
         const switchPage = (btn, index) => {
@@ -1032,15 +1031,20 @@ export default class GameController extends cc.Component {
 
             let policySelected = btnPolicyInvest['policy'];
             const cost = world.costCalculation(policySelected);
-
+            let tmp = parseInt(policySelected.id) - 1;
+            let i = Math.floor(tmp / 4);
+            let j = tmp % 4;
+            let page = pageView.node.getChildByName("view").getChildByName("content").children[i];
+            let optNode = page.getChildByName(`opt_${i}_${j}`);
+            
             if (world.gameState.resources - cost >= 0 &&
                 world.gameState.policies[policySelected.id] === undefined) {
 
                 world.gameState.resources -= cost;
                 world.gameState.policies[policySelected.id] = 1;
                 resourceScoreLabel.string = (world.gameState.resources.toString());
-                levelButtons[policySelected.id * 100 + 1].getComponent(cc.Sprite).spriteFrame = controller.dotOff;
-                levelButtons[policySelected.id * 100 + 1].color = controller.colors.COLOR_UMBER;
+                let btnNode = optNode.getChildByName(`btnLvl1_${i}_${j}`);
+                btnNode.color = controller.colors.COLOR_UMBER;
 
             }
             else if (world.gameState.resources - cost >= 0 &&
@@ -1049,8 +1053,8 @@ export default class GameController extends cc.Component {
                 world.gameState.resources -= cost;
                 world.gameState.policies[policySelected.id] = 2;
                 resourceScoreLabel.string = (world.gameState.resources.toString());
-                levelButtons[policySelected.id * 100 + 2].getComponent(cc.Sprite).spriteFrame = controller.dotOff;
-                levelButtons[policySelected.id * 100 + 2].color = controller.colors.COLOR_UMBER;
+                let btnNode = optNode.getChildByName(`btnLvl2_${i}_${j}`);
+                btnNode.color = controller.colors.COLOR_UMBER;
 
             }
             else if (world.gameState.resources - cost >= 0 &&
@@ -1059,8 +1063,8 @@ export default class GameController extends cc.Component {
                 world.gameState.resources -= cost;
                 world.gameState.policies[policySelected.id] = 3;
                 resourceScoreLabel.string = (world.gameState.resources.toString());
-                levelButtons[policySelected.id * 100 + 3].getComponent(cc.Sprite).spriteFrame = controller.dotOff;
-                levelButtons[policySelected.id * 100 + 3].color = controller.colors.COLOR_UMBER;
+                let btnNode = optNode.getChildByName(`btnLvl3_${i}_${j}`);
+                btnNode.color = controller.colors.COLOR_UMBER;
 
             }
 
@@ -1087,16 +1091,13 @@ export default class GameController extends cc.Component {
             }
 
         }, this);
+
         Object.values(world.res.RESOURCES).forEach((res, index) => {
 
             let btn = makeButton(res[cc.sys.localStorage.language].name, new cc.Vec2(300 + 200 * index, 80), index);
-            //allButtons.push(btn);
 
         });
 
-        const pageCount = 4;
-        const levelButtons = {};
-        let currentOptNode = null;
 
         for (let i = 0; i < pageCount; ++i) {
 
@@ -1114,6 +1115,7 @@ export default class GameController extends cc.Component {
                 policyOptionCounter++;
 
                 const optNode = new cc.Node();
+                optNode.name = `opt_${i}_${j}`;
                 optNode.setAnchorPoint(new cc.Vec2(0.0, 0.0));
                 optNode.parent = page;
                 optNode.setPosition(xLoc, yLoc);
@@ -1203,44 +1205,53 @@ export default class GameController extends cc.Component {
                 [optNode, btnNodeBgd, btnLabelNode].forEach((node) => { node.on(cc.Node.EventType.MOUSE_LEAVE, exitBtn, optNode); });
 
                 let btnLvl1Node = new cc.Node();
+                btnLvl1Node.name = `btnLvl1_${i}_${j}`;
                 let btnLvl1 = btnLvl1Node.addComponent(cc.Sprite);
                 btnLvl1.spriteFrame = controller.dotOff;
                 btnLvl1.setMaterial(1, controller.defaultMaterial);
                 let btnLvl2Node = new cc.Node();
+                btnLvl2Node.name = `btnLvl2_${i}_${j}`;
                 let btnLvl2 = btnLvl2Node.addComponent(cc.Sprite);
                 btnLvl2.spriteFrame = controller.dotOff;
                 btnLvl2.setMaterial(1, controller.defaultMaterial);
                 let btnLvl3Node = new cc.Node();
+                btnLvl3Node.name = `btnLvl3_${i}_${j}`;
                 let btnLvl3 = btnLvl3Node.addComponent(cc.Sprite);
                 btnLvl3.spriteFrame = controller.dotOff;
                 btnLvl3.setMaterial(1, controller.defaultMaterial);
 
                 if (world.gameState.policies[opt.id] === undefined) {
 
-                    btnLvl1.spriteFrame = controller.dotOff;
-                    btnLvl2.spriteFrame = controller.dotOff;
-                    btnLvl3.spriteFrame = controller.dotOff;
+                    // btnLvl1.spriteFrame = controller.dotOff;
+                    // btnLvl2.spriteFrame = controller.dotOff;
+                    // btnLvl3.spriteFrame = controller.dotOff;
 
                 }
                 else if (world.gameState.policies[opt.id] === 1) {
 
-                    btnLvl1.spriteFrame = controller.dotOn;
-                    btnLvl2.spriteFrame = controller.dotOff;
-                    btnLvl3.spriteFrame = controller.dotOff;
+                    btnLvl1.node.color = controller.colors.COLOR_UMBER;
+                    // btnLvl1.spriteFrame = controller.dotOn;
+                    // btnLvl2.spriteFrame = controller.dotOff;
+                    // btnLvl3.spriteFrame = controller.dotOff;
 
                 }
                 else if (world.gameState.policies[opt.id] === 2) {
 
-                    btnLvl1.spriteFrame = controller.dotOn;
-                    btnLvl2.spriteFrame = controller.dotOn;
-                    btnLvl3.spriteFrame = controller.dotOff;
+                    btnLvl1.node.color = controller.colors.COLOR_UMBER;
+                    btnLvl2.node.color = controller.colors.COLOR_UMBER;
+                    // btnLvl1.spriteFrame = controller.dotOn;
+                    // btnLvl2.spriteFrame = controller.dotOn;
+                    // btnLvl3.spriteFrame = controller.dotOff;
 
                 }
                 else if (world.gameState.policies[opt.id] === 3) {
 
-                    btnLvl1.spriteFrame = controller.dotOn;
-                    btnLvl2.spriteFrame = controller.dotOn;
-                    btnLvl3.spriteFrame = controller.dotOn;
+                    btnLvl1.node.color = controller.colors.COLOR_UMBER;
+                    btnLvl2.node.color = controller.colors.COLOR_UMBER;
+                    btnLvl3.node.color = controller.colors.COLOR_UMBER;
+                    // btnLvl1.spriteFrame = controller.dotOn;
+                    // btnLvl2.spriteFrame = controller.dotOn;
+                    // btnLvl3.spriteFrame = controller.dotOn;
 
                 }
 
@@ -1256,10 +1267,6 @@ export default class GameController extends cc.Component {
                 btnLvl1Node.parent = optNode;
                 btnLvl2Node.parent = optNode;
                 btnLvl3Node.parent = optNode;
-
-                levelButtons[opt.id * 100 + 1] = btnLvl1Node;
-                levelButtons[opt.id * 100 + 2] = btnLvl2Node;
-                levelButtons[opt.id * 100 + 3] = btnLvl3Node;
 
             }
         }
@@ -2269,7 +2276,7 @@ export default class GameController extends cc.Component {
                 // Set up countries and their
                 controller.world.countriesJson = res.json;
                 controller.world.setupCountries();
-                // controller.defaultMaterial = cc.sys.localStorage.countryMask = 'default' ? controller.materialA : controller.materialB;
+                // controller.countryMaterial = cc.sys.localStorage.countryMask = 'default' ? controller.materialA : controller.materialB;
                 controller.loadCountrySprites();
 
                 // Initialise controls
