@@ -455,7 +455,7 @@ export default class GameController extends cc.Component {
         world.gameState.modal = true;
         world.gameState.state = world.res.GAME_STATES.PAUSED;
 
-        cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, -750) }, { easing: 'backOut'}).start();
+        cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, -1250) }, { easing: 'backOut'}).start();
         // controller.settingsBox.opacity = 255;
         controller.settingsBox.zIndex = 106;
 
@@ -522,7 +522,7 @@ export default class GameController extends cc.Component {
             // controller.settingsBox.zIndex = -1;
             world.gameState.modal = false;
             world.gameState.state = world.res.GAME_STATES.STARTED;
-            cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, 750) }, { easing: 'backIn'}).start();
+            cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, 1250) }, { easing: 'backIn'}).start();
 
         };
         btn1.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
@@ -537,7 +537,7 @@ export default class GameController extends cc.Component {
             // controller.settingsBox.zIndex = -1;
             world.gameState.modal = false;
             world.gameState.state = world.res.GAME_STATES.STARTED;
-            cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, 750) }, { easing: 'backIn'}).start();
+            cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, 1250) }, { easing: 'backIn'}).start();
 
         };
         btn2.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
