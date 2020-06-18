@@ -7,7 +7,7 @@
 export class Resources  {
 
     // Version
-    VERSION_ANTARCTIC_FUTURES = "Build: 1025";
+    VERSION_ANTARCTIC_FUTURES = "Build: 1026";
 
     // LANGUAGES
     LANGUAGES = ['eng', 'esp'];

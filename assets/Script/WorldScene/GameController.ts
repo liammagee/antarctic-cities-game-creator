@@ -455,8 +455,10 @@ export default class GameController extends cc.Component {
         world.gameState.modal = true;
         world.gameState.state = world.res.GAME_STATES.PAUSED;
 
-        controller.settingsBox.opacity = 255;
+        cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, -750) }, { easing: 'backOut'}).start();
+        // controller.settingsBox.opacity = 255;
         controller.settingsBox.zIndex = 106;
+
         let content = controller.settingsBox.getChildByName("pageview").getChildByName("view").getChildByName("content"); 
         let page1 = content.getChildByName("page_1"); 
         let page2 = content.getChildByName("page_2"); 
@@ -516,10 +518,11 @@ export default class GameController extends cc.Component {
             controller.updateCountryMask();
 
             // Hide settings
-            controller.settingsBox.opacity = 0;
-            controller.settingsBox.zIndex = -1;
+            // controller.settingsBox.opacity = 0;
+            // controller.settingsBox.zIndex = -1;
             world.gameState.modal = false;
             world.gameState.state = world.res.GAME_STATES.STARTED;
+            cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, 750) }, { easing: 'backIn'}).start();
 
         };
         btn1.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
@@ -530,10 +533,11 @@ export default class GameController extends cc.Component {
             btn2.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             world.gameState.modal = false;
             event.stopPropagation();
-            controller.settingsBox.opacity = 0;
-            controller.settingsBox.zIndex = -1;
+            // controller.settingsBox.opacity = 0;
+            // controller.settingsBox.zIndex = -1;
             world.gameState.modal = false;
             world.gameState.state = world.res.GAME_STATES.STARTED;
+            cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, 750) }, { easing: 'backIn'}).start();
 
         };
         btn2.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
@@ -905,215 +909,43 @@ export default class GameController extends cc.Component {
         // Add handling for bottom bar buttons
         btnDesignPolicy.on(cc.Node.EventType.TOUCH_END, function () {
 
-            world.gameState.modal = true;
-            world.gameState.state = world.res.GAME_STATES.PAUSED;
-            designPolicy.zIndex = 105;
-            resourceScore.zIndex = 106;
-            let layerDesignPolicy = cc.director.getScene().getChildByName('Canvas').getChildByName("layerDesignPolicy");
-            let policyLabel = layerDesignPolicy.getChildByName("policyLabel");
-            let policyDescription = layerDesignPolicy.getChildByName("policyDescription");
-            let policyCostLabel = layerDesignPolicy.getChildByName("policyCostLabel");
-            let btnPolicyInvest = layerDesignPolicy.getChildByName("btnPolicyInvest");
-
-            policyLabel.opacity = 0;
-            policyLabel.getComponent(cc.Label).string = "<< Select";
-            policyDescription.opacity = 255;
-            const policyGeneralLabel = world.res.lang.policy_platform_hint[cc.sys.localStorage.language];
-            policyDescription.getComponent(cc.Label).string = policyGeneralLabel;
-            policyCostLabel.opacity = 0;
-            btnPolicyInvest.getComponent(cc.Button).interactable = true;
-            btnPolicyInvest.opacity = 0;
+            controller.showPolicyDesign();
 
         });
         let btnDesignPolicyQuit = designPolicy.getChildByName("btnDesignPolicyQuit");
         btnDesignPolicyQuit.on(cc.Node.EventType.TOUCH_END, function () {
+            
             world.gameState.state = world.res.GAME_STATES.STARTED;
-            designPolicy.zIndex = -1;
+            // designPolicy.zIndex = -1;
+            cc.tween(designPolicy).by(0.5, { position: cc.v2(-1334, 0) }, { easing: 'backIn'}).start();
             resourceScore.zIndex = 101;
+
         }, btnDesignPolicyQuit);
 
-        btnStats.on(cc.Node.EventType.TOUCH_END, function () {
+        btnStats.on(cc.Node.EventType.TOUCH_END, () => {
 
-            world.gameState.modal = true;
-            world.gameState.state = world.res.GAME_STATES.PAUSED;
-            stats.zIndex = 105;
-            let page1 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_1");
-            let page2 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_2");
-            let page3 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_3");
-
-            // Functions
-            let drawSegment = function (pt1, pt2, width, color) {
-                graphics.lineWidth = width;
-                graphics.strokeColor = color;
-                graphics.fillColor = color;
-                graphics.moveTo(pt1.x, pt1.y);
-                graphics.lineTo(pt2.x + 1, pt2.y);
-                graphics.stroke();
-                graphics.fill();
-
-            };
-            const makeString = function (num) { return (Math.round(num * 10) / 10).toString() + '%'; };
-
-            // World
-            page1.getChildByName("lblYear").getComponent(cc.Label).string = world.res.lang.stats_year[cc.sys.localStorage.language] + world.gameState.currentDate.getFullYear();
-            page1.getChildByName("lblYearMessage").getComponent(cc.Label).string = world.res.lang.stats_year_message_a[cc.sys.localStorage.language] + (world.gameState.targetDate.getFullYear() - world.gameState.currentDate.getFullYear()) + world.res.lang.stats_year_message_b[cc.sys.localStorage.language];
-            page1.getChildByName("lblLoss").getComponent(cc.Label).string = world.res.lang.stats_loss[cc.sys.localStorage.language];
-            page1.getChildByName("lblLossMessage").getComponent(cc.Label).string = world.res.lang.stats_loss_message_a[cc.sys.localStorage.language] + world.gameState.startDate.getFullYear() + world.res.lang.stats_loss_message_b[cc.sys.localStorage.language] + makeString(world.gameState.totalLoss) + ".";
-            page1.getChildByName("lblPreparedness").getComponent(cc.Label).string = world.res.lang.stats_preparedness[cc.sys.localStorage.language] + makeString(world.gameState.populationPreparedPercent) + " / " + Math.round(world.gameState.populationPrepared / 1000000) + "M";
-            let pd = world.res.lang.stats_preparedness_message_a[cc.sys.localStorage.language] + makeString(world.gameState.populationPreparedPercent) + world.res.lang.stats_preparedness_message_b[cc.sys.localStorage.language];
-            page1.getChildByName("lblPreparednessMessage").getComponent(cc.Label).string = pd;
-
-            // Countries
-            // Sort countries
-            const countriesSorted = Object.values(world.countries).sort((a, b) => {
-                if (a.name < b.name) { return -1; }
-                if (a.name > b.name) { return 1; }
-                return 0;
-            });
-            let txtCountry = '', txtLoss = '', txtPreparedness = '';
-
-            let content = page2.getChildByName("scrollview").getChildByName("view").getChildByName("content");
-            content.destroyAllChildren();
-
-            let counter = 0;
-            countriesSorted.forEach((country) => {
-                counter++;
-                let color = country.loss > 20 ? controller.colors.COLOR_RED : (country.pop_prepared_percent > 20 ? controller.colors.COLOR_GREEN : controller.colors.COLOR_ICE);
-
-                let cn = new cc.Node();
-                let cnl = cn.addComponent(cc.Label);
-                cn.color = color;
-                cnl.string = country.name;
-                cnl.fontSize = 20;
-                cnl.font = controller.titleFont;
-                cnl.horizontalAlign = cc.Label.HorizontalAlign.LEFT;
-                cn.setAnchorPoint(0, 0);
-                cn.x = 0;
-                cn.y = -40 + counter * -24;
-                cn.parent = content;
-
-                let cnln = new cc.Node();
-                let cnll = cnln.addComponent(cc.Label);
-                cnln.color = color;
-                cnll.string = makeString(country.loss);
-                cnll.fontSize = 20;
-                cnll.font = controller.titleFont;
-                cnll.horizontalAlign = cc.Label.HorizontalAlign.RIGHT;
-                cnln.setAnchorPoint(1, 0);
-                cnln.x = 580;
-                cnln.y = -40 + counter * -24;
-                cnln.parent = content;
-
-                let cnpn = new cc.Node();
-                let cnlp = cnpn.addComponent(cc.Label);
-                cnpn.color = color;
-                cnlp.string = makeString(country.pop_prepared_percent);
-                cnlp.fontSize = 20;
-                cnlp.font = controller.titleFont;
-                cnlp.horizontalAlign = cc.Label.HorizontalAlign.RIGHT;
-                cnpn.setAnchorPoint(1, 0);
-                cnpn.x = 780;
-                cnpn.y = -40 + counter * -24;
-                cnpn.parent = content;
-
-            });
-
-            // Trends
-            let drawNode = page3.getChildByName("graph");
-            let graphics = drawNode.getComponent(cc.Graphics);
-            graphics.clear();
-            drawNode.destroyAllChildren();
-
-            let x_o = 0, yP_o = 0, yL_o = 0, x = 0, yP = 0, yL = 0;
-            const colorD = new cc.Color(controller.colors.COLOR_RED.r,
-                controller.colors.COLOR_RED.g,
-                controller.colors.COLOR_RED.b);
-            const colorP = new cc.Color(controller.colors.COLOR_GREEN.r,
-                controller.colors.COLOR_GREEN.g,
-                controller.colors.COLOR_GREEN.b);
-
-            const graphX = 4;
-            const graphY = 0;
-            const years = world.gameState.targetDate.getFullYear() - world.gameState.startDate.getFullYear();
-            let scaleFactor = 0.9;
-            const graphIncrementX = page3.width * scaleFactor / years;
-            const graphIncrementY = page3.height * scaleFactor / 100;
-            const graphOffset = 0;
-            const lineOffset = -10;
-            drawSegment(new cc.Vec2(graphX, graphOffset + lineOffset), new cc.Vec2(graphX + page3.width * scaleFactor, graphOffset + lineOffset), 1, controller.colors.COLOR_ICE);
-            drawSegment(new cc.Vec2(graphX, graphOffset + lineOffset), new cc.Vec2(graphX, graphOffset + page3.height * scaleFactor), 1, controller.colors.COLOR_ICE);
-
-            for (let i = world.gameState.startDate.getFullYear(); i < world.gameState.targetDate.getFullYear(); i++) {
-
-                const index = i - world.gameState.startDate.getFullYear();
-
-                const stats = world.gameState.stats[i];
-
-                if (stats === undefined)
-                    continue;
-
-                const loss = stats.loss;
-                const prepared = stats.prepared;
-                x = graphX + index * graphIncrementX;
-                yL = graphOffset + (100 - Math.round(loss)) * graphIncrementY;
-                yP = graphOffset + Math.round(prepared) * graphIncrementY;
-
-                if (index > 0) {
-
-                    // Line 
-                    // drawNode.drawSegment(cc.p(x_o, yL_o), cc.p(x, yL), 2, controller.colors.COLOR_RED);
-                    // drawNode.drawSegment(cc.p(x_o, yP_o), cc.p(x, yP), 2, controller.colors.COLOR_GREEN);
-
-                    // Staircase
-                    drawSegment(new cc.Vec2(x_o, yL_o), new cc.Vec2(x - 1, yL_o), 1, colorD);
-                    drawSegment(new cc.Vec2(x, yL_o), new cc.Vec2(x, yL), 1, colorD);
-                    drawSegment(new cc.Vec2(x_o, yP_o), new cc.Vec2(x - 1, yP_o), 1, colorP);
-                    drawSegment(new cc.Vec2(x, yP_o), new cc.Vec2(x, yP), 1, colorP);
-
-                }
-                x_o = x, yL_o = yL, yP_o = yP;
-
-            }
-
-            let lblDestructionScoreNode = new cc.Node();
-            let lblDestructionScore = lblDestructionScoreNode.addComponent(cc.Label);
-            lblDestructionScore.string = makeString(world.gameState.totalLoss);
-            lblDestructionScore.font = controller.titleFont;
-            lblDestructionScore.fontSize = 28;
-            lblDestructionScoreNode.color = colorD;
-            lblDestructionScoreNode.setPosition(4 + graphX + x, graphY + yL);
-            lblDestructionScoreNode.setAnchorPoint(0, 0.5);
-            lblDestructionScoreNode.parent = drawNode;
-            lblDestructionScoreNode.zIndex = 106;
-            let lblPolicyScoreNode = new cc.Node();
-            let lblPolicyScore = lblPolicyScoreNode.addComponent(cc.Label);
-            lblPolicyScore.string = makeString(world.gameState.populationPreparedPercent);
-            lblPolicyScore.font = controller.titleFont;
-            lblPolicyScore.fontSize = 28;
-            lblPolicyScoreNode.color = colorP;
-            lblPolicyScoreNode.setPosition(4 + graphX + x, graphY + yP);
-            lblPolicyScoreNode.setAnchorPoint(0, 0.5);
-            lblPolicyScoreNode.parent = drawNode;
-            lblPolicyScoreNode.zIndex = 106;
+            controller.showStatsBox();
 
         }, btnStats);
 
         let btnStatsQuit = stats.getChildByName("btnStatsQuit");
-        btnStatsQuit.on(cc.Node.EventType.TOUCH_END, function () {
+        btnStatsQuit.on(cc.Node.EventType.TOUCH_END, () => {
 
             world.gameState.modal = false;
             world.gameState.state = world.res.GAME_STATES.STARTED;
-            stats.zIndex = -1;
+            // stats.zIndex = -1;
+            cc.tween(stats).by(0.5, { position: cc.v2(1334, 0) }, { easing: 'backIn'}).start();
 
         }, btnStatsQuit);
 
         // Set ordering
-        stats.zIndex = -1;
+        // stats.zIndex = -1;
 
         // Update tweet label
         controller.tweetLabel.string = world.gameState.scenarioName;
 
     }
+
 
     initPolicyDesign() {
 
@@ -1446,6 +1278,36 @@ export default class GameController extends cc.Component {
 
     }
 
+    showPolicyDesign() {
+
+        let controller = this.controller;
+        let world = this.world;
+        let designPolicy = cc.director.getScene().getChildByName('Canvas').getChildByName("layerDesignPolicy");
+        let resourceScore = cc.director.getScene().getChildByName('Canvas').getChildByName("resourceScoreBackground");
+
+        world.gameState.modal = true;
+        world.gameState.state = world.res.GAME_STATES.PAUSED;
+        designPolicy.zIndex = 105;
+        resourceScore.zIndex = 106;
+        cc.tween(designPolicy).by(0.5, { position: cc.v2(1334, 0) }, { easing: 'backOut'}).start();
+
+        let layerDesignPolicy = cc.director.getScene().getChildByName('Canvas').getChildByName("layerDesignPolicy");
+        let policyLabel = layerDesignPolicy.getChildByName("policyLabel");
+        let policyDescription = layerDesignPolicy.getChildByName("policyDescription");
+        let policyCostLabel = layerDesignPolicy.getChildByName("policyCostLabel");
+        let btnPolicyInvest = layerDesignPolicy.getChildByName("btnPolicyInvest");
+
+        policyLabel.opacity = 0;
+        policyLabel.getComponent(cc.Label).string = "<< Select";
+        policyDescription.opacity = 255;
+        const policyGeneralLabel = world.res.lang.policy_platform_hint[cc.sys.localStorage.language];
+        policyDescription.getComponent(cc.Label).string = policyGeneralLabel;
+        policyCostLabel.opacity = 0;
+        btnPolicyInvest.getComponent(cc.Button).interactable = true;
+        btnPolicyInvest.opacity = 0;
+
+    }
+
     initStats() {
 
         let controller = this.controller;
@@ -1499,6 +1361,180 @@ export default class GameController extends cc.Component {
             let btn = allButtons[index];
             switchPage(btn, index);
         }, world);
+    }
+
+    showStatsBox() {
+
+        let controller = this.controller;
+        let world = this.world;
+        let stats = cc.director.getScene().getChildByName('Canvas').getChildByName("layerStats");
+
+        let page1 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_1");
+        let page2 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_2");
+        let page3 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_3");
+
+        // Functions
+        let drawSegment = function (pt1, pt2, width, color) {
+            graphics.lineWidth = width;
+            graphics.strokeColor = color;
+            graphics.fillColor = color;
+            graphics.moveTo(pt1.x, pt1.y);
+            graphics.lineTo(pt2.x + 1, pt2.y);
+            graphics.stroke();
+            graphics.fill();
+
+        };
+        const makeString = function (num) { return (Math.round(num * 10) / 10).toString() + '%'; };
+
+        // World
+        page1.getChildByName("lblYear").getComponent(cc.Label).string = world.res.lang.stats_year[cc.sys.localStorage.language] + world.gameState.currentDate.getFullYear();
+        page1.getChildByName("lblYearMessage").getComponent(cc.Label).string = world.res.lang.stats_year_message_a[cc.sys.localStorage.language] + (world.gameState.targetDate.getFullYear() - world.gameState.currentDate.getFullYear()) + world.res.lang.stats_year_message_b[cc.sys.localStorage.language];
+        page1.getChildByName("lblLoss").getComponent(cc.Label).string = world.res.lang.stats_loss[cc.sys.localStorage.language];
+        page1.getChildByName("lblLossMessage").getComponent(cc.Label).string = world.res.lang.stats_loss_message_a[cc.sys.localStorage.language] + world.gameState.startDate.getFullYear() + world.res.lang.stats_loss_message_b[cc.sys.localStorage.language] + makeString(world.gameState.totalLoss) + ".";
+        page1.getChildByName("lblPreparedness").getComponent(cc.Label).string = world.res.lang.stats_preparedness[cc.sys.localStorage.language] + makeString(world.gameState.populationPreparedPercent) + " / " + Math.round(world.gameState.populationPrepared / 1000000) + "M";
+        let pd = world.res.lang.stats_preparedness_message_a[cc.sys.localStorage.language] + makeString(world.gameState.populationPreparedPercent) + world.res.lang.stats_preparedness_message_b[cc.sys.localStorage.language];
+        page1.getChildByName("lblPreparednessMessage").getComponent(cc.Label).string = pd;
+
+        // Countries
+        // Sort countries
+        const countriesSorted = Object.values(world.countries).sort((a, b) => {
+            if (a.name < b.name) { return -1; }
+            if (a.name > b.name) { return 1; }
+            return 0;
+        });
+        let txtCountry = '', txtLoss = '', txtPreparedness = '';
+
+        let content = page2.getChildByName("scrollview").getChildByName("view").getChildByName("content");
+        content.destroyAllChildren();
+
+        let counter = 0;
+        countriesSorted.forEach((country) => {
+            counter++;
+            let color = country.loss > 20 ? controller.colors.COLOR_RED : (country.pop_prepared_percent > 20 ? controller.colors.COLOR_GREEN : controller.colors.COLOR_ICE);
+
+            let cn = new cc.Node();
+            let cnl = cn.addComponent(cc.Label);
+            cn.color = color;
+            cnl.string = country.name;
+            cnl.fontSize = 20;
+            cnl.font = controller.titleFont;
+            cnl.horizontalAlign = cc.Label.HorizontalAlign.LEFT;
+            cn.setAnchorPoint(0, 0);
+            cn.x = 0;
+            cn.y = -40 + counter * -24;
+            cn.parent = content;
+
+            let cnln = new cc.Node();
+            let cnll = cnln.addComponent(cc.Label);
+            cnln.color = color;
+            cnll.string = makeString(country.loss);
+            cnll.fontSize = 20;
+            cnll.font = controller.titleFont;
+            cnll.horizontalAlign = cc.Label.HorizontalAlign.RIGHT;
+            cnln.setAnchorPoint(1, 0);
+            cnln.x = 580;
+            cnln.y = -40 + counter * -24;
+            cnln.parent = content;
+
+            let cnpn = new cc.Node();
+            let cnlp = cnpn.addComponent(cc.Label);
+            cnpn.color = color;
+            cnlp.string = makeString(country.pop_prepared_percent);
+            cnlp.fontSize = 20;
+            cnlp.font = controller.titleFont;
+            cnlp.horizontalAlign = cc.Label.HorizontalAlign.RIGHT;
+            cnpn.setAnchorPoint(1, 0);
+            cnpn.x = 780;
+            cnpn.y = -40 + counter * -24;
+            cnpn.parent = content;
+
+        });
+
+        // Trends
+        let drawNode = page3.getChildByName("graph");
+        let graphics = drawNode.getComponent(cc.Graphics);
+        graphics.clear();
+        drawNode.destroyAllChildren();
+
+        let x_o = 0, yP_o = 0, yL_o = 0, x = 0, yP = 0, yL = 0;
+        const colorD = new cc.Color(controller.colors.COLOR_RED.r,
+            controller.colors.COLOR_RED.g,
+            controller.colors.COLOR_RED.b);
+        const colorP = new cc.Color(controller.colors.COLOR_GREEN.r,
+            controller.colors.COLOR_GREEN.g,
+            controller.colors.COLOR_GREEN.b);
+
+        const graphX = 4;
+        const graphY = 0;
+        const years = world.gameState.targetDate.getFullYear() - world.gameState.startDate.getFullYear();
+        let scaleFactor = 0.9;
+        const graphIncrementX = page3.width * scaleFactor / years;
+        const graphIncrementY = (page3.height - 14) * scaleFactor / 100;
+        const graphOffset = 0;
+        const lineOffset = -10;
+
+        drawSegment(new cc.Vec2(graphX, graphOffset + lineOffset), new cc.Vec2(graphX + page3.width * scaleFactor, graphOffset + lineOffset), 1, controller.colors.COLOR_ICE);
+        drawSegment(new cc.Vec2(graphX, graphOffset + lineOffset), new cc.Vec2(graphX, graphOffset + page3.height * scaleFactor), 1, controller.colors.COLOR_ICE);
+
+        for (let i = world.gameState.startDate.getFullYear(); i < world.gameState.targetDate.getFullYear(); i++) {
+
+            const index = i - world.gameState.startDate.getFullYear();
+
+            const stats = world.gameState.stats[i];
+
+            if (stats === undefined)
+                continue;
+
+            const loss = stats.loss;
+            const prepared = stats.prepared;
+            x = graphX + index * graphIncrementX;
+            yL = graphOffset + (100 - Math.round(loss)) * graphIncrementY;
+            yP = graphOffset + Math.round(prepared) * graphIncrementY;
+
+            if (index > 0) {
+
+                // Line 
+                // drawNode.drawSegment(cc.p(x_o, yL_o), cc.p(x, yL), 2, controller.colors.COLOR_RED);
+                // drawNode.drawSegment(cc.p(x_o, yP_o), cc.p(x, yP), 2, controller.colors.COLOR_GREEN);
+
+                // Staircase
+                drawSegment(new cc.Vec2(x_o, yL_o), new cc.Vec2(x - 1, yL_o), 1, colorD);
+                drawSegment(new cc.Vec2(x, yL_o), new cc.Vec2(x, yL), 1, colorD);
+                drawSegment(new cc.Vec2(x_o, yP_o), new cc.Vec2(x - 1, yP_o), 1, colorP);
+                drawSegment(new cc.Vec2(x, yP_o), new cc.Vec2(x, yP), 1, colorP);
+
+            }
+
+            x_o = x, yL_o = yL, yP_o = yP;
+
+        }
+
+        let lblDestructionScoreNode = new cc.Node();
+        let lblDestructionScore = lblDestructionScoreNode.addComponent(cc.Label);
+        lblDestructionScore.string = makeString(world.gameState.totalLoss);
+        lblDestructionScore.font = controller.titleFont;
+        lblDestructionScore.fontSize = 28;
+        lblDestructionScoreNode.color = colorD;
+        lblDestructionScoreNode.setPosition(4 + graphX + x, graphY + yL);
+        lblDestructionScoreNode.setAnchorPoint(0, 0.5);
+        lblDestructionScoreNode.parent = drawNode;
+        lblDestructionScoreNode.zIndex = 106;
+        let lblPolicyScoreNode = new cc.Node();
+        let lblPolicyScore = lblPolicyScoreNode.addComponent(cc.Label);
+        lblPolicyScore.string = makeString(world.gameState.populationPreparedPercent);
+        lblPolicyScore.font = controller.titleFont;
+        lblPolicyScore.fontSize = 28;
+        lblPolicyScoreNode.color = colorP;
+        lblPolicyScoreNode.setPosition(4 + graphX + x, graphY + yP);
+        lblPolicyScoreNode.setAnchorPoint(0, 0.5);
+        lblPolicyScoreNode.parent = drawNode;
+        lblPolicyScoreNode.zIndex = 106;
+
+        world.gameState.modal = true;
+        world.gameState.state = world.res.GAME_STATES.PAUSED;
+        cc.tween(stats).by(0.5, { position: cc.v2(-1334, 0) }, { easing: 'backOut'}).start();
+        stats.zIndex = 105;
+
     }
 
     processResourceSelection(event) {
@@ -1591,7 +1627,7 @@ export default class GameController extends cc.Component {
                 // Prevent the same quiz question being asked twice
                 if (world.gameState.quizzes.indexOf(qindex) > -1)
                     return;
-                    
+
                 world.gameState.quizzes.push(qindex);
 
                 let quiz = qi.quiz[cc.sys.localStorage.language];
