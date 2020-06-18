@@ -25,7 +25,7 @@ const readerOptions = {
 
 let gameStates: GameState[] = []
 
-Reader.open('/Users/liam/Downloads/GeoLite2-City_20200609/GeoLite2-City.mmdb', readerOptions).then(reader => {
+Reader.open('./GeoLite2-City_20200609/GeoLite2-City.mmdb', readerOptions).then(reader => {
 
     let lineReader = readline.createInterface({
         //   input: fs.createReadStream('tmp/results.14042020.json'),
