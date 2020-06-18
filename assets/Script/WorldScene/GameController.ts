@@ -696,7 +696,8 @@ export default class GameController extends cc.Component {
                 centroid: undefined,
                 area: undefined,
                 density: undefined,
-                economy: undefined
+                economy: undefined,
+                places: undefined
 
             });
 
