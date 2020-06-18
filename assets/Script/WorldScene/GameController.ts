@@ -454,10 +454,8 @@ export default class GameController extends cc.Component {
 
         world.gameState.modal = true;
         world.gameState.state = world.res.GAME_STATES.PAUSED;
-
+        controller.settingsBox.zIndex = 106;
         cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, -750) }, { easing: 'backOut'}).start();
-        // controller.settingsBox.opacity = 255;
-        // controller.settingsBox.zIndex = 106;
 
         let content = controller.settingsBox.getChildByName("pageview").getChildByName("view").getChildByName("content"); 
         let page1 = content.getChildByName("page_1"); 
@@ -537,7 +535,7 @@ export default class GameController extends cc.Component {
             // controller.settingsBox.zIndex = -1;
             world.gameState.modal = false;
             world.gameState.state = world.res.GAME_STATES.STARTED;
-            cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, 1250) }, { easing: 'backIn'}).start();
+            cc.tween(controller.settingsBox).by(0.5, { position: cc.v2(0, 750) }, { easing: 'backIn'}).start();
 
         };
         btn2.on(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
@@ -904,19 +902,26 @@ export default class GameController extends cc.Component {
         let designPolicy = cc.director.getScene().getChildByName('Canvas').getChildByName("layerDesignPolicy");
         let resourceScore = cc.director.getScene().getChildByName('Canvas').getChildByName("resourceScoreBackground");
         let stats = cc.director.getScene().getChildByName('Canvas').getChildByName("layerStats");
-
+        stats.zIndex = 105;
 
         // Add handling for bottom bar buttons
-        btnDesignPolicy.on(cc.Node.EventType.TOUCH_END, function () {
+        let currentState = world.gameState.state;
+        btnDesignPolicy.on(cc.Node.EventType.TOUCH_END, () => {
 
+            if (world.gameState.state !== world.res.GAME_STATES.STARTED && 
+                world.gameState.state !== world.res.GAME_STATES.PAUSED && 
+                world.gameState.state !== world.res.GAME_STATES.PAUSED_TUTORIAL)
+                return;
+
+            currentState = world.gameState.state;
             controller.showPolicyDesign();
 
         });
         let btnDesignPolicyQuit = designPolicy.getChildByName("btnDesignPolicyQuit");
-        btnDesignPolicyQuit.on(cc.Node.EventType.TOUCH_END, function () {
+        btnDesignPolicyQuit.on(cc.Node.EventType.TOUCH_END, () => {
             
-            world.gameState.state = world.res.GAME_STATES.STARTED;
-            // designPolicy.zIndex = -1;
+            world.gameState.modal = false;
+            world.gameState.state = currentState;
             cc.tween(designPolicy).by(0.5, { position: cc.v2(-1334, 0) }, { easing: 'backIn'}).start();
             resourceScore.zIndex = 101;
 
@@ -924,6 +929,12 @@ export default class GameController extends cc.Component {
 
         btnStats.on(cc.Node.EventType.TOUCH_END, () => {
 
+            if (world.gameState.state !== world.res.GAME_STATES.STARTED && 
+                world.gameState.state !== world.res.GAME_STATES.PAUSED && 
+                world.gameState.state !== world.res.GAME_STATES.PAUSED_TUTORIAL)
+                return;
+
+            currentState = world.gameState.state;
             controller.showStatsBox();
 
         }, btnStats);
@@ -932,14 +943,10 @@ export default class GameController extends cc.Component {
         btnStatsQuit.on(cc.Node.EventType.TOUCH_END, () => {
 
             world.gameState.modal = false;
-            world.gameState.state = world.res.GAME_STATES.STARTED;
-            // stats.zIndex = -1;
+            world.gameState.state = currentState;
             cc.tween(stats).by(0.5, { position: cc.v2(1334, 0) }, { easing: 'backIn'}).start();
 
         }, btnStatsQuit);
-
-        // Set ordering
-        // stats.zIndex = -1;
 
         // Update tweet label
         controller.tweetLabel.string = world.gameState.scenarioName;
@@ -1369,6 +1376,11 @@ export default class GameController extends cc.Component {
         let world = this.world;
         let stats = cc.director.getScene().getChildByName('Canvas').getChildByName("layerStats");
 
+        world.gameState.modal = true;
+        world.gameState.state = world.res.GAME_STATES.PAUSED;
+        cc.tween(stats).by(0.5, { position: cc.v2(-1334, 0) }, { easing: 'backOut'}).start();
+        stats.zIndex = 105;
+
         let page1 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_1");
         let page2 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_2");
         let page3 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_3");
@@ -1405,56 +1417,81 @@ export default class GameController extends cc.Component {
         let txtCountry = '', txtLoss = '', txtPreparedness = '';
 
         let content = page2.getChildByName("scrollview").getChildByName("view").getChildByName("content");
-        content.destroyAllChildren();
+        // content.destroyAllChildren();
 
-        let counter = 0;
-        countriesSorted.forEach((country) => {
-            counter++;
-            let color = country.loss > 20 ? controller.colors.COLOR_RED : (country.pop_prepared_percent > 20 ? controller.colors.COLOR_GREEN : controller.colors.COLOR_ICE);
+        if (content.childrenCount === 0) {
 
-            let cn = new cc.Node();
-            let cnl = cn.addComponent(cc.Label);
-            cn.color = color;
-            cnl.string = country.name;
-            cnl.fontSize = 20;
-            cnl.font = controller.titleFont;
-            cnl.horizontalAlign = cc.Label.HorizontalAlign.LEFT;
-            cn.setAnchorPoint(0, 0);
-            cn.x = 0;
-            cn.y = -40 + counter * -24;
-            cn.parent = content;
+            let counter = 0;
+            countriesSorted.forEach((country) => {
+                counter++;
+                let color = country.loss > 20 ? controller.colors.COLOR_RED : (country.pop_prepared_percent > 20 ? controller.colors.COLOR_GREEN : controller.colors.COLOR_ICE);
 
-            let cnln = new cc.Node();
-            let cnll = cnln.addComponent(cc.Label);
-            cnln.color = color;
-            cnll.string = makeString(country.loss);
-            cnll.fontSize = 20;
-            cnll.font = controller.titleFont;
-            cnll.horizontalAlign = cc.Label.HorizontalAlign.RIGHT;
-            cnln.setAnchorPoint(1, 0);
-            cnln.x = 580;
-            cnln.y = -40 + counter * -24;
-            cnln.parent = content;
+                let cn = new cc.Node();
+                let cnl = cn.addComponent(cc.Label);
+                cn.color = color;
+                cnl.string = country.name;
+                cnl.fontSize = 20;
+                cnl.font = controller.titleFont;
+                cnl.horizontalAlign = cc.Label.HorizontalAlign.LEFT;
+                cn.setAnchorPoint(0, 0);
+                cn.x = 0;
+                cn.y = -40 + counter * -24;
+                cn.parent = content;
 
-            let cnpn = new cc.Node();
-            let cnlp = cnpn.addComponent(cc.Label);
-            cnpn.color = color;
-            cnlp.string = makeString(country.pop_prepared_percent);
-            cnlp.fontSize = 20;
-            cnlp.font = controller.titleFont;
-            cnlp.horizontalAlign = cc.Label.HorizontalAlign.RIGHT;
-            cnpn.setAnchorPoint(1, 0);
-            cnpn.x = 780;
-            cnpn.y = -40 + counter * -24;
-            cnpn.parent = content;
+                let cnln = new cc.Node();
+                let cnll = cnln.addComponent(cc.Label);
+                cnln.color = color;
+                cnll.string = makeString(country.loss);
+                cnll.fontSize = 20;
+                cnll.font = controller.titleFont;
+                cnll.horizontalAlign = cc.Label.HorizontalAlign.RIGHT;
+                cnln.setAnchorPoint(1, 0);
+                cnln.x = 580;
+                cnln.y = -40 + counter * -24;
+                cnln.parent = content;
 
-        });
+                let cnpn = new cc.Node();
+                let cnlp = cnpn.addComponent(cc.Label);
+                cnpn.color = color;
+                cnlp.string = makeString(country.pop_prepared_percent);
+                cnlp.fontSize = 20;
+                cnlp.font = controller.titleFont;
+                cnlp.horizontalAlign = cc.Label.HorizontalAlign.RIGHT;
+                cnpn.setAnchorPoint(1, 0);
+                cnpn.x = 780;
+                cnpn.y = -40 + counter * -24;
+                cnpn.parent = content;
+
+            });
+        }
+        else {
+            let counter = 0;
+            countriesSorted.forEach((country) => {
+
+                let color = country.loss > 20 ? controller.colors.COLOR_RED : (country.pop_prepared_percent > 20 ? controller.colors.COLOR_GREEN : controller.colors.COLOR_ICE);
+
+                let lblCountry = content.children[counter * 3 + 0].getComponent(cc.Label);
+                let lblLoss = content.children[counter * 3 + 1].getComponent(cc.Label);
+                let lblPreparedness = content.children[counter * 3 + 2].getComponent(cc.Label);
+
+                lblCountry.node.color = color;
+                lblLoss.node.color = color;
+                lblPreparedness.node.color = color;
+                lblCountry.string = country.name;
+                lblLoss.string = makeString(country.loss);
+                lblPreparedness.string = makeString(country.pop_prepared_percent);
+
+                counter++;
+
+            });
+        }
 
         // Trends
         let drawNode = page3.getChildByName("graph");
         let graphics = drawNode.getComponent(cc.Graphics);
         graphics.clear();
         drawNode.destroyAllChildren();
+
 
         let x_o = 0, yP_o = 0, yL_o = 0, x = 0, yP = 0, yL = 0;
         const colorD = new cc.Color(controller.colors.COLOR_RED.r,
@@ -1529,11 +1566,6 @@ export default class GameController extends cc.Component {
         lblPolicyScoreNode.setAnchorPoint(0, 0.5);
         lblPolicyScoreNode.parent = drawNode;
         lblPolicyScoreNode.zIndex = 106;
-
-        world.gameState.modal = true;
-        world.gameState.state = world.res.GAME_STATES.PAUSED;
-        cc.tween(stats).by(0.5, { position: cc.v2(-1334, 0) }, { easing: 'backOut'}).start();
-        stats.zIndex = 105;
 
     }
 
