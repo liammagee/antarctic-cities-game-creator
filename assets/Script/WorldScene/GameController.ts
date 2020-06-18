@@ -1581,9 +1581,8 @@ export default class GameController extends cc.Component {
         }
         else {
 
-            // Add Crisis Quiz, 50% of the time
-            if (Math.random() < 0.5) {
-            // if (Math.random() < 1.0) {
+            // Add Crisis Quiz
+            if (Math.random() < world.res.QUIZ_CHANGE) {
 
                 // Show quiz
                 let qindex = Math.floor(Math.random() * world.res.quizzes.length);
@@ -1592,6 +1591,7 @@ export default class GameController extends cc.Component {
                 // Prevent the same quiz question being asked twice
                 if (world.gameState.quizzes.indexOf(qindex) > -1)
                     return;
+                    
                 world.gameState.quizzes.push(qindex);
 
                 let quiz = qi.quiz[cc.sys.localStorage.language];
