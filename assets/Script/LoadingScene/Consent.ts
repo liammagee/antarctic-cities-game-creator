@@ -87,7 +87,7 @@ export default class Consent extends cc.Component {
 
     }
 
-    learnMove() {
+    learnMore() {
 
         cc.sys.openURL("https://antarctic-cities.org/the-game/");
 
