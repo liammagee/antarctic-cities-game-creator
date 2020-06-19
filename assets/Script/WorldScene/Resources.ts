@@ -41,7 +41,7 @@ export class Resources  {
     MONTH_INTERVAL_FF = this.MONTH_INTERVAL / 3;
     RESOURCE_CHANCE = 0.1;
     CRISIS_CHANCE = 0.05;
-    QUIZ_CHANCE = 1.0;
+    QUIZ_CHANCE = 0.33;
     TUTORIAL_INTERVAL_MULTIPLIER = 6; 
     RESOURCE_INTERVAL_MULTIPLIER = 10; 
     CRISIS_INTERVAL_MULTIPLIER = 20; 
@@ -950,7 +950,6 @@ export class Resources  {
             BAD: {
                 loss: 20,
                 eng: [
-                    // "Because of the high level of environmental damage globally, surface waters have become corrosive to aragonite shells of pteropods, forever altering the Antarctic sea ecosystem. Act fast to avoid worse consequences to the Antarctic continent."
                     "Because of the high level of environmental damage globally, surface waters have become corrosive to aragonite shells of pteropods, with long lasting effects on Antarctic sea ecosystems. Act fast to avoid worse consequences to the Antarctic region."
                 ],
                 esp: [
@@ -960,7 +959,6 @@ export class Resources  {
             VERY_BAD: {
                 loss: 40,
                 eng: [
-                    // "Sea levels are rising because of the contribution of Antarctic glaciers and ice shelves. Their retreat has exposed new ice-free areas, particularly on the Antarctic Peninsula, the northernmost part of the continent, where new invasive species have arrived. Act fast to avoid worse consequences to the Antarctic continent."
                     "Sea levels are rising because of the rapid melting of Antarctic glaciers and ice shelves. Their thawing and retreat has exposed new ice-free areas, particularly on the Antarctic Peninsula, the northernmost part of the continent, where new invasive species have flourished. Act fast to avoid worse consequences to the Antarctic continent."
                 ],
                 esp: [
@@ -970,7 +968,6 @@ export class Resources  {
             VERY_VERY_BAD: {
                 loss: 60,
                 eng: [
-                    // "In response to new phenomena such as transport of soil particles to the ocean by increased run-off of ice melt from the continent, interactions between key species (especially krill, penguins, seals and whales) are unexpectedly changing. Catastrophic declines in some communities prelude to the extinction of many of these species. Act fast to avoid worse consequences to the Antarctic continent."
                     "In response to new phenomena such as transport of soil particles to the ocean by increased run-off of ice melt from the continent, interactions between key species (especially krill, penguins, seals and whales) are rapidly changing. Catastrophic declines in some communities prelude to the extinction of many of these species. Act fast to avoid worse consequences to the Antarctic region."
                 ],
                 esp: [
@@ -980,7 +977,6 @@ export class Resources  {
             VERY_VERY_VERY_BAD: {
                 loss: 80,
                 eng: [
-                    // "Owing to tremendous pressure for resources to support the world's population, Antarctica is becoming more widely exploited. The Commission for the Conservation of Antarctic Marine Living Resources (CCAMLR), which is responsible for setting the limits on fishing in the region, is weakening. As a result, many new marine species are now being harvested in the Southern Ocean. In addition, several nations are attempting to rescind Article 7 of the Protocol on Environmental Protection to the Antarctic Treaty, which prohibits mineral resource exploitation. The destruction of Antarctica as we know it seems inevitable."
                     "Owing to tremendous pressure for resources to support the world's population, Antarctica is being opened up for resource exploitation. The Commission for the Conservation of Antarctic Marine Living Resources (CCAMLR), which is responsible for setting the limits on fishing in the region, is weakening. As a result, many new marine species are now being harvested in the Southern Ocean. In addition, several nations are attempting to rescind Article 7 of the Protocol on Environmental Protection to the Antarctic Treaty, which prohibits mineral resource exploitation. Devastation of Antarctica seems inevitable."
                 ],
                 esp: [
@@ -1023,7 +1019,6 @@ export class Resources  {
             GOOD: {
                 loss: 0,
                 eng: [
-                    // "You won! Your global policy platform has arrested climate change and reverted its negative effects on Antarctica. Most polar species have adapted to the new environmental conditions and your policy efforts have allowed a renegotiation of the Antarctic Treaty, which imposes much stricter limitations on human presence and on the exploitation of resources on the continent. Sea level rise has remained contained within 6cm, whilst less than 10% of Antarctic ice has been lost. Congratulations for avoiding an environmental catastrophe."
                     "You won! Your global policy platform has arrested climate change and reverted its negative effects on Antarctica. Most polar species are adapting to the new environmental conditions and your policy efforts have allowed a renegotiation of the Antarctic Treaty, which imposes much stricter limitations on human presence and on the exploitation of resources on the continent. Sea level rise has remained contained within 6mm, whilst less than 10% of Antarctic ice has been lost. Congratulations for avoiding an environmental catastrophe."
                 ],
                 esp: [
@@ -1040,11 +1035,11 @@ export class Resources  {
         },
         about_game: {
             eng: "This game is developed as part of a research project, 'Antarctic Cities and the Global Commons'. As part of our research, we collect your IP address, as well as anonymous data during the game. To learn more, click the 'Learn More' button below.",
-            esp: "Este juego forma parte del proyecto de investigación “Ciudades Antárticas y Bienes Comunes Globales”. Como parte de nuestra investigación recopilamos tu dirección de IP así como algunos datos anónimos de la sesión de juego."
+            esp: "Este juego forma parte del proyecto de investigación “Las ciudades antárticas y los bienes comunes globales”. Como parte de nuestra investigación recopilamos tu dirección de IP así como algunos datos anónimos de la sesión de juego."
         },
         consent: {
             eng: "I agree to participate in this research project, and understand my gameplay data will be recorded anonymously.",
-            esp: "Acepto participar de este proyecto de investigación y entiendo que los datos de mi sesión de juego serán recopilados de forma anónima."
+            esp: "Acepto participar en este proyecto de investigación y entiendo que los datos de mi sesión de juego serán recopilados de forma anónima."
         },
         commands_play: {
             eng: "PLAY",
@@ -1052,7 +1047,7 @@ export class Resources  {
         },
         commands_learn_more: {
             eng: "LEARN MORE",
-            esp: "APRENDA MÁS"
+            esp: "APRENDE MÁS"
         },
         commands_policy: {
             eng: "POLICY",
