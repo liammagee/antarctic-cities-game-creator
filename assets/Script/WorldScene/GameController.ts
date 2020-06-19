@@ -1657,7 +1657,7 @@ export default class GameController extends cc.Component {
         else {
 
             // Add Crisis Quiz
-            if (Math.random() < world.res.QUIZ_CHANGE) {
+            if (Math.random() < world.res.QUIZ_CHANCE) {
 
                 // Show quiz
                 let qindex = Math.floor(Math.random() * world.res.quizzes.length);

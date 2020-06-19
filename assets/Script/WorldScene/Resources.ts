@@ -41,7 +41,7 @@ export class Resources  {
     MONTH_INTERVAL_FF = this.MONTH_INTERVAL / 3;
     RESOURCE_CHANCE = 0.1;
     CRISIS_CHANCE = 0.05;
-    QUIZ_CHANGE = 0.33;
+    QUIZ_CHANCE = 1.0;
     TUTORIAL_INTERVAL_MULTIPLIER = 6; 
     RESOURCE_INTERVAL_MULTIPLIER = 10; 
     CRISIS_INTERVAL_MULTIPLIER = 20; 
@@ -833,8 +833,8 @@ export class Resources  {
 
     CRISES = {
         WATER_SHORTAGE: {
-            eng: "Water shortage",
-            esp: "Escasez de agua",
+            eng: "water shortage",
+            esp: "escasez de agua",
             image: "icons/ICON_CRISIS_WATER_SHORTAGE",
             effect_on_climate: 0,
             effect_on_population: 0,
@@ -847,8 +847,8 @@ export class Resources  {
             influence_of_preparedness: -0.2 
         },
         FINANCIAL_CRISIS: {
-            eng: "Financial crisis",
-            esp: "Crisis financiera",
+            eng: "financial crisis",
+            esp: "crisis financiera",
             image: "icons/ICON_CRISIS_CRASH",
             effect_on_climate: 0,
             effect_on_population: 0,
@@ -861,8 +861,8 @@ export class Resources  {
             influence_of_preparedness: 0.0 
         },
         EXTREME_WEATHER_EVENT: {
-            eng: "Extreme weather event",
-            esp: "Evento meteorológico extremo",
+            eng: "extreme weather event",
+            esp: "evento meteorológico extremo",
             image: "icons/ICON_CRISIS_WEATHER",
             effect_on_climate: 0,
             effect_on_population: 0,
@@ -875,8 +875,8 @@ export class Resources  {
             influence_of_preparedness: -0.2 
         },
         FORCED_DISPLACEMENT: {
-            eng: "Forced displacement",
-            esp: "Desplazamiento forzado",
+            eng: "forced displacement",
+            esp: "desplazamiento forzado",
             image: "icons/ICON_CRISIS_DISPLACEMENT",
             effect_on_climate: 0,
             effect_on_population: 0,
@@ -889,8 +889,8 @@ export class Resources  {
             influence_of_preparedness: -0.5 
         },
         EPIDEMIC: {
-            eng: "Epidemic",
-            esp: "Epidémico",
+            eng: "epidemic",
+            esp: "epidémico",
             image: "icons/ICON_CRISIS_EPIDEMIC",
             effect_on_climate: 0,
             effect_on_population: 0,
@@ -903,8 +903,8 @@ export class Resources  {
             influence_of_preparedness: -0.2 
         },
         WAR: {
-            eng: "War",
-            esp: "Guerra",
+            eng: "war",
+            esp: "guerra",
             image: "icons/ICON_CRISIS_WAR",
             effect_on_climate: 0,
             effect_on_population: 0,
@@ -950,7 +950,8 @@ export class Resources  {
             BAD: {
                 loss: 20,
                 eng: [
-                    "Because of the high level of environmental damage globally, surface waters have become corrosive to aragonite shells of pteropods, forever altering the Antarctic sea ecosystem. Act fast to avoid worse consequences to the Antarctic continent."
+                    // "Because of the high level of environmental damage globally, surface waters have become corrosive to aragonite shells of pteropods, forever altering the Antarctic sea ecosystem. Act fast to avoid worse consequences to the Antarctic continent."
+                    "Because of the high level of environmental damage globally, surface waters have become corrosive to aragonite shells of pteropods, with long lasting effects on Antarctic sea ecosystems. Act fast to avoid worse consequences to the Antarctic region."
                 ],
                 esp: [
                     "Debido al alto nivel de daño ambiental a nivel mundial, las aguas superficiales se han vuelto corrosivas para las conchas de aragonita de los pterópodos, alterando para siempre el ecosistema marino antártico. Actuar con rapidez para evitar las peores consecuencias para el continente antártico."
@@ -959,7 +960,8 @@ export class Resources  {
             VERY_BAD: {
                 loss: 40,
                 eng: [
-                    "Sea levels are rising because of the contribution of Antarctic glaciers and ice shelves. Their retreat has exposed new ice-free areas, particularly on the Antarctic Peninsula, the northernmost part of the continent, where new invasive species have arrived. Act fast to avoid worse consequences to the Antarctic continent."
+                    // "Sea levels are rising because of the contribution of Antarctic glaciers and ice shelves. Their retreat has exposed new ice-free areas, particularly on the Antarctic Peninsula, the northernmost part of the continent, where new invasive species have arrived. Act fast to avoid worse consequences to the Antarctic continent."
+                    "Sea levels are rising because of the rapid melting of Antarctic glaciers and ice shelves. Their thawing and retreat has exposed new ice-free areas, particularly on the Antarctic Peninsula, the northernmost part of the continent, where new invasive species have flourished. Act fast to avoid worse consequences to the Antarctic continent."
                 ],
                 esp: [
                     "El nivel del mar está subiendo debido a la contribución de los glaciares y las plataformas de hielo de la Antártida. Su retirada ha puesto al descubierto nuevas áreas libres de hielo, particularmente en la Península Antártica, la parte más septentrional del continente, donde han llegado nuevas especies invasoras. Actuar con rapidez para evitar las peores consecuencias para el continente antártico."
@@ -968,7 +970,8 @@ export class Resources  {
             VERY_VERY_BAD: {
                 loss: 60,
                 eng: [
-                    "In response to new phenomena such as transport of soil particles to the ocean by increased run-off of ice melt from the continent, interactions between key species (especially krill, penguins, seals and whales) are unexpectedly changing. Catastrophic declines in some communities prelude to the extinction of many of these species. Act fast to avoid worse consequences to the Antarctic continent."
+                    // "In response to new phenomena such as transport of soil particles to the ocean by increased run-off of ice melt from the continent, interactions between key species (especially krill, penguins, seals and whales) are unexpectedly changing. Catastrophic declines in some communities prelude to the extinction of many of these species. Act fast to avoid worse consequences to the Antarctic continent."
+                    "In response to new phenomena such as transport of soil particles to the ocean by increased run-off of ice melt from the continent, interactions between key species (especially krill, penguins, seals and whales) are rapidly changing. Catastrophic declines in some communities prelude to the extinction of many of these species. Act fast to avoid worse consequences to the Antarctic region."
                 ],
                 esp: [
                     "En respuesta a nuevos fenómenos como el transporte de partículas de suelo al océano por el aumento de la escorrentía del hielo derretido del continente, las interacciones entre especies clave (especialmente el krill, los pingüinos, las focas y las ballenas) están cambiando inesperadamente. Las disminuciones catastróficas en algunas comunidades son el preludio de la extinción de muchas de estas especies. Actuar con rapidez para evitar las peores consecuencias para el continente antártico."
@@ -977,7 +980,8 @@ export class Resources  {
             VERY_VERY_VERY_BAD: {
                 loss: 80,
                 eng: [
-                    "Owing to tremendous pressure for resources to support the world's population, Antarctica is becoming more widely exploited. The Commission for the Conservation of Antarctic Marine Living Resources (CCAMLR), which is responsible for setting the limits on fishing in the region, is weakening. As a result, many new marine species are now being harvested in the Southern Ocean. In addition, several nations are attempting to rescind Article 7 of the Protocol on Environmental Protection to the Antarctic Treaty, which prohibits mineral resource exploitation. The destruction of Antarctica as we know it seems inevitable."
+                    // "Owing to tremendous pressure for resources to support the world's population, Antarctica is becoming more widely exploited. The Commission for the Conservation of Antarctic Marine Living Resources (CCAMLR), which is responsible for setting the limits on fishing in the region, is weakening. As a result, many new marine species are now being harvested in the Southern Ocean. In addition, several nations are attempting to rescind Article 7 of the Protocol on Environmental Protection to the Antarctic Treaty, which prohibits mineral resource exploitation. The destruction of Antarctica as we know it seems inevitable."
+                    "Owing to tremendous pressure for resources to support the world's population, Antarctica is being opened up for resource exploitation. The Commission for the Conservation of Antarctic Marine Living Resources (CCAMLR), which is responsible for setting the limits on fishing in the region, is weakening. As a result, many new marine species are now being harvested in the Southern Ocean. In addition, several nations are attempting to rescind Article 7 of the Protocol on Environmental Protection to the Antarctic Treaty, which prohibits mineral resource exploitation. Devastation of Antarctica seems inevitable."
                 ],
                 esp: [
                     "Debido a la tremenda presión por recursos para apoyar a la población mundial, la Antártida se está explotando cada vez más. La Comisión para la Conservación de los Recursos Vivos Marinos Antárticos (CCAMLR), responsable de fijar los límites de pesca en la región, se está debilitando. Como resultado, muchas nuevas especies marinas están siendo capturadas en el Océano Austral. Además, varias naciones están intentando rescindir el Artículo 7 del Protocolo sobre Protección Ambiental del Tratado Antártico, que prohíbe la explotación de recursos minerales. La destrucción de la Antártida tal como la conocemos parece inevitable."
@@ -1019,10 +1023,11 @@ export class Resources  {
             GOOD: {
                 loss: 0,
                 eng: [
-                    "You won! Your global policy platform has arrested climate change and reverted its negative effects on Antarctica. Most polar species have adapted to the new environmental conditions and your policy efforts have allowed a renegotiation of the Antarctic Treaty, which imposes much stricter limitations on human presence and on the exploitation of resources on the continent. Sea level rise has remained contained within 6cm, whilst less than 10% of Antarctic ice has been lost. Congratulations for avoiding an environmental catastrophe."
+                    // "You won! Your global policy platform has arrested climate change and reverted its negative effects on Antarctica. Most polar species have adapted to the new environmental conditions and your policy efforts have allowed a renegotiation of the Antarctic Treaty, which imposes much stricter limitations on human presence and on the exploitation of resources on the continent. Sea level rise has remained contained within 6cm, whilst less than 10% of Antarctic ice has been lost. Congratulations for avoiding an environmental catastrophe."
+                    "You won! Your global policy platform has arrested climate change and reverted its negative effects on Antarctica. Most polar species are adapting to the new environmental conditions and your policy efforts have allowed a renegotiation of the Antarctic Treaty, which imposes much stricter limitations on human presence and on the exploitation of resources on the continent. Sea level rise has remained contained within 6mm, whilst less than 10% of Antarctic ice has been lost. Congratulations for avoiding an environmental catastrophe."
                 ],
                 esp: [
-                    "¡Ganaste! Tu plataforma política global ha logrado detener el cambio climático y revertir sus efectos negativos sobre la Antártida. La mayoría de las especies polares se han adaptado a las nuevas condiciones climáticas y tus esfuerzos políticos han permitido la renegociación del Tratado Antártico, el cual impone límites más estrictos a la presencia humana y la explotación de recursos en el continente. El nivel del mar ha permanecido contenido en 6cm y sólo un 10% del hielo Antártico se ha perdido. Felicitaciones por evitar una catástrofe ambiental."
+                    "¡Ganaste! Tu plataforma política global ha logrado detener el cambio climático y revertir sus efectos negativos sobre la Antártida. La mayoría de las especies polares se han adaptado a las nuevas condiciones climáticas y tus esfuerzos políticos han permitido la renegociación del Tratado Antártico, el cual impone límites más estrictos a la presencia humana y la explotación de recursos en el continente. El nivel del mar ha permanecido contenido en 6mm y sólo un 10% del hielo Antártico se ha perdido. Felicitaciones por evitar una catástrofe ambiental."
                 ]
             }
         }
@@ -1217,28 +1222,28 @@ export class Resources  {
                 "negative": [
                     "Global temperatures are rising, and could be 3.5 degrees higher by 2070!",
                     "New ice-free areas are appearing on the Antarctic continent!",
-                    "Warming of Southern Oceans pose risks to shellfish and other marine life.",
-                    "Fishing, tourism and commercial shipping are expanding in the Southern Ocean!",
-                    "Globally, sea level rises cost coastal cities $1 trillion USD each year!",
-                    "Ships can now access new parts of the Antarctic continent...",
+                    "Warming of Southern Ocean pose risks to all marine life.",
+                    "Fishing, tourism and commercial shipping are expanding exponentially in the Southern Ocean!",
+                    "On a planetary scale, sea level rise costs coastal cities $1 trillion USD each year!",
+                    "Ships can now access new parts of the Antarctic continent during winter months...",
                     "Warmer waters see a rise in baleen whales!",
                     "Southern Ocean fish and penguin populations are declining...",
-                    "Invasive species - grasses, insects, biota - are settling permanently in Antarctica...",
+                    "Invasive species, such as grasses and insects - are colonising new environments in Antarctica...",
                     "Calls to protect endangered species appear to be ignored by Antarctic Treaty signatories...",
                     "Human population is on track to exceed 10 billion by 2070...",
                     "New technologies are enabling polar mining for oil and other resources!",
-                    "Antarctica tourism reaches 1 million visitors per year!"
+                    "Antarctica tourism reaches half a million visitors per year!"
                 ],
                 "positive": [
-                    "Finally! The physical environment of Antarctica and the Southern Ocean is returning to 2020 levels...",
-                    "'Hey Jude'! Ozone levels in the Antarctic stratosphere are returning to the values of the 1960s...",
+                    "Finally! The fragile ecosystems of Antarctica and the Southern Ocean are returning to 2020 levels...",
+                    "'Hey Jude'! Ozone levels in the stratosphere over Antarctica are returning to the values of the 1960s...",
                     "Ocean acidification is no longer increasing dramatically...",
-                    "Major ice shelves remain in tact... for now.",
-                    "Sea level rises are restricted to 6cm per annum!",
-                    "Systematic conservation begins...",
-                    "Great! Invasive species are unable to settle permanently on the Antarctic!",
-                    "Decisive steps are being taken to limit the impact of increased human engagement with Antarctica.",
-                    "Truly global action on the Sustainable Development Goals is now underway!",
+                    "Major ice shelves remain intact... for now.",
+                    "Sea level rise is restricted to 6mm per annum!",
+                    "Dramatic new conservation policies are being enforced...",
+                    "Great! Invasive species have declined on the Antarctic!",
+                    "Decisive steps are being taken to limit the impact of increased human engagement in Antarctica.",
+                    "Global action on the Sustainable Development Goals continues!",
                     "Eureka! Scientists discover new compounds from Antarctic biota, with major industrial and medical applications..."
                 ]
             }
@@ -1536,7 +1541,7 @@ export class Resources  {
                 },
                 right_answer: {
                     eng: `Lobby the parties to the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty</color> secure Antarctica as a natural reserve and establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing in the Southern Ocean?`,
-                    esp: `¿Ejercer presión sobre las partes del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> para asegurar la Antártida como reserva natural y establecer una <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratoria</color> sobre la pesca en el Océano Austral?`
+                    esp: `¿Ejercer presión sobre las partes del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> para asegurar la Antártida como reserva natural y establecer una <color=#AAAAFF click="handler" param='https://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-una-moratoria-a-la-pesca-de-arrastre.html'>moratoria</color> sobre la pesca en el Océano Austral?`
               }
             },
             {
@@ -1561,11 +1566,11 @@ export class Resources  {
                     esp: `Debido a la escasez mundial de minerales clave, algunas naciones han comenzado a investigar el potencial de los recursos y las tecnologías de extracción en la Antártida, apenas velado bajo el pretexto de la exploración científica. A los expertos en medio ambiente les preocupa que aparezcan minas secretas en el continente, poniendo en peligro el ecosistema. ¿Qué se puede hacer?`,
                 },
                 wrong_answer: {
-                    eng: `Call upon the Antarctic Treaty parties to rescind Article 7 of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty>Protocol on Environmental Protection to the Antarctic Treaty</color>?`,
+                    eng: `Call upon the Antarctic Treaty parties to rescind Article 7 of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty'>Protocol on Environmental Protection to the Antarctic Treaty</color>?`,
                     esp: `¿Llamar a las partes del Tratado Antártico a rescindir el artículo 7 del Protocolo de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Protocolo_al_Tratado_Ant%C3%A1rtico_sobre_Protecci%C3%B3n_del_Medio_Ambiente'>Protección Ambiental del Tratado Antártico</color>?`
                 },
                 right_answer: {
-                    eng: `Call upon the Antarctic Treaty parties to reinforce Article 7 of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty>Protocol on Environmental Protection to the Antarctic Treaty</color>?`,
+                    eng: `Call upon the Antarctic Treaty parties to reinforce Article 7 of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty'>Protocol on Environmental Protection to the Antarctic Treaty</color>?`,
                     esp: `¿Llamar a las partes del Tratado Antártico a reforzar el artículo 7 del Protocolo de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Protocolo_al_Tratado_Ant%C3%A1rtico_sobre_Protecci%C3%B3n_del_Medio_Ambiente'>Protección Ambiental del Tratado Antártico</color>?`
                 }
             },
@@ -1581,7 +1586,7 @@ export class Resources  {
                 },
                 right_answer: {
                     eng: `Lobby the UN to adopt a stricter temperature increase target and a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on new <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Fossil_fuel'>fossil fuel</color> explorations?`,
-                    esp: `¿Presionar a la ONU para que adopte un objetivo más estricto para limitar el aumento de la temperatura y una <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratoria</color> de las nuevas exploraciones de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Hidrocarburos'>hidrocarburos</color>?`
+                    esp: `¿Presionar a la ONU para que adopte un objetivo más estricto para limitar el aumento de la temperatura y una <color=#AAAAFF click="handler" param='https://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-unahttps://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-una-moratoria-a-la-pesca-de-arrastre.html '>moratoria</color> de las nuevas exploraciones de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Hidrocarburos'>hidrocarburos</color>?`
                 }
             },
             {
@@ -1611,7 +1616,7 @@ export class Resources  {
                 },
                 right_answer: {
                     eng: `Lobby the parties to the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty</color> to secure Antarctica as a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Nature_reserve'>natural reserve</color> and establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing in the Southern Ocean?`,
-                    esp: `¿Presionar a las partes del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> para asegurar la Antártida como <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Reserva_natural'>reserva natural</color> y establecer una <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratoria</color> de la pesca en el Océano Austral?`
+                    esp: `¿Presionar a las partes del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> para asegurar la Antártida como <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Reserva_natural'>reserva natural</color> y establecer una <color=#AAAAFF click="handler" param='https://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-una-moratoria-a-la-pesca-de-arrastre.html'>moratoria</color> de la pesca en el Océano Austral?`
                 }
             },
             {
@@ -1626,7 +1631,7 @@ export class Resources  {
                 },
                 right_answer: {
                     eng: `Lobby the Antarctic Treaty parties and the UN to adopt an <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Ecosystem-based_management'>ecosystem-based approach</color> to the conservation of krill in the Southern Ocean, including a possible <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing?`,
-                    esp: `¿Presionar a las partes del Tratado Antártico y a las Naciones Unidas para que adopten un enfoque basado en el <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Ecosistema'>ecosistema</color> para la conservación del krill en el Océano Austral, incluyendo una posible <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratoria</color> de la pesca?`
+                    esp: `¿Presionar a las partes del Tratado Antártico y a las Naciones Unidas para que adopten un enfoque basado en el <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Ecosistema'>ecosistema</color> para la conservación del krill en el Océano Austral, incluyendo una posible <color=#AAAAFF click="handler" param='https://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-una-moratoria-a-la-pesca-de-arrastre.html'>moratoria</color> de la pesca?`
                 }
             }
 
