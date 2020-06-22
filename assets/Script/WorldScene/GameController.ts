@@ -276,7 +276,6 @@ export default class GameController extends cc.Component {
 
         // Narrative
         lblStatusHeading.string = `The Story in ${world.gameState.currentDate.getFullYear()}...`;
-        lblContents.string = message;
 
         // Add graph
         this.drawGraph(graphHolder);
@@ -311,15 +310,16 @@ export default class GameController extends cc.Component {
         statsString += `\n\nEnvironmental loss peaked in ${y1}, while preparedness peaked in ${y2}.`
         if (world.gameState.totalLoss > 20) {
 
-            statsString += `\n\n<color=#99cc66>Hint: Try a different mix of resources next time!</color>`;
+            message += `\n\n<color=#99cc66>Hint: Try a different mix of resources next time!</color>`;
 
         }
         else {
 
-            statsString += `\n\n<color=#99cc66>You're a great policy maker! Could another set of policies work next time?</color>`;
+            message += `\n\n<color=#99cc66>You're a great policy maker! Could another set of policies work next time?</color>`;
 
         }
         statsContent.string = statsString;
+        lblContents.string = message;
 
 
         let btn1Func = (event) => {
