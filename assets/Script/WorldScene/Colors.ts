@@ -23,8 +23,11 @@ export class Colors {
     COLOR_HIGHLIGHT = this.COLOR_OAK; 
     COLOR_RESOURCE = new cc.Color(108, 180, 244); // Blue with transparency; COLOR_UMBER; 
     COLOR_GREEN = new cc.Color(153, 204, 102); // Green, with transparency
-    COLOR_RED = new cc.Color(151, 51, 51); // Red, with transparency
+    // #99cc66
+    COLOR_RED = new cc.Color(153, 51, 51); // Red, with transparency
+    // #993333
     COLOR_SKY = new cc.Color(204, 204, 255); // Red, with transparency
+    // #ccccff
     COLOR_BACKGROUND_TRANS = new cc.Color(42, 54, 68); // Black, with transparency
 
 

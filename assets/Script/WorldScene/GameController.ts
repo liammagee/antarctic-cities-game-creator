@@ -263,12 +263,11 @@ export default class GameController extends cc.Component {
         layerGameOver.zIndex = 104;
         layerGameOver.opacity = 255;
         let lblTitle = layerGameOver.getChildByName("messageBoxTitle").getComponent(cc.Label);
-        let lblStatusHeading = layerGameOver.getChildByName("messageBoxContents").getComponent(cc.Label);
-        let lblContents = layerGameOver.getChildByName("messageBoxContents").getComponent(cc.Label);
+        let lblStatusHeading = layerGameOver.getChildByName("statusHeading").getComponent(cc.Label);
+        let lblContents = layerGameOver.getChildByName("messageBoxContents").getComponent(cc.RichText);
         let graphHolder = layerGameOver.getChildByName('graphHolder');
         let statsContent = layerGameOver.getChildByName('statsContent').getComponent(cc.RichText);
         let btn1 = layerGameOver.getChildByName("btn1").getComponent(cc.Button);
-        lblContents = layerGameOver.getChildByName("messageBoxContents").getComponent(cc.Label);
 
         // btn1.node.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = prompt1;
 
@@ -292,15 +291,32 @@ export default class GameController extends cc.Component {
         policyString = policyString.length === 0 ? '(no policies)' : policyString; 
         policyString = `These were the policies you chose: ${policyString}`;
         let statsString = policyString;
-        statsString += `\n\nYou dealt with ${world.gameState.crisisCount} crises.`;
+        statsString += `\n\nThe world experienced ${world.gameState.crisisCount} crises.`;
+
+        let y1 = 0, y2 = 0, ml = 0, mp = 0;
+        Object.entries(world.gameState.stats).forEach((a) => {
+            let year = parseInt(a[0]);
+            let loss = a[1].loss;
+            if (loss > ml) {
+                ml = loss;
+                y1 = year;
+            }
+            let prepared = a[1].prepared;
+            if (prepared > mp) {
+                mp = prepared;
+                y2 = year;
+            }
+                
+        })
+        statsString += `\n\nEnvironmental loss peaked in ${y1}, while preparedness peaked in ${y2}.`
         if (world.gameState.totalLoss > 20) {
 
-            statsString += `\n\n<color #00ff00>Hint: Try a different mix of resources next time!</color>`;
+            statsString += `\n\n<color=#99cc66>Hint: Try a different mix of resources next time!</color>`;
 
         }
         else {
 
-            statsString += `\n\n<color #00ff00>You're a great policy maker! Could another set of policies work next time?</color>`;
+            statsString += `\n\n<color=#99cc66>You're a great policy maker! Could another set of policies work next time?</color>`;
 
         }
         statsContent.string = statsString;
@@ -1373,7 +1389,7 @@ export default class GameController extends cc.Component {
         page1.getChildByName("lblYear").getComponent(cc.Label).string = world.res.lang.stats_year[cc.sys.localStorage.language] + world.gameState.currentDate.getFullYear();
         page1.getChildByName("lblYearMessage").getComponent(cc.Label).string = world.res.lang.stats_year_message_a[cc.sys.localStorage.language] + (world.gameState.targetDate.getFullYear() - world.gameState.currentDate.getFullYear()) + world.res.lang.stats_year_message_b[cc.sys.localStorage.language];
         page1.getChildByName("lblLoss").getComponent(cc.Label).string = world.res.lang.stats_loss[cc.sys.localStorage.language];
-        page1.getChildByName("lblLossMessage").getComponent(cc.Label).string = world.res.lang.stats_loss_message_a[cc.sys.localStorage.language] + world.gameState.startDate.getFullYear() + world.res.lang.stats_loss_message_b[cc.sys.localStorage.language] + makeString(world.gameState.totalLoss) + ".";
+        page1.getChildByName("lblLossMessage").getComponent(cc.Label).string = world.res.lang.stats_loss_message_a[cc.sys.localStorage.language] + world.gameState.startDate.getFullYear() + world.res.lang.stats_loss_message_b[cc.sys.localStorage.language] + this.makeString(world.gameState.totalLoss) + ".";
         page1.getChildByName("lblPreparedness").getComponent(cc.Label).string = world.res.lang.stats_preparedness[cc.sys.localStorage.language] + this.makeString(world.gameState.populationPreparedPercent) + " / " + Math.round(world.gameState.populationPrepared / 1000000) + "M";
         let pd = world.res.lang.stats_preparedness_message_a[cc.sys.localStorage.language] + this.makeString(world.gameState.populationPreparedPercent) + world.res.lang.stats_preparedness_message_b[cc.sys.localStorage.language];
         page1.getChildByName("lblPreparednessMessage").getComponent(cc.Label).string = pd;
@@ -1459,87 +1475,6 @@ export default class GameController extends cc.Component {
 
         // Trends
         this.drawGraph(page3);
-        /*
-        let drawNode = page3.getChildByName("graph");
-        let graphics = drawNode.getComponent(cc.Graphics);
-        graphics.clear();
-        drawNode.destroyAllChildren();
-
-
-        let x_o = 0, yP_o = 0, yL_o = 0, x = 0, yP = 0, yL = 0;
-        const colorD = new cc.Color(controller.colors.COLOR_RED.r,
-            controller.colors.COLOR_RED.g,
-            controller.colors.COLOR_RED.b);
-        const colorP = new cc.Color(controller.colors.COLOR_GREEN.r,
-            controller.colors.COLOR_GREEN.g,
-            controller.colors.COLOR_GREEN.b);
-
-        const graphX = 4;
-        const graphY = 0;
-        const years = world.gameState.targetDate.getFullYear() - world.gameState.startDate.getFullYear();
-        let scaleFactor = 0.9;
-        const graphIncrementX = page3.width * scaleFactor / years;
-        const graphIncrementY = (page3.height - 14) * scaleFactor / 100;
-        const graphOffset = 0;
-        const lineOffset = -10;
-
-        this.drawSegment(graphics, new cc.Vec2(graphX, graphOffset + lineOffset), new cc.Vec2(graphX + page3.width * scaleFactor, graphOffset + lineOffset), 1, controller.colors.COLOR_ICE);
-        this.drawSegment(graphics, new cc.Vec2(graphX, graphOffset + lineOffset), new cc.Vec2(graphX, graphOffset + page3.height * scaleFactor), 1, controller.colors.COLOR_ICE);
-
-        for (let i = world.gameState.startDate.getFullYear(); i < world.gameState.targetDate.getFullYear(); i++) {
-
-            const index = i - world.gameState.startDate.getFullYear();
-
-            const stats = world.gameState.stats[i];
-
-            if (stats === undefined)
-                continue;
-
-            const loss = stats.loss;
-            const prepared = stats.prepared;
-            x = graphX + index * graphIncrementX;
-            yL = graphOffset + (100 - Math.round(loss)) * graphIncrementY;
-            yP = graphOffset + Math.round(prepared) * graphIncrementY;
-
-            if (index > 0) {
-
-                // Line 
-                // drawNode.drawSegment(cc.p(x_o, yL_o), cc.p(x, yL), 2, controller.colors.COLOR_RED);
-                // drawNode.drawSegment(cc.p(x_o, yP_o), cc.p(x, yP), 2, controller.colors.COLOR_GREEN);
-
-                // Staircase
-                drawSegment(new cc.Vec2(x_o, yL_o), new cc.Vec2(x - 1, yL_o), 1, colorD);
-                drawSegment(new cc.Vec2(x, yL_o), new cc.Vec2(x, yL), 1, colorD);
-                drawSegment(new cc.Vec2(x_o, yP_o), new cc.Vec2(x - 1, yP_o), 1, colorP);
-                drawSegment(new cc.Vec2(x, yP_o), new cc.Vec2(x, yP), 1, colorP);
-
-            }
-
-            x_o = x, yL_o = yL, yP_o = yP;
-
-        }
-
-        let lblDestructionScoreNode = new cc.Node();
-        let lblDestructionScore = lblDestructionScoreNode.addComponent(cc.Label);
-        lblDestructionScore.string = this.makeString(world.gameState.totalLoss);
-        lblDestructionScore.font = controller.titleFont;
-        lblDestructionScore.fontSize = 28;
-        lblDestructionScoreNode.color = colorD;
-        lblDestructionScoreNode.setPosition(4 + graphX + x, graphY + yL);
-        lblDestructionScoreNode.setAnchorPoint(0, 0.5);
-        lblDestructionScoreNode.parent = drawNode;
-        lblDestructionScoreNode.zIndex = 106;
-        let lblPolicyScoreNode = new cc.Node();
-        let lblPolicyScore = lblPolicyScoreNode.addComponent(cc.Label);
-        lblPolicyScore.string = this.makeString(world.gameState.populationPreparedPercent);
-        lblPolicyScore.font = controller.titleFont;
-        lblPolicyScore.fontSize = 28;
-        lblPolicyScoreNode.color = colorP;
-        lblPolicyScoreNode.setPosition(4 + graphX + x, graphY + yP);
-        lblPolicyScoreNode.setAnchorPoint(0, 0.5);
-        lblPolicyScoreNode.parent = drawNode;
-        lblPolicyScoreNode.zIndex = 106;
-        */
 
     }
 
@@ -1552,7 +1487,6 @@ export default class GameController extends cc.Component {
         let graphics = drawNode.getComponent(cc.Graphics);
         graphics.clear();
         drawNode.destroyAllChildren();
-
 
         let x_o = 0, yP_o = 0, yL_o = 0, x = 0, yP = 0, yL = 0;
         const colorD = new cc.Color(controller.colors.COLOR_RED.r,
