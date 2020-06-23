@@ -953,7 +953,7 @@ export class Resources  {
                     "Because of the high level of environmental damage globally, surface waters have become corrosive to aragonite shells of pteropods, with long lasting effects on Antarctic sea ecosystems. Act fast to avoid worse consequences to the Antarctic region."
                 ],
                 esp: [
-                    "Debido al alto nivel de daño ambiental a nivel mundial, las aguas superficiales se han vuelto corrosivas para las conchas de aragonita de los pterópodos, alterando para siempre el ecosistema marino antártico. Actuar con rapidez para evitar las peores consecuencias para el continente antártico."
+                    "Debido al alto nivel de daño ambiental a nivel mundial, las aguas superficiales se han vuelto corrosivas para las conchas de aragonita de los pterópodos, alterando para siempre el ecosistema marino antártico. Debes actuar con rapidez para evitar las peores consecuencias para el continente antártico."
                 ]
             },
             VERY_BAD: {
@@ -962,7 +962,7 @@ export class Resources  {
                     "Sea levels are rising because of the rapid melting of Antarctic glaciers and ice shelves. Their thawing and retreat has exposed new ice-free areas, particularly on the Antarctic Peninsula, the northernmost part of the continent, where new invasive species have flourished. Act fast to avoid worse consequences to the Antarctic continent."
                 ],
                 esp: [
-                    "El nivel del mar está subiendo debido a la contribución de los glaciares y las plataformas de hielo de la Antártida. Su retirada ha puesto al descubierto nuevas áreas libres de hielo, particularmente en la Península Antártica, la parte más septentrional del continente, donde han llegado nuevas especies invasoras. Actuar con rapidez para evitar las peores consecuencias para el continente antártico."
+                    "El nivel del mar está subiendo debido al rápido derretimiento de los glaciares y las plataformas de hielo de la Antártida. El retroceso glaciar  ha puesto al descubierto nuevas áreas libres de hielo, en particular en la Península Antártica, la parte más septentrional del continente, donde han llegado nuevas especies invasoras. Se debe actuar con rapidez para evitar las peores consecuencias para el continente antártico."
                 ]
             },
             VERY_VERY_BAD: {
@@ -971,7 +971,7 @@ export class Resources  {
                     "In response to new phenomena such as transport of soil particles to the ocean by increased run-off of ice melt from the continent, interactions between key species (especially krill, penguins, seals and whales) are rapidly changing. Catastrophic declines in some communities prelude to the extinction of many of these species. Act fast to avoid worse consequences to the Antarctic region."
                 ],
                 esp: [
-                    "En respuesta a nuevos fenómenos como el transporte de partículas de suelo al océano por el aumento de la escorrentía del hielo derretido del continente, las interacciones entre especies clave (especialmente el krill, los pingüinos, las focas y las ballenas) están cambiando inesperadamente. Las disminuciones catastróficas en algunas comunidades son el preludio de la extinción de muchas de estas especies. Actuar con rapidez para evitar las peores consecuencias para el continente antártico."
+                    "En respuesta a nuevos fenómenos, tales como el transporte de partículas de suelo al océano por el aumento de la escorrentía del hielo derretido del continente, las interacciones entre las especies clave (especialmente el krill, los pingüinos, las focas y las ballenas) están cambiando repentinamente. Las disminuciones catastróficas en algunas comunidades son el preludio de la extinción de muchas de estas especies. Debes actuar con rapidez para evitar las peores consecuencias para el continente antártico."
                 ]
             },
             VERY_VERY_VERY_BAD: {
@@ -980,7 +980,7 @@ export class Resources  {
                     "Owing to tremendous pressure for resources to support the world's population, Antarctica is being opened up for resource exploitation. The Commission for the Conservation of Antarctic Marine Living Resources (CCAMLR), which is responsible for setting the limits on fishing in the region, is weakening. As a result, many new marine species are now being harvested in the Southern Ocean. In addition, several nations are attempting to rescind Article 7 of the Protocol on Environmental Protection to the Antarctic Treaty, which prohibits mineral resource exploitation. Devastation of Antarctica seems inevitable."
                 ],
                 esp: [
-                    "Debido a la tremenda presión por recursos para apoyar a la población mundial, la Antártida se está explotando cada vez más. La Comisión para la Conservación de los Recursos Vivos Marinos Antárticos (CCAMLR), responsable de fijar los límites de pesca en la región, se está debilitando. Como resultado, muchas nuevas especies marinas están siendo capturadas en el Océano Austral. Además, varias naciones están intentando rescindir el Artículo 7 del Protocolo sobre Protección Ambiental del Tratado Antártico, que prohíbe la explotación de recursos minerales. La destrucción de la Antártida tal como la conocemos parece inevitable."
+                    "Debido a la tremenda demanda de recursos para sustentar a la población mundial, la Antártida se abre cada vez más a la explotación . La Comisión para la Conservación de los Recursos Vivos Marinos Antárticos (CCAMLR), responsable de fijar los límites de pesca en la región, se está debilitando. En consecuencia, se vienen capturando muchas nuevas especies marinas en el Océano Austral. Además, varias naciones están intentando rescindir el Artículo 7 del Protocolo sobre Protección Ambiental del Tratado Antártico, que prohíbe la explotación de los recursos minerales. La devastación de la Antártida tal como la conocemos parece inevitable."
                 ]
             },
             GOOD: {
@@ -991,9 +991,9 @@ export class Resources  {
                     "Thanks to the strong action in mitigation greenhouse emissions globally, changes in the temperature and salinity of the Southern Ocean are reversing. The Antarctic Circumpolar Current is shifting towards the Equator, therefore contributing to cooling  the Southern Ocean. Changes in wind-driven ocean currents are reducing the exposure of the floating ice shelves to basal melt by warm ocean waters. However, the reduction in ocean heat transport to the ice shelf cavities is coming too late to save some West Antarctic ice shelves and ice tongues. Keep acting on your global policy strategy to save Antarctica.",
                 ],
                 esp: [
-                    "Mientras que algunas plataformas de hielo en la Península Antártica y el Mar de Amundsen parecen haberse perdido para siempre, las tasas de adelgazamiento observadas en las grandes plataformas de hielo durante el período 1994-2012 se mantuvieron bastante estables hasta 2048. La inestabilidad de los acantilados de hielo marino se ha limitado principalmente a unos pocos glaciares de salida en el sector del Mar de Amundsen de la Antártida occidental y no ha llegado a la Antártida oriental. Sigan mejorando su estrategia de política global para salvar a la Antártida.",
-                    "Aunque la acidificación de los océanos continúa, su impacto se estabiliza debido a que los niveles atmosféricos de CO2 están decreciendo. Se ha registrado una caída en las poblaciones antárticas de algunas especies críticas, pero otras especies se han adaptado, resultando en un cambio menos dramático que el inicialmente pronosticado. Si los eventos climáticos extremos se vuelven menos frecuentes, es probable que las poblaciones de focas y aves marinas puedan adaptarse a las nuevas condiciones ecosistémicas.",
-                    "Gracias a las enérgicas medidas de mitigación de las emisiones de gases de efecto invernadero en todo el mundo, los cambios en la temperatura y la salinidad del Océano Austral se están invirtiendo. La Corriente Circumpolar Antártica se desplaza hacia el Ecuador, contribuyendo así a enfriar el Océano Austral. Los cambios en las corrientes oceánicas impulsadas por el viento están reduciendo la exposición de las plataformas de hielo flotante al derretimiento basal por las aguas cálidas del océano. Sin embargo, la reducción en el transporte de calor oceánico a las cavidades de la plataforma de hielo está llegando demasiado tarde para salvar algunas plataformas de hielo y lenguas de hielo de la Antártida Occidental. Sigan actuando en su estrategia de política global para salvar a la Antártida.",
+                    "Si bien algunas barreras de hielo en la Península Antártica y el Mar de Amundsen parecen haberse perdido para siempre, las tasas de adelgazamiento que se observaron  durante el período 1994-2012 se mantuvieron bastante estables hasta 2048. La inestabilidad de los acantilados de hielo marino se ha acotado a algunos glaciares de salida en el sector del Mar de Amundsen de la Antártida occidental y no ha llegado a la Antártida oriental. Sigue mejorando tu estrategia de política global para salvar a la Antártida.",
+                    "Aunque la acidificación de los océanos continúa, el impacto se estabiliza debido a que los niveles atmosféricos de CO2 están disminuyendo. Se ha registrado una caída en las poblaciones antárticas de algunas especies críticas, pero otras especies se han adaptado, resultando en un cambio menos dramático que el inicialmente pronosticado. Si los eventos climáticos extremos se vuelven menos frecuentes, es probable que las poblaciones de focas y aves marinas puedan adaptarse a las nuevas condiciones ecosistémicas.",
+                    "Gracias a las enérgicas medidas de mitigación de las emisiones de gases de efecto invernadero en todo el mundo, los cambios en la temperatura y la salinidad del Océano Austral se están invirtiendo. La Corriente Circumpolar Antártica se desplaza hacia el Ecuador, contribuyendo así a enfriar el Océano Austral. Los cambios en las corrientes oceánicas impulsadas por el viento están reduciendo la exposición de las plataformas de hielo flotante al derretimiento basal por las aguas cálidas del océano. Sin embargo, la reducción en el transporte de calor oceánico a las cavidades de la plataforma de hielo está llegando demasiado tarde para salvar algunas barreras y lenguas de hielo de la Antártida occidental. Sigue actuando en tu estrategia de política global para salvar a la Antártida.",
                 ]
             }
         },
@@ -1004,7 +1004,7 @@ export class Resources  {
                     "<color=#ff3333>You lost!</color> Your policy platform did not achieve its aim and an unprecedented environmental catastrophe is leading to a collapse of organised society globally. An international armed conflict over the use of Antarctic water and underground resources has sparked in 2069 with large scale human casualties. Forced human migration has spiked in 2048, when low-rise coastal cities needed to be abandoned and half the species on the planet have gone extinct. Carbon footprint is decreasing, but only due to population loss. Underground and low-orbit settlements for wealthy people are under construction, whilst a large majority of the world’s population will not survive the combination of climate wars and extreme climate events."
                 ],
                 esp: [
-                    "<color=#ff3333>¡Perdiste!</color> Su plataforma política no ha alcanzado su objetivo y una catástrofe medioambiental sin precedentes está llevando a un colapso de la sociedad organizada a nivel mundial. Un conflicto armado internacional por el uso del agua de la Antártida y los recursos subterráneos se desencadenó en 2069 con grandes pérdidas humanas. La migración forzada de seres humanos ha aumentado en 2048, cuando las ciudades costeras de baja altura necesitaban ser abandonadas y la mitad de las especies del planeta se han extinguido. La huella de carbono está disminuyendo, pero sólo debido a la pérdida de población. Se están construyendo asentamientos subterráneos y en órbita baja para personas ricas, mientras que una gran mayoría de la población mundial no sobrevivirá a la combinación de guerras climáticas y fenómenos climáticos extremos."
+                    "<color=#ff3333>¡Perdiste!</color> Tu plataforma política no ha alcanzado su objetivo y una catástrofe medioambiental sin precedentes está llevando a un colapso de la sociedad organizada a nivel mundial. Un conflicto armado internacional por el uso del agua y los recursos subterráneos antárticos se desencadenó en 2069 con grandes pérdidas humanas. La migración forzada de seres humanos aumentó  en 2048, cuando las ciudades costeras de baja altura debieron ser abandonadas y la mitad de las especies del planeta se extinguieron. La huella de carbono está disminuyendo, pero sólo debido a la pérdida de población. Se están construyendo asentamientos subterráneos y en órbita baja para personas ricas, mientras que una gran mayoría de la población mundial no sobrevivirá a la combinación de guerras climáticas y fenómenos climáticos extremos."
                 ]
             },
             MID: {
@@ -1013,7 +1013,7 @@ export class Resources  {
                     "<color=#ccccff>You lost!</color> In spite of your efforts, which have curbed climate change and reduced global carbon footprint, your policy platform was not strong enough to avoid environmental catastrophe. Whilst some Antarctic species have adapted to the new habitat conditions, the loss of ice shelves, the change in salinity, temperature and acidity of the Southern Ocean have completely transformed the Antarctic Continent. Mining explorations are taking place in the eastern side of the continent, after a number of states called for a review of the Environmental Protocol to the Antarctic Treaty. Elsewhere in the world, several cities have become inhospitable and climate migrants are causing several political struggles globally. The future of humanity is at risk."
                 ],
                 esp: [
-                    "<color=#ccccff>¡Perdiste!</color> A pesar de sus esfuerzos, que han frenado el cambio climático y reducido la huella de carbono global, su plataforma política no era lo suficientemente fuerte como para evitar una catástrofe medioambiental. Mientras que algunas especies antárticas se han adaptado a las nuevas condiciones del hábitat, la pérdida de las plataformas de hielo, el cambio en la salinidad, la temperatura y la acidez del Océano Austral han transformado completamente el continente antártico. Las exploraciones mineras se están llevando a cabo en la parte oriental del continente, después de que varios estados solicitaran una revisión del Protocolo Ambiental del Tratado Antártico. En otras partes del mundo, varias ciudades se han vuelto inhóspitas y los migrantes climáticos están causando varias luchas políticas a nivel mundial. El futuro de la humanidad está en peligro."
+                    "<color=#ccccff>¡Perdiste!</color> A pesar de tus esfuerzos, que han puesto el freno l cambio climático y reducido la huella de carbono global, tu plataforma política no fue lo suficientemente fuerte como para evitar una catástrofe medioambiental. Si bien algunas especies antárticas se adaptaron a las nuevas condiciones del hábitat, la pérdida de las plataformas de hielo, el cambio en la salinidad, la temperatura y la acidez del Océano Austral han transformado completamente el continente antártico.  Se están llevando a cabo exploraciones mineras en la parte oriental del continente, después de que varios estados solicitaron una revisión del Protocolo Ambiental del Tratado Antártico. En otras partes del mundo, varias ciudades se han vuelto inhóspitas y los migrantes climáticos están causando varias luchas políticas a nivel mundial. El futuro de la humanidad está en peligro."
                 ]
             },
             GOOD: {
@@ -1022,7 +1022,7 @@ export class Resources  {
                     "<color=#99cc66>You won</color>! Your global policy platform has arrested climate change and reverted its negative effects on Antarctica. Most polar species are adapting to the new environmental conditions and your policy efforts have allowed a renegotiation of the Antarctic Treaty, which imposes much stricter limitations on human presence and on the exploitation of resources on the continent. Sea level rise has remained contained within 6mm, whilst less than 10% of Antarctic ice has been lost. Congratulations for avoiding an environmental catastrophe."
                 ],
                 esp: [
-                    "<color=#99cc66>¡Ganaste</color>! Tu plataforma política global ha logrado detener el cambio climático y revertir sus efectos negativos sobre la Antártida. La mayoría de las especies polares se han adaptado a las nuevas condiciones climáticas y tus esfuerzos políticos han permitido la renegociación del Tratado Antártico, el cual impone límites más estrictos a la presencia humana y la explotación de recursos en el continente. El nivel del mar ha permanecido contenido en 6mm y sólo un 10% del hielo Antártico se ha perdido. Felicitaciones por evitar una catástrofe ambiental."
+                    "<color=#99cc66>¡Ganaste</color>! Tu plataforma política global ha logrado detener el cambio climático y revertir los efectos negativos sobre la Antártida. La mayoría de las especies polares se han adaptado a las nuevas condiciones climáticas y tus esfuerzos políticos han permitido la renegociación del Tratado Antártico, el cual impone límites más estrictos a la presencia humana y la explotación de recursos en el continente. El aumento del nivel del mar se ha contenido dentro de los 6mm y se ha perdido sólo un 10% del hielo Antártico . Felicitaciones por evitar una catástrofe ambiental."
                 ]
             }
         }
@@ -1258,31 +1258,31 @@ export class Resources  {
             "popup_2_description": "Haga clic en los iconos azules para reunir recursos!",
             "messages": {
                 "negative": [
-                    "Las temperaturas globales están subiendo, y podrían ser 3,5 grados más altas para el año 2070!",
-                    "Nuevas áreas libres de hielo están apareciendo en el continente antártico!",
-                    "El calentamiento de los océanos meridionales plantea riesgos para los mariscos y otras formas de vida marina.",
-                    "La pesca, el turismo y la navegación comercial se están expandiendo en el Océano Antártico!",
-                    "A nivel global, el aumento del nivel del mar cuesta a las ciudades costeras 1 trillón de dólares cada año.",
-                    "Los barcos ya pueden acceder a nuevas partes del continente antártico....",
-                    "Las aguas más cálidas ven un aumento en las ballenas con barbas!",
+                    "Las temperaturas globales están subiendo, ¡y podrían aumentar por3,5 grados para el año 2070!",
+                    "¡Están apareciendo nuevas áreas libres de hielo en el continente antártico!",
+                    "El calentamiento del Océano Austral  pone en riesgo a toda la  vida marina.",
+                    "La pesca, el turismo y la navegación comercial se expande exponencialmente en el Océano Austral",
+                    " El aumento del nivel del mar le cuesta a las ciudades costeras del planeta 1 billón USD cada año.",
+                    "Ya se puede acceder con  barcos, durante los meses de invierno, a nuevas partes del continente antártico....",
+                    "¡Las aguas más cálidas han llevado al aumento en la cantidad de balénidos!",
                     "Las poblaciones de peces y pingüinos del Océano Austral están disminuyendo....",
-                    "Las especies invasoras - hierbas, insectos, biota - se están asentando permanentemente en la Antártida....",
-                    "Los llamamientos para proteger las especies amenazadas parecen ser ignorados por los signatarios del Tratado Antártico...",
+                    "Las especies invasoras, tales como ciertas hierbas, insectos, y biota, están colonizando nuevos entornos antárticos...",
+                    "Los llamamientos a proteger las especies amenazadas parecen ser ignorados por los signatarios del Tratado Antártico...",
                     "La población humana va camino de superar los 10.000 millones para 2070...",
-                    "Las nuevas tecnologías están permitiendo la minería polar para el petróleo y otros recursos!",
-                    "¡El turismo Antártico alcanza 1 millón de visitantes al año!"
+                    "¡Las nuevas tecnologías están permitiendo la minería polar del petróleo y de otros recursos!",
+                    "¡El turismo antártico alcanza el medio millón de visitantes al año!"
                 ],
                 "positive": [
-                    "¡Finalmente! El entorno físico de la Antártida y el Océano Antártico está volviendo a los niveles del año 2020....",
-                    "¡Hey Jude! Los niveles de ozono en la estratósfera antártica están volviendo a los valores de 1960....",
+                    "¡Por fin! Los frágiles ecosistemas de Antártida y el Océano Austral están volviendo a los niveles del año 2020....",
+                    "¡Qué bien! Los niveles de ozono en la estratosfera sobre Antártida están volviendo a los valores de 1960....",
                     "La acidificación de los océanos ya no aumenta de modo dramático....",
-                    "Las principales plataformas de hielo permanecen intactas.... por ahora.",
-                    "El aumento del nivel del mar está restringido a 6 cm por año!",
-                    "Comienza una política de conservación sistemática....",
-                    "¡Genial! Las especies invasoras no pueden establecerse permanentemente en la Antártida!",
+                    "Las principales barreras de hielo permanecen intactas.... por ahora.",
+                    "¡El aumento del nivel del mar se ha limitado a 6 mm por año!",
+                    "Se vienen implementando nuevas políticas de conservación de gran impacto....",
+                    "¡Genial! ¡Han disminuido las especies invasoras en Antártida!",
                     "Se están tomando medidas decisivas para limitar el impacto del aumento de la participación humana en la Antártida.",
-                    "La acción verdaderamente global sobre los Objetivos de Desarrollo Sostenible ya está en marcha!",
-                    "¡Eureka! Científicos descubren nuevos compuestos en la biota Antártica con aplicaciones médicas e industriales de gran alcance...."
+                    "Continúa la acción a nivel mundial con respecto a los Objetivos de Desarrollo Sostenible.",
+                    "¡Eureka! Las científicas y científicos siguen descubriendo nuevos compuestos en la biota antártica con aplicaciones médicas e industriales de gran alcance...."
                 ]
             }
         
