@@ -73,15 +73,7 @@ export default class Consent extends cc.Component {
 
         if (this.play.interactable) {
 
-            // if (cc.sys.isMobile) {
-
-            //     cc.screen['requestFullScreen'](null, () => {
-            //         cc.log('now fullscreen');
-            //     });
-
-            // }
             cc.director.loadScene("WorldScene");
-            // cc.director.loadScene("OptionsScene");
 
         }
 
@@ -89,7 +81,7 @@ export default class Consent extends cc.Component {
 
     learnMore() {
 
-        cc.sys.openURL("https://antarctic-cities.org/the-game/");
+        cc.sys.openURL(this.res.lang.url_learn_more[cc.sys.localStorage.language]);
 
     }
 

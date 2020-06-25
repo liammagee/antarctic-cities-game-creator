@@ -251,7 +251,7 @@ export default class GameController extends cc.Component {
      * @param {*} prompt 
      * @param {*} callback 
      */
-    showGameOverBox(parent, title, message, prompt1, callback1, prompt2, callback2) {
+    showGameOverBox(parent, message, prompt1, callback1, prompt2, callback2) {
 
         let controller = this.controller;
         let world = this.world;
@@ -263,34 +263,46 @@ export default class GameController extends cc.Component {
         layerGameOver.zIndex = 104;
         layerGameOver.opacity = 255;
         let lblTitle = layerGameOver.getChildByName("messageBoxTitle").getComponent(cc.Label);
-        let lblStatusHeading = layerGameOver.getChildByName("statusHeading").getComponent(cc.Label);
-        let lblContents = layerGameOver.getChildByName("messageBoxContents").getComponent(cc.RichText);
+        let lblStoryHeading = layerGameOver.getChildByName("statusHeading").getComponent(cc.Label);
+        let lblStoryContents = layerGameOver.getChildByName("messageBoxContents").getComponent(cc.RichText);
         let graphHolder = layerGameOver.getChildByName('graphHolder');
-        let statsContent = layerGameOver.getChildByName('statsContent').getComponent(cc.RichText);
+        let lblStatsContent = layerGameOver.getChildByName('statsContent').getComponent(cc.RichText);
         let btn1 = layerGameOver.getChildByName("btn1").getComponent(cc.Button);
 
-        // btn1.node.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = prompt1;
-
         // Title
-        lblTitle.string = title;
+        lblTitle.string = world.res.lang.game_over_heading[cc.sys.localStorage.language];
 
         // Narrative
-        lblStatusHeading.string = `The Story in ${world.gameState.currentDate.getFullYear()}...`;
+        let sh = world.res.lang.game_over_story_heading[cc.sys.localStorage.language];
+        lblStoryHeading.string = `${sh} ${world.gameState.currentDate.getFullYear()}...`;
+        if (world.gameState.totalLoss < 20) {
+
+            let sm = world.res.lang.game_over_hint_loss[cc.sys.localStorage.language];
+            message += `\n\n<color=#99cc66>${sm}</color>`;
+
+        }
+        else {
+
+            let sm = world.res.lang.game_over_hint_win[cc.sys.localStorage.language];
+            message += `\n\n<color=#99cc66>${sm}</color>`;
+
+        }
+        lblStoryContents.string = message;
 
         // Add graph
         this.drawGraph(graphHolder);
         
-        // Add policies
+        // Add key statistics
         let policyIds : Map<string, string> = new Map<string, string>();
         world.res.RESOURCES.economic.policyOptions.map((opt)    => { policyIds[opt.id] = opt.eng.text; });
         world.res.RESOURCES.politics.policyOptions.map((opt)    => { policyIds[opt.id] = opt.eng.text; });
         world.res.RESOURCES.cultural.policyOptions.map((opt)    => { policyIds[opt.id] = opt.eng.text; });
         world.res.RESOURCES.ecology.policyOptions.map((opt)     => { policyIds[opt.id] = opt.eng.text; });
         let policyString = Object.entries(world.gameState.policies).map((entry) => { return `<i>${policyIds[entry[0]]}</i> <b>(${entry[1]})</b>`;  }).join(', ');
-        policyString = policyString.length === 0 ? '(no policies)' : policyString; 
-        policyString = `These were the policies you chose: ${policyString}`;
+        policyString = policyString.length === 0 ? world.res.lang.game_over_no_policies[cc.sys.localStorage.language] : policyString; 
+        policyString = world.res.lang.game_over_policy_list[cc.sys.localStorage.language] + ' ' + policyString;
         let statsString = policyString;
-        statsString += `\n\nThe world experienced ${world.gameState.crisisCount} crises.`;
+        statsString += `\n\n` + world.res.lang.game_over_world_experienced[cc.sys.localStorage.language] + world.gameState.crisisCount + world.res.lang.game_over_crises[cc.sys.localStorage.language];
 
         let y1 = 0, y2 = 0, ml = 0, mp = 0;
         Object.entries(world.gameState.stats).forEach((a) => {
@@ -308,18 +320,7 @@ export default class GameController extends cc.Component {
                 
         })
         statsString += `\n\nEnvironmental loss peaked in ${y1}, while preparedness peaked in ${y2}.`
-        if (world.gameState.totalLoss > 20) {
-
-            message += `\n\n<color=#99cc66>Hint: Try a different mix of resources next time!</color>`;
-
-        }
-        else {
-
-            message += `\n\n<color=#99cc66>You're a great policy maker! Could another set of policies work next time?</color>`;
-
-        }
-        statsContent.string = statsString;
-        lblContents.string = message;
+        lblStatsContent.string = statsString;
 
 
         let btn1Func = (event) => {
@@ -710,7 +711,7 @@ export default class GameController extends cc.Component {
         window.clearTimeout(world.gameState.timeoutID);
         world.gameState.state = world.res.GAME_STATES.PAUSED;
 
-        controller.showGameOverBox(parent, "Game Over", message, prompt, function () {
+        controller.showGameOverBox(parent, message, prompt, function () {
 
             world.initGameState(cc.sys.localStorage.level,
                 cc.sys.localStorage.language,
@@ -1202,26 +1203,18 @@ export default class GameController extends cc.Component {
 
                 if (world.gameState.policies[opt.id] === undefined) {
 
-                    // btnLvl1.spriteFrame = controller.dotOff;
-                    // btnLvl2.spriteFrame = controller.dotOff;
-                    // btnLvl3.spriteFrame = controller.dotOff;
+                    // Do nothing
 
                 }
                 else if (world.gameState.policies[opt.id] === 1) {
 
                     btnLvl1.node.color = controller.colors.COLOR_UMBER;
-                    // btnLvl1.spriteFrame = controller.dotOn;
-                    // btnLvl2.spriteFrame = controller.dotOff;
-                    // btnLvl3.spriteFrame = controller.dotOff;
 
                 }
                 else if (world.gameState.policies[opt.id] === 2) {
 
                     btnLvl1.node.color = controller.colors.COLOR_UMBER;
                     btnLvl2.node.color = controller.colors.COLOR_UMBER;
-                    // btnLvl1.spriteFrame = controller.dotOn;
-                    // btnLvl2.spriteFrame = controller.dotOn;
-                    // btnLvl3.spriteFrame = controller.dotOff;
 
                 }
                 else if (world.gameState.policies[opt.id] === 3) {
@@ -1229,9 +1222,6 @@ export default class GameController extends cc.Component {
                     btnLvl1.node.color = controller.colors.COLOR_UMBER;
                     btnLvl2.node.color = controller.colors.COLOR_UMBER;
                     btnLvl3.node.color = controller.colors.COLOR_UMBER;
-                    // btnLvl1.spriteFrame = controller.dotOn;
-                    // btnLvl2.spriteFrame = controller.dotOn;
-                    // btnLvl3.spriteFrame = controller.dotOn;
 
                 }
 
@@ -1908,19 +1898,6 @@ export default class GameController extends cc.Component {
         controller.buttons.push(btnRes);
 
         btnRes.on(cc.Node.EventType.TOUCH_END, controller.processResourceSelection, this);
-
-        /*
-        if (world.gameState.automateMode) {
-            
-            const r = Math.random();
-            if (r < parseFloat(world.gameState.automateScript.resourcesProb)) {
-
-                fireClickOnTarget(btnRes);
-
-            }
-
-        }
-        */
 
         if (!world.gameState.alertResources) {
 
@@ -2623,8 +2600,6 @@ export default class GameController extends cc.Component {
                     let mv = countryNode.getComponent(cc.Sprite).materials[0];
                     mv.setProperty('u_selected', (country.selected ? 1.0 : 0.0));
                     mv.setProperty('u_percentageLoss', country.loss);
-                    // if (country.iso_a3 == 'AUS')
-                    //     console.log(`AUS: ${country.loss}`)
                     mv.setProperty('u_percentagePrep', country.pop_prepared_percent);
 
                 }

@@ -7,7 +7,7 @@
 export class Resources  {
 
     // Version
-    VERSION_ANTARCTIC_FUTURES = "Build: 1028";
+    VERSION_ANTARCTIC_FUTURES = "Build: 1029";
 
     // LANGUAGES
     LANGUAGES = ['eng', 'esp'];
@@ -79,22 +79,6 @@ export class Resources  {
         resource_ecology_2: "icons/RESOURCE_2",
         resource_ecology_3: "icons/RESOURCE_3",
         resource_ecology_4: "icons/RESOURCE_4",
-        // resource_economy_1: "icons/ICON_RESOURCE_ECONOMY_1",
-        // resource_economy_2: "icons/ICON_RESOURCE_ECONOMY_2",
-        // resource_economy_3: "icons/ICON_RESOURCE_ECONOMY_3",
-        // resource_economy_4: "icons/ICON_RESOURCE_ECONOMY_4",
-        // resource_politics_1: "icons/ICON_RESOURCE_POLITICS_1",
-        // resource_politics_2: "icons/ICON_RESOURCE_POLITICS_2",
-        // resource_politics_3: "icons/ICON_RESOURCE_POLITICS_3",
-        // resource_politics_4: "icons/ICON_RESOURCE_POLITICS_4",
-        // resource_culture_1: "icons/ICON_RESOURCE_CULTURE_1",
-        // resource_culture_2: "icons/ICON_RESOURCE_CULTURE_2",
-        // resource_culture_3: "icons/ICON_RESOURCE_CULTURE_3",
-        // resource_culture_4: "icons/ICON_RESOURCE_CULTURE_4",
-        // resource_ecology_1: "icons/ICON_RESOURCE_ECOLOGY_1",
-        // resource_ecology_2: "icons/ICON_RESOURCE_ECOLOGY_2",
-        // resource_ecology_3: "icons/ICON_RESOURCE_ECOLOGY_3",
-        // resource_ecology_4: "icons/ICON_RESOURCE_ECOLOGY_4",
     };
 
     crisis = {
@@ -794,24 +778,6 @@ export class Resources  {
     };
 
 
-    RESOURCE_MATRIX2 = [
-        [ 0		                                                                ],
-        [ 0 	,0	                                                            ],
-        [ 0     ,0	,0						 ],
-        [ 0	    ,0	,0	,0						],
-        [ 0	    ,0	,0	,0	,0					 ],
-        [ 0 	,0	,0	,0	,0	,0				 	],
-        [ 0    	,0	,0	,0	,0	,0	,0				 ],
-        [ 0 	,0	,0	,0	,0	,0	,0	,0			 	],
-        [ 0 	,0	,0	,0	,0	,0	,0	,0	,0			],
-        [ 0    	,0	,0	,0	,0	,0	,0	,0	,0	,0			],
-        [ 0    	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0		  ],
-        [ 0 	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	  	],
-        [ 0 	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	  	],
-        [ 0 	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	  ],
-        [ 0	    ,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	  ],
-        [ 0 	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0	,0   ]
-    ];
 
     RESOURCE_MATRIX = [
         [0, 0.4, -0.5, 1, 0, -0.5, -0.2, 0, 0.2, 0.2, 0.1, 0, 0.1, 0.1, 0.1, -0.1],
@@ -1049,6 +1015,10 @@ export class Resources  {
             eng: "LEARN MORE",
             esp: "APRENDE MÁS"
         },
+        url_learn_more: {
+            eng: "https://antarctic-cities.org/the-game/",
+            esp: "https://antarctic-cities.org/el-juego/",
+        },
         commands_policy: {
             eng: "POLICY",
             esp: "PÓLITICA"
@@ -1196,7 +1166,56 @@ export class Resources  {
         stats_track: {
             eng: "Track how the world is doing",
             esp: "Siga la pista de cómo le va al mundo"
+        },
+        game_over_heading: {
+            eng: "Game Over",
+            esp: "Game Over"
+        },
+        game_over_story_heading: {
+            eng: "The Story in ",
+            esp: "La historia en "
+        },
+        game_over_hint_loss: {
+            eng: "Hint: Try a different mix of resources next time!",
+            esp: "Pista: ¡Intenta una mezcla diferente de recursos la próxima vez!"
+        },
+        game_over_hint_win: {
+            eng: "You're a great policy maker! Could another set of policies work next time?",
+            esp: "¡Eres un gran hacedor de políticas! ¿Podría funcionar otro conjunto de políticas la próxima vez?"
+        },
+        game_over_no_policies: {
+            eng: "(no policies)",
+            esp: "(no políticas)"
+        },
+        game_over_policy_list: {
+            eng: "These were the policies you chose: ",
+            esp: "Estas fueron las políticas que eligió: "
+        },
+        game_over_world_experienced: {
+            eng: "The world has experienced ",
+            esp: "El mundo ha experimentado "
+        },
+        game_over_crises: {
+            eng: " crises.",
+            esp: " crisis."
+        },
+        game_over_whats_next: {
+            eng: "What's next?",
+            esp: "¿Qué es lo siguiente?",
+        },
+        game_over_ayc: {
+            eng: "Get involved in real-world Antarctic issues. Visit the <color=#ccccff click='handler' param='https://antarctic-cities.org/ayc/'>Antartic Youth Forum</color>.",
+            esp: "Involúcrese en asuntos antárticos del mundo real. Visita el <color=#ccccff click='handler' param='https://antarctic-cities.org/ayc/'>Foro Juvenil Antártico</color>.",
+        },
+        game_over_feedback: {
+            eng: "Send us feedback on <color=#ccccff click='handler' param='https://forms.gle/cYkKsquN3i9q5FfY8'>Antartic Futures</color>.",
+            esp: "Envíenos sus comentarios sobre <color=#ccccff click='handler' param='https://forms.gle/cYkKsquN3i9q5FfY8'>Futuros Atlánticos</color>.",
+        },
+        game_over_play_again: {
+            eng: "or PLAY AGAIN?",
+            esp: "o JUEGA DE NUEVO?",
         }
+        
     };
 
     scenarioData = {
