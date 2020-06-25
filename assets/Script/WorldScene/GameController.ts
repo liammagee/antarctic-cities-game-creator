@@ -357,6 +357,7 @@ export default class GameController extends cc.Component {
 
         controller.quizBox.zIndex = 104;
         cc.tween(controller.quizBox).to(0.5, { position: cc.v2(0, 0) }, { easing: 'backOut'}).start();
+        controller.node.opacity = 32;
         
         controller.quizBox.getChildByName("quizTitle").getComponent(cc.Label).string = title;
         controller.quizBox.getChildByName("quizContents").getComponent(cc.RichText).string = message;
@@ -378,6 +379,7 @@ export default class GameController extends cc.Component {
         let btn1Func = (event) => {
 
             cc.tween(controller.quizBox).to(0.5, { position: cc.v2(0, -750) }, { easing: 'backIn'}).start();
+            cc.tween(controller.node).to(0.5, { opacity: 255 }).start();
 
             controller.world.gameState.modal = false;
             controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).resume();
@@ -398,6 +400,7 @@ export default class GameController extends cc.Component {
         let btn2Func = (event) => {
 
             cc.tween(controller.quizBox).to(0.5, { position: cc.v2(0, -750) }, { easing: 'backIn'}).start();
+            cc.tween(controller.node).to(0.5, { opacity: 255 }).start();
 
             controller.world.gameState.modal = false;
             controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).resume();

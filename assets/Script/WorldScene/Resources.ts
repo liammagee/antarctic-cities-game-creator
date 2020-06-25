@@ -1231,7 +1231,7 @@ export class Resources  {
             "popup_1_title": "Welcome to Antarctic Futures",
             "popup_1_description": "The future of Antarctica and the future of the world are deeply connected. What kind of policy action will halt climate change and save Antarctica from environmental destruction? The aim of the game is to build the right global policy platform to survive until year 2070.",
             "popup_2_title": "OK",
-            "popup_2_description": "Click on the blue icons to collect resources!",
+            "popup_2_description": "Click on the lilac icons to collect resources!",
             "messages": {
                 "negative": [
                     "Global temperatures are rising, and could be 3.5 degrees higher by 2070!",
@@ -1274,7 +1274,7 @@ export class Resources  {
             "popup_1_title": "¡Bienvenido a Futuros Antárcticos!",
             "popup_1_description": "El futuro de la Antártida y el futuro del planeta están profundamente interconectados ¿Qué tipo de políticas pueden detener el cambio climático global y salvar a la Antártida de la destrucción medioambiental? El objetivo del juego es construir la plataforma política global correcta para sobrevivir hasta el año 2070.",
             "popup_2_title": "OK",
-            "popup_2_description": "Haga clic en los iconos azules para reunir recursos!",
+            "popup_2_description": "Haga clic en los iconos lilas para reunir recursos!",
             "messages": {
                 "negative": [
                     "Las temperaturas globales están subiendo, ¡y podrían aumentar por3,5 grados para el año 2070!",
