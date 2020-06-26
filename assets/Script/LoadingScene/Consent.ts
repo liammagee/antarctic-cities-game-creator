@@ -43,11 +43,11 @@ export default class Consent extends cc.Component {
         let lblPlayGame = layout.getChildByName('btnPlayGame').getChildByName('Background').getChildByName('Label').getComponent(cc.Label);
         let lblLearnMore = layout.getChildByName('btnLearnMore').getChildByName('Background').getChildByName('Label').getComponent(cc.Label);
 
-        lblWelcome.string = this.res.lang.welcome[cc.sys.localStorage.language];
-        lblAbout.string = this.res.lang.about_game[cc.sys.localStorage.language];
-        lblAgree.string = this.res.lang.consent[cc.sys.localStorage.language];
-        lblPlayGame.string = this.res.lang.commands_play[cc.sys.localStorage.language];
-        lblLearnMore.string = this.res.lang.commands_learn_more[cc.sys.localStorage.language];
+        lblWelcome.string = this.res.LANG.welcome[cc.sys.localStorage.language];
+        lblAbout.string = this.res.LANG.about_game[cc.sys.localStorage.language];
+        lblAgree.string = this.res.LANG.consent[cc.sys.localStorage.language];
+        lblPlayGame.string = this.res.LANG.commands_play[cc.sys.localStorage.language];
+        lblLearnMore.string = this.res.LANG.commands_learn_more[cc.sys.localStorage.language];
 
         let consented = (cc.sys.localStorage.consent === 'true');
         chbAgree.isChecked = consented;
@@ -81,7 +81,7 @@ export default class Consent extends cc.Component {
 
     learnMore() {
 
-        cc.sys.openURL(this.res.lang.url_learn_more[cc.sys.localStorage.language]);
+        cc.sys.openURL(this.res.LANG.url_learn_more[cc.sys.localStorage.language]);
 
     }
 

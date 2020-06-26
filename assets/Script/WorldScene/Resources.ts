@@ -7,7 +7,7 @@
 export class Resources  {
 
     // Version
-    VERSION_ANTARCTIC_FUTURES : string = "Build: 1029";
+    VERSION_ANTARCTIC_FUTURES : string = "Build: 1030";
 
     // LANGUAGES
     LANGUAGES = ['eng', 'esp'];
@@ -23,13 +23,13 @@ export class Resources  {
     RESOURCE_CHANCE : number = 0.1;
     CRISIS_CHANCE : number = 0.05;
     QUIZ_CHANCE : number = 0.33;
-    TUTORIAL_INTERVAL_MULTIPLIER : number = 6; 
     RESOURCE_INTERVAL_MULTIPLIER : number = 10; 
-    CRISIS_INTERVAL_MULTIPLIER : number = 20; 
     RESOURCE_DURATION : number = 300;
+    CRISIS_INTERVAL_MULTIPLIER : number = 20; 
+    TUTORIAL_INTERVAL_MULTIPLIER : number = 20; 
 
     // Game states
-    GAME_STATES : object = {
+    GAME_STATES = {
         INITIALISED: 0,
         PREPARED: 1,
         STARTED: 2,
@@ -1249,7 +1249,7 @@ export class Resources  {
 
     TUTORIAL_MESSAGES = {
         FIRST_RESOURCE_SHOWN: {
-            eng: "Click on the lilac icons when they appear. It will add resources to your wallet.",
+            eng: "Click on the lilac icons when they appear. They will add resources to your wallet.",
             esp: "Pulsa sobre los íconos lilas cuando aparezcan, para añadir recursos a tu billetera."
         },
         FIRST_RESOURCE_CLICKED: {
@@ -1408,7 +1408,7 @@ export class Resources  {
                 id: 4,
                 quiz: {
                     eng: `Mass loss from the melting <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Western Antarctic Ice Sheet (WAIS)</color> is contributing to global sea level rise and continues to accelerate. Antarctica now makes the largest contribution to the rise in global mean sea level, exceeding the contribution from <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Thermal_expansion'>thermal expansion</color>, the retreat of mountain glaciers and melting of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Greenland_ice_sheet'>Greenland Ice Sheet</color>. What can be done?`,
-                    esp: `El derretimiento de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Capa_de_hielo_de_la_Ant%C3%A1rtida_occidental'> está contribuyendo al aumento del nivel del mar a nivel mundial y continúa acelerándose. El aporte antártico al aumento del nivel medio del mar mundial es actualmente el más importante, superando la contribución de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Dilataci%C3%B3n_t%C3%A9rmica'>dilatación térmica</color>, el retroceso de los glaciares montañosos y el derretimiento de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Capa_de_hielo_de_Groenlandia'>capa de hielo de Groenlandia</color>. ¿Qué se puede hacer?`,
+                    esp: `El derretimiento de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Capa_de_hielo_de_la_Ant%C3%A1rtida_occidental'>capa de hielo de la Antártida occidental (WAIS)</color> está contribuyendo al aumento del nivel del mar a nivel mundial y continúa acelerándose. El aporte antártico al aumento del nivel medio del mar mundial es actualmente el más importante, superando la contribución de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Dilataci%C3%B3n_t%C3%A9rmica'>dilatación térmica</color>, el retroceso de los glaciares montañosos y el derretimiento de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Capa_de_hielo_de_Groenlandia'>capa de hielo de Groenlandia</color>. ¿Qué se puede hacer?`,
                 },
                 wrong_answer: {
                     eng: `Lobby the Antarctic treaty parties to test a geoengineering solution that delays sea level rise by pumping seawater onto the Antarctic continent to be stored as ice, with power supplied by 850,000 1.5-MW wind turbines?`,
@@ -1471,11 +1471,11 @@ export class Resources  {
                     esp: `Se debe aumentar el nivel de concienciación sobre el daño ambiental en la región antártica. ¿Qué se puede hacer?`,
                 },
                 wrong_answer: {
-                    eng: `Hope Antarctica  will take care of itself?`,
+                    eng: `Hope Antarctica will take care of itself?`,
                     esp: `¿Esperar que Antártida se cuide sola?`
                 },
                 right_answer: {
-                    eng: `Lobby the Antarctic Treaty parties and the UN to adopt an <color=#AAAAFF click="handler" param='https://antarctic-cities.org/ayc/'>Antarctic Youth Coalition</color> to the conservation of krill in the Southern Ocean, including a possible <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing?`,
+                    eng: `Get in touch with the <color=#AAAAFF click="handler" param='https://antarctic-cities.org/ayc/'>Antarctic Youth Coalition</color> for advice and ideas about how to promote awareness in your local area?`,
                     esp: `¿Entrar en contacto con la <color=#AAAAFF click="handler" param='https://antarctic-cities.org/ayc/'>Coalición Juvenil Antártica</color> y hablar sobre ideas para concientizar a la población en tu zona?`
                 }
             }

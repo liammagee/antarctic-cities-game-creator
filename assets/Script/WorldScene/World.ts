@@ -570,12 +570,12 @@ export class World {
         world.gameState.modal = false;
         world.gameState.startDate = new Date(Date.now());
         world.gameState.startDate.setDate(1);
-        world.gameState.startDate.setMonth(world.res.scenarioData.start_month);
-        world.gameState.startDate.setFullYear(world.res.scenarioData.start_year);
+        world.gameState.startDate.setMonth(world.res.SCENARIO_DATA.start_month);
+        world.gameState.startDate.setFullYear(world.res.SCENARIO_DATA.start_year);
         world.gameState.targetDate = new Date(Date.now());
         world.gameState.targetDate.setDate(1);
-        world.gameState.targetDate.setMonth(world.res.scenarioData.target_month);
-        world.gameState.targetDate.setFullYear(world.res.scenarioData.target_year);
+        world.gameState.targetDate.setMonth(world.res.SCENARIO_DATA.target_month);
+        world.gameState.targetDate.setFullYear(world.res.SCENARIO_DATA.target_year);
         world.gameState.previousDate = world.gameState.startDate;
         world.gameState.currentDate = world.gameState.startDate;
         world.gameState.counter = 0;
@@ -592,17 +592,17 @@ export class World {
         world.gameState.populationPrepared = 0;
         world.gameState.populationAwarePercent = 0;
         world.gameState.populationPreparedPercent = 0;
-        world.gameState.resources = world.res.scenarioData.starting_resources;
+        world.gameState.resources = world.res.SCENARIO_DATA.starting_resources;
         world.gameState.alertResources = false;
         world.gameState.alertCrisis = false;
         world.gameState.resourcesAdded = false;
-        world.gameState.previousLoss = world.res.scenarioData.threat_details.starting_conditions.starting_loss;
-        world.gameState.rateOfLoss = world.res.scenarioData.threat_details.advanced_stats.loss_increase_speed;
-        world.gameState.minimumLoss = world.res.scenarioData.threat_details.advanced_stats.minimum_loss_increase;
+        world.gameState.previousLoss = world.res.SCENARIO_DATA.threat_details.starting_conditions.starting_loss;
+        world.gameState.rateOfLoss = world.res.SCENARIO_DATA.threat_details.advanced_stats.loss_increase_speed;
+        world.gameState.minimumLoss = world.res.SCENARIO_DATA.threat_details.advanced_stats.minimum_loss_increase;
         world.gameState.totalLoss = 0;
-        world.gameState.scenarioName = world.res.scenarioData[world.gameState.language].name;
-        world.gameState.messagesNegative = world.res.scenarioData[world.gameState.language].messages.negative;
-        world.gameState.messagesPositive = world.res.scenarioData[world.gameState.language].messages.positive;
+        world.gameState.scenarioName = world.res.SCENARIO_DATA[world.gameState.language].name;
+        world.gameState.messagesNegative = world.res.SCENARIO_DATA[world.gameState.language].messages.negative;
+        world.gameState.messagesPositive = world.res.SCENARIO_DATA[world.gameState.language].messages.positive;
         world.gameState.messageOverride = null;
         world.gameState.tutorialMode = false;
         world.gameState.tutorialHints = [];
@@ -770,10 +770,10 @@ export class World {
 
         const neighbours = country.neighbours;
         const sharedBorder = country.shared_border_percentage;
-        const transmissionLand = world.res.scenarioData.threat_details.transmission.transmission_land;
-        const transmissionSea = world.res.scenarioData.threat_details.transmission.transmission_sea;
-        const transmissionAir = world.res.scenarioData.threat_details.transmission.transmission_air;
-        const infectivityMinimumIncrease = world.res.scenarioData.threat_details.advanced_stats.minimum_infectivity_increase;
+        const transmissionLand = world.res.SCENARIO_DATA.threat_details.transmission.transmission_land;
+        const transmissionSea = world.res.SCENARIO_DATA.threat_details.transmission.transmission_sea;
+        const transmissionAir = world.res.SCENARIO_DATA.threat_details.transmission.transmission_air;
+        const infectivityMinimumIncrease = world.res.SCENARIO_DATA.threat_details.advanced_stats.minimum_infectivity_increase;
 
         const likelihoodOfTransmission = country.affected_chance; //infectivityIncreaseSpeed / 100.0;
 
@@ -873,8 +873,8 @@ export class World {
             return;
 
         // Calculate infectivity
-        const infectivityIncreaseSpeed = world.res.scenarioData.threat_details.advanced_stats.infectivity_increase_speed;
-        const infectivityMinimumIncrease = world.res.scenarioData.threat_details.advanced_stats.minimum_infectivity_increase;
+        const infectivityIncreaseSpeed = world.res.SCENARIO_DATA.threat_details.advanced_stats.infectivity_increase_speed;
+        const infectivityMinimumIncrease = world.res.SCENARIO_DATA.threat_details.advanced_stats.minimum_infectivity_increase;
 
         let infectivityRate = infectivityIncreaseSpeed;
 
@@ -1131,8 +1131,8 @@ export class World {
         let popPrepared = country.pop_prepared;
 
         // Calculate severity
-        let severityIncreaseSpeed = world.res.scenarioData.threat_details.advanced_stats.severity_increase_speed;
-        const severityMinimumIncrease = world.res.scenarioData.threat_details.advanced_stats.minimum_severity_increase;
+        let severityIncreaseSpeed = world.res.SCENARIO_DATA.threat_details.advanced_stats.severity_increase_speed;
+        const severityMinimumIncrease = world.res.SCENARIO_DATA.threat_details.advanced_stats.minimum_severity_increase;
         const policyBalance =  world.calculatePolicyBalanceOnPreparedness();
         const policyImpact =  world.calculatePolicyImpactOnPreparedness(country);
         const policyEffect = policyBalance * policyImpact * severityIncreaseSpeed;

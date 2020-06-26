@@ -208,9 +208,9 @@ export default class GameController extends cc.Component {
             btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
             controller.world.gameState.modal = false;
-            callback1();
             controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).resume();
             event.stopPropagation();
+            callback1();
 
         };
         btn1.node.on(cc.Node.EventType.TOUCH_END, btn1Func, btn1);
@@ -223,9 +223,9 @@ export default class GameController extends cc.Component {
             btn2.node.off(cc.Node.EventType.TOUCH_END, btn2Func, btn2);
             //parent.node.resumeAllActions(); 
             controller.world.gameState.modal = false;
-            callback2();
             controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).resume();
             event.stopPropagation();
+            callback2();
 
         };
         if (btn2.interactable)
@@ -905,6 +905,12 @@ export default class GameController extends cc.Component {
             world.gameState.state = currentState;
             cc.tween(designPolicy).by(0.5, { position: cc.v2(-1334, 0) }, { easing: 'backIn'}).start();
             resourceScore.zIndex = 101;
+            if (world.gameState.state == world.res.GAME_STATES.PAUSED_TUTORIAL) {
+
+                world.gameState.state = world.res.GAME_STATES.STARTED;
+                controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).play();
+
+            }
 
         }, btnDesignPolicyQuit);
 
@@ -1578,10 +1584,16 @@ export default class GameController extends cc.Component {
 
             if (world.gameState.tutorialMode) {
 
-                controller.showMessageBox(world, "HINT:", world.res.TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language], "OK!", function () {
+                controller.showMessageBox(world, "HINT:", world.res.TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language], "OK!", () => {
 
                     world.gameState.tutorialHints.push(world.res.TUTORIAL_MESSAGES.FIRST_RESOURCE_CLICKED[cc.sys.localStorage.language]);
-                    world.gameState.state = world.res.GAME_STATES.STARTED;
+                    world.gameState.state = world.res.GAME_STATES.PAUSED_TUTORIAL;
+                    controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).pause();
+                    let btnDesignPolicy = controller.bottomBar.getChildByName("btnDesignPolicy");
+                    cc.tween(btnDesignPolicy).
+                        repeat(10, 
+                            cc.tween().to(0.5, {opacity:0}).to(0.5, {opacity:255})
+                        ).start();
 
                 }, undefined, undefined);
 
@@ -1621,7 +1633,7 @@ export default class GameController extends cc.Component {
 
         event.target.destroy();
 
-        if (!world.gameState.alertCrisis && world.gameState.tutorialMode) {
+        if (world.gameState.crisisCount < 4 && world.gameState.tutorialMode) {
 
             world.gameState.state = world.res.GAME_STATES.PAUSED;
             world.gameState.alertCrisis = true;
@@ -1631,6 +1643,7 @@ export default class GameController extends cc.Component {
                 world.res.LANG.crisis_message[cc.sys.localStorage.language] + crisis[cc.sys.localStorage.language] + "!", "OK!", function () {
 
                     world.gameState.state = world.res.GAME_STATES.STARTED;
+                    controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).play();
 
                 }, undefined, undefined);
 
@@ -1656,6 +1669,12 @@ export default class GameController extends cc.Component {
                 let title = world.res.LANG.crisis_alert[cc.sys.localStorage.language];
 
                 controller.showQuizBox(world, title, quiz, wrong_answer, right_answer);
+
+            }
+            else if (world.gameState.state === world.res.GAME_STATES.PAUSED_TUTORIAL) {
+                
+                world.gameState.state = world.res.GAME_STATES.STARTED;
+                controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).play();
 
             }
 
@@ -1914,6 +1933,7 @@ export default class GameController extends cc.Component {
                     world.gameState.tutorialHints.push(world.res.TUTORIAL_MESSAGES.FIRST_RESOURCE_SHOWN[cc.sys.localStorage.language]);
                     //world.gameState.state = world.res.GAME_STATES.STARTED;
                     world.gameState.state = world.res.GAME_STATES.PAUSED_TUTORIAL;
+                    controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).pause();
 
                 }, undefined, undefined);
 
@@ -1980,8 +2000,12 @@ export default class GameController extends cc.Component {
 
             controller.showMessageBox(world, world.res.LANG.crisis_alert[cc.sys.localStorage.language], message, "OK!", (that) => {
 
-                if (world.gameState.tutorialMode)
+                if (world.gameState.tutorialMode) {
+
                     world.gameState.state = world.res.GAME_STATES.PAUSED_TUTORIAL;
+                    controller.topBar.getChildByName("tweetBackground").getChildByName("nodeMask").getChildByName("lblTweet").getComponent(cc.Animation).pause();
+
+                }
                 else
                     world.gameState.state = world.res.GAME_STATES.STARTED;
 
@@ -2518,7 +2542,7 @@ export default class GameController extends cc.Component {
 
         }
 
-        if (world.gameState.tutorialMode && world.gameState.counter % world.gameState.tutorialInterval == 0) {
+        if (world.gameState.tutorialMode && world.gameState.counter % world.gameState.tutorialInterval === 0) {
 
             controller.addTutorial();
 
