@@ -7,46 +7,29 @@
 export class Resources  {
 
     // Version
-    VERSION_ANTARCTIC_FUTURES = "Build: 1029";
+    VERSION_ANTARCTIC_FUTURES : string = "Build: 1029";
 
     // LANGUAGES
     LANGUAGES = ['eng', 'esp'];
 
     // UI Constants
-    FONT_FACE_TITLE = "ArvoFont";
-    FONT_FACE_BODY = "JosefinSansFont";
-    FONT_FACE_TITLE_SMALL = 20;
-    FONT_FACE_TITLE_MEDIUM = 26;
-    FONT_FACE_TITLE_BIG = 38;
-    FONT_FACE_BODY_SMALL = 20;
-    FONT_FACE_BODY_MEDIUM = 24;
-    FONT_FACE_BODY_BIG = 30;
-    FONT_FACE_BODY_VERY_BIG = 48;
-    FONT_SPACING = 4;
-
-    X_OFFSET = 0;
-    Y_OFFSET = 55;
-    RESOURCE_SIZE_W = 64; 
-    RESOURCE_SIZE_H = 72; 
-    TAG_SPRITE_BATCH_NODE = 1;
-    FULLSCREEN = true;
-
-    // Decay effects
-    DECAY_LOSS: number = 50.0;
-    DECAY_PREPAREDNESS: number = 5.0;
-
+    Y_OFFSET : number = 55;
+    RESOURCE_SIZE_W : number = 64; 
+    RESOURCE_SIZE_H : number = 72; 
 
     // Timing Constants
-    MONTH_INTERVAL = 15;
-    MONTH_INTERVAL_FF = this.MONTH_INTERVAL / 3;
-    RESOURCE_CHANCE = 0.1;
-    CRISIS_CHANCE = 0.05;
-    QUIZ_CHANCE = 0.33;
-    TUTORIAL_INTERVAL_MULTIPLIER = 6; 
-    RESOURCE_INTERVAL_MULTIPLIER = 10; 
-    CRISIS_INTERVAL_MULTIPLIER = 20; 
-    RESOURCE_DURATION = 300;
-    GAME_STATES = {
+    MONTH_INTERVAL : number = 15;
+    MONTH_INTERVAL_FF : number = this.MONTH_INTERVAL / 3;
+    RESOURCE_CHANCE : number = 0.1;
+    CRISIS_CHANCE : number = 0.05;
+    QUIZ_CHANCE : number = 0.33;
+    TUTORIAL_INTERVAL_MULTIPLIER : number = 6; 
+    RESOURCE_INTERVAL_MULTIPLIER : number = 10; 
+    CRISIS_INTERVAL_MULTIPLIER : number = 20; 
+    RESOURCE_DURATION : number = 300;
+
+    // Game states
+    GAME_STATES : object = {
         INITIALISED: 0,
         PREPARED: 1,
         STARTED: 2,
@@ -58,38 +41,392 @@ export class Resources  {
     // DEFAULT LOSS CUTOFFs - Can be modified by narratives below
     LOSS_TOTAL = 80;
     LOSS_PARTIAL = 80;
+    // Decay effects
+    DECAY_LOSS : number = 50.0;
+    DECAY_PREPAREDNESS : number = 5.0;
     // Game play parameters
     SIGMOIDAL_DECAY = true;
 
+    // Game instructions
+    LANG = {
+        welcome: {
+            eng: "Welcome to Antarctic Futures!",
+            esp: "¡Bienvenido a Futuros Antárcticos!"
+        },
+        about_game: {
+            eng: "This game is developed as part of a research project, 'Antarctic Cities and the Global Commons'. As part of our research, we collect your IP address, as well as anonymous data during the game. To learn more, click the 'Learn More' button below.",
+            esp: "Este juego forma parte del proyecto de investigación “Las ciudades antárticas y los bienes comunes globales”. Como parte de nuestra investigación recopilamos tu dirección de IP así como algunos datos anónimos de la sesión de juego."
+        },
+        consent: {
+            eng: "I agree to participate in this research project, and understand my gameplay data will be recorded anonymously.",
+            esp: "Acepto participar en este proyecto de investigación y entiendo que los datos de mi sesión de juego serán recopilados de forma anónima."
+        },
+        commands_play: {
+            eng: "PLAY",
+            esp: "JUEGA"
+        },
+        commands_learn_more: {
+            eng: "LEARN MORE",
+            esp: "APRENDE MÁS"
+        },
+        url_learn_more: {
+            eng: "https://antarctic-cities.org/the-game/",
+            esp: "https://antarctic-cities.org/el-juego/",
+        },
+        commands_policy: {
+            eng: "POLICY",
+            esp: "PÓLITICA"
+        },
+        commands_loss: {
+            eng: "Loss",
+            esp: "Pérdida"
+        },
+        commands_prepared: {
+            eng: "Prepared",
+            esp: "Preparado"
+        },
+        commands_stats: {
+            eng: "STATS",
+            esp: "ESTADÍSTICA"
+        },
+        world_label: {
+            eng: "World",
+            esp: "Mundo"
+        },
+        crisis_prefix: {
+            eng: "A ",
+            esp: "Un "
+        },
+        crisis_suffix: {
+            eng: " is taking place in ",
+            esp: " tiene lugar en "
+        },
+        crisis_explanation: {
+            eng: " Crises are unexpected events due to environmental loss. Click on the crisis icon to slow the loss and increase the preparedness of the country to minimise the risk of further crises.",
+            esp: " Las crisis son eventos inesperados como consecuencia de la degradación ambiental. Haz clic sobre el ícono de crisis para detener el daño ambiental; aumenta el nivel de preparación de los países para minimizar el riesgo de nuevas crisis."
+        },
+        crisis_alert: {
+            eng: "Crisis alert!",
+            esp: "¡Alerta de Crisis!"
+        },
+        bulletin: {
+            eng: "Antarctic Bulletin, year ",
+            esp: "Boletín Antártico, año "
+        },
+        start_tutorial: {
+            eng: "Start Tutorial",
+            esp: "Iniciar Tutorial"
+        },
+        start_tutorial_skip: {
+            eng: "Straight to Game",
+            esp: "Directo al juego"
+        },
+        start_prepare: {
+            eng: "Prepare the world...",
+            esp: "Preparar al mundo..."
+        },
+        start_mission_a: {
+            eng: "In 2019, your global policy mission begins in ",
+            esp: "En el 2019 tu misión política global comienza en "
+        },
+        start_mission_b: {
+            eng: ". You have until 2070 to save the Antarctic continent. Invest in policies that will reduce the effects of climate change, arrest environmental loss and increase the preparedness of each country.",
+            esp: ". Tienes tiempo hasta el año 2070 para salvar el continente Antártico. Invertí en políticas que ayuden a reducir los efectos del cambio climático, evitar la pérdida de medio ambiente y aumentar el nivel de preparación de cada país."
+        },
+        crisis_title: {
+            eng: "Congratulations!",
+            esp: "Felicitaciones!"
+        },
+        crisis_message: {
+            eng: "You have averted the ",
+            esp: "Has evitado el "
+        },
+        policy_platform_title: {
+            eng: "Build a policy platform",
+            esp: "Construir una plataforma de políticas"
+        },
+        policy_platform_hint: {
+            eng: "<<< Select one of these policies to invest in it!",
+            esp: "<<< ¡Seleccione una de estas póliticas para invertir en ella!"
+        },
+        policy_platform_cost: {
+            eng: "Cost: ",
+            esp: "Costo: "
+        },
+        policy_platform_invest: {
+            eng: "Invest in this policy",
+            esp: "Invierta en esta política"
+        },
+        policy_platform_completed: {
+            eng: "Policy completed!",
+            esp: "¡Pólitica completa!"
+        },
+        policy_platform_more_resources: {
+            eng: "You need more resources!",
+            esp: "¡Necesita más recursos!"
+        },
+        stats_world: {
+            eng: "World",
+            esp: "Mundo"
+        },
+        stats_countries: {
+            eng: "Countries",
+            esp: "Países"
+        },
+        stats_trends: {
+            eng: "Trends",
+            esp: "Tendencias"
+        },
+        stats_country: {
+            eng: "Country",
+            esp: "País"
+        },
+        stats_year: {
+            eng: "Year ",
+            esp: "Año "
+        },
+        stats_year_message_a: {
+            eng: "You have ",
+            esp: "Usted tiene "
+        },
+        stats_year_message_b: {
+            eng: " years until the end of the simulation.",
+            esp: " años hasta el final de la simulación."
+        },
+        stats_loss: {
+            eng: "Environmental loss",
+            esp: "Pérdida ambiental"
+        },
+        stats_loss_message_a: {
+            eng: "Since ",
+            esp: "Desde que "
+        },
+        stats_loss_message_b: {
+            eng: ", the global environment has declined by ",
+            esp: ", el medio ambiente mundial se ha deteriorado en "
+        },
+        stats_preparedness: {
+            eng: "Preparedness ",
+            esp: "Preparación "
+        },
+        stats_preparedness_message_a: {
+            eng: "Thanks to your policy platform, ",
+            esp: "Gracias a su plataforma de póliticas, "
+        },
+        stats_preparedness_message_b: {
+            eng: " of the world is now more ready to take action against climate change. ",
+            esp: " del mundo está ahora más preparado para tomar medidas contra el cambio climático. "
+        },
+        stats_track: {
+            eng: "Track how the world is doing",
+            esp: "Siga la pista de cómo le va al mundo"
+        },
+        game_over_heading: {
+            eng: "Game Over",
+            esp: "Fin del juego"
+        },
+        game_over_story_heading: {
+            eng: "The Story in ",
+            esp: "La historia en "
+        },
+        game_over_hint_loss: {
+            eng: "Hint: Try a different mix of resources next time!",
+            esp: "Pista: La próxima vez, prueba una combinación diferente de recursos."
+        },
+        game_over_hint_win: {
+            eng: "You're a great policy maker! Could another set of policies work next time?",
+            esp: "¡Armaste muy bien tus  políticas! ¿Podría funcionar otro conjunto de políticas la próxima vez?"
+        },
+        game_over_no_policies: {
+            eng: "(no policies)",
+            esp: "(sin políticas)"
+        },
+        game_over_policy_list: {
+            eng: "These were the policies you chose: ",
+            esp: "Estas son las políticas que elegiste: "
+        },
+        game_over_world_experienced: {
+            eng: "The world has experienced ",
+            esp: "El mundo ha sufrido "
+        },
+        game_over_crises: {
+            eng: " crises.",
+            esp: " crisis."
+        },
+        game_over_whats_next: {
+            eng: "What's next?",
+            esp: "¿Qué sigue?",
+        },
+        game_over_ayc: {
+            eng: "Get involved in real-world Antarctic issues. Visit the <color=#ccccff click='handler' param='https://antarctic-cities.org/ayc/'>Antartic Youth Forum</color>.",
+            esp: "Involúcrate en los asuntos antárticos del mundo real. Visita el <color=#ccccff click='handler' param='https://antarctic-cities.org/ayc/'>Foro Juvenil Antártico</color>.",
+        },
+        game_over_feedback: {
+            eng: "Send us feedback on <color=#ccccff click='handler' param='https://forms.gle/cYkKsquN3i9q5FfY8'>Antartic Futures</color>.",
+            esp: "Envíanos tus comentarios sobre <color=#ccccff click='handler' param='https://forms.gle/cYkKsquN3i9q5FfY8'>Futuros Atlánticos</color>.",
+        },
+        game_over_play_again: {
+            eng: "or PLAY AGAIN?",
+            esp: "o JUEGA OTRA VEZ?",
+        }
+        
+    };
+
+    SCENARIO_DATA = {
+        "version":"1.0",
+        "eng": { 
+            "name": "Scenario: 'Choosing the future of Antarctica'",
+            "description": "Obtained from Rintoul et al. (2018), 'Choosing the future of Antarctica', Nature, 558, 233-241",
+            "icon": "",
+            "feedback_email": "",
+            "threat_type": "",
+            "threat_type_locked": "",
+            "threat_name": "",
+            "popup_1_title": "Welcome to Antarctic Futures",
+            "popup_1_description": "The future of Antarctica and the future of the world are deeply connected. What kind of policy action will halt climate change and save Antarctica from environmental destruction? The aim of the game is to build the right global policy platform to survive until year 2070.",
+            "popup_2_title": "OK",
+            "popup_2_description": "Click on the lilac icons to collect resources!",
+            "messages": {
+                "negative": [
+                    "Global temperatures are rising, and could be 3.5 degrees higher by 2070!",
+                    "New ice-free areas are appearing on the Antarctic continent!",
+                    "Warming of Southern Ocean pose risks to all marine life.",
+                    "Fishing, tourism and commercial shipping are expanding exponentially in the Southern Ocean!",
+                    "On a planetary scale, sea level rise costs coastal cities $1 trillion USD each year!",
+                    "Ships can now access new parts of the Antarctic continent during winter months...",
+                    "Warmer waters see a rise in baleen whales!",
+                    "Southern Ocean fish and penguin populations are declining...",
+                    "Invasive species, such as grasses and insects - are colonising new environments in Antarctica...",
+                    "Calls to protect endangered species appear to be ignored by Antarctic Treaty signatories...",
+                    "Human population is on track to exceed 10 billion by 2070...",
+                    "New technologies are enabling polar mining for oil and other resources!",
+                    "Antarctica tourism reaches half a million visitors per year!"
+                ],
+                "positive": [
+                    "Finally! The fragile ecosystems of Antarctica and the Southern Ocean are returning to 2020 levels...",
+                    "'Hey Jude'! Ozone levels in the stratosphere over Antarctica are returning to the values of the 1960s...",
+                    "Ocean acidification is no longer increasing dramatically...",
+                    "Major ice shelves remain intact... for now.",
+                    "Sea level rise is restricted to 6mm per annum!",
+                    "Dramatic new conservation policies are being enforced...",
+                    "Great! Invasive species have declined on the Antarctic!",
+                    "Decisive steps are being taken to limit the impact of increased human engagement in Antarctica.",
+                    "Global action on the Sustainable Development Goals continues!",
+                    "Eureka! Scientists discover new compounds from Antarctic biota, with major industrial and medical applications..."
+                ]
+            }
+        
+        },
+        "esp": {
+            "name": "Escenario: 'Choosing the future of Antarctica'",
+            "description": "Obtenido de Rintoul et al. (2018), 'Choosing the future of Antarctica', Nature, 558, 233-241",
+            "icon": "",
+            "feedback_email": "",
+            "threat_type": "",
+            "threat_type_locked": "",
+            "threat_name": "",
+            "popup_1_title": "¡Bienvenido a Futuros Antárcticos!",
+            "popup_1_description": "El futuro de la Antártida y el futuro del planeta están profundamente interconectados ¿Qué tipo de políticas pueden detener el cambio climático global y salvar a la Antártida de la destrucción medioambiental? El objetivo del juego es construir la plataforma política global correcta para sobrevivir hasta el año 2070.",
+            "popup_2_title": "OK",
+            "popup_2_description": "Haga clic en los iconos lilas para reunir recursos!",
+            "messages": {
+                "negative": [
+                    "Las temperaturas globales están subiendo, ¡y podrían aumentar por3,5 grados para el año 2070!",
+                    "¡Están apareciendo nuevas áreas libres de hielo en el continente antártico!",
+                    "El calentamiento del Océano Austral  pone en riesgo a toda la  vida marina.",
+                    "La pesca, el turismo y la navegación comercial se expande exponencialmente en el Océano Austral",
+                    " El aumento del nivel del mar le cuesta a las ciudades costeras del planeta 1 billón USD cada año.",
+                    "Ya se puede acceder con  barcos, durante los meses de invierno, a nuevas partes del continente antártico....",
+                    "¡Las aguas más cálidas han llevado al aumento en la cantidad de balénidos!",
+                    "Las poblaciones de peces y pingüinos del Océano Austral están disminuyendo....",
+                    "Las especies invasoras, tales como ciertas hierbas, insectos, y biota, están colonizando nuevos entornos antárticos...",
+                    "Los llamamientos a proteger las especies amenazadas parecen ser ignorados por los signatarios del Tratado Antártico...",
+                    "La población humana va camino de superar los 10.000 millones para 2070...",
+                    "¡Las nuevas tecnologías están permitiendo la minería polar del petróleo y de otros recursos!",
+                    "¡El turismo antártico alcanza el medio millón de visitantes al año!"
+                ],
+                "positive": [
+                    "¡Por fin! Los frágiles ecosistemas de Antártida y el Océano Austral están volviendo a los niveles del año 2020....",
+                    "¡Qué bien! Los niveles de ozono en la estratosfera sobre Antártida están volviendo a los valores de 1960....",
+                    "La acidificación de los océanos ya no aumenta de modo dramático....",
+                    "Las principales barreras de hielo permanecen intactas.... por ahora.",
+                    "¡El aumento del nivel del mar se ha limitado a 6 mm por año!",
+                    "Se vienen implementando nuevas políticas de conservación de gran impacto....",
+                    "¡Genial! ¡Han disminuido las especies invasoras en Antártida!",
+                    "Se están tomando medidas decisivas para limitar el impacto del aumento de la participación humana en la Antártida.",
+                    "Continúa la acción a nivel mundial con respecto a los Objetivos de Desarrollo Sostenible.",
+                    "¡Eureka! Las científicas y científicos siguen descubriendo nuevos compuestos en la biota antártica con aplicaciones médicas e industriales de gran alcance...."
+                ]
+            }
+        
+        },
+        "start_country": "",
+        "start_country_locked": "",
+        "start_country_percentage_affected": "",
+        "start_country_percentage_dead": "",
+        "start_country_percentage_zombie": "",
+
+        "scenario_score_adjusted": "",
+        "event_restriction": "",
+        "lock_difficulty": "",
+        "gene_selection": "",
+        "allow_cheats": "",
+
+        "start_specified": 1,
+        "start_day": 1,
+        "start_month": 1,
+        "start_year": 2020,
+        "target_month": 1,
+        "target_year": 2070,
+
+        "starting_resources": 8,
+
+        "threat_details" : {
+            "threat_template": "",
+            "starting_conditions": {
+                "starting_loss": 0.1,
+                "starting_infectivity": 1,
+                "starting_severity": 1,
+                "starting_lethality": 10
+            },
+            "transmission": {
+                "transmission_air": 1.0,
+                "transmission_sea": 1.0,
+                "transmission_land": 1.0    		
+            },
+            "environmental_effectivness": {
+                "wealthy_country": 0.0,
+                "poor_country": 1.0,
+                "urban_country": 1.0,
+                "rural_country": 1.0,
+                "hot_country": 0.1,
+                "cold_country": 0.1,
+                "humid_country": 1.0,
+                "arid_country": 1.0
+            },
+            "other_stats": {
+                "cure_requirement": 0.0, 
+                "mutation_likelihood": 0.5
+            },
+            "advanced_stats": {
+                "loss_increase_speed": 0.1, 
+                "minimum_loss_increase": 0.02, 
+                "infectivity_increase_speed": 1.0, 
+                "minimum_infectivity_increase": 0.1, 
+                "severity_increase_speed": 1.1, 
+                "minimum_severity_increase": 1.0, 
+                "lethality_increase_speed": 0.05, 
+                "minimum_lethality_increase_speed": 0.4, 
+                "enable_corpse_transmission": false,
+                "enable_land_transmission": true,
+                "enable_sea_transmission": true,
+                "enable_air_transmission": true,
+                "infected_points_pot": 0 
+            }
+        }
+    };
+
     // RESOURCES
-    res = {
-        resource_economy_1: "icons/RESOURCE_1",
-        resource_economy_2: "icons/RESOURCE_2",
-        resource_economy_3: "icons/RESOURCE_3",
-        resource_economy_4: "icons/RESOURCE_4",
-        resource_politics_1: "icons/RESOURCE_1",
-        resource_politics_2: "icons/RESOURCE_2",
-        resource_politics_3: "icons/RESOURCE_3",
-        resource_politics_4: "icons/RESOURCE_4",
-        resource_culture_1: "icons/RESOURCE_1",
-        resource_culture_2: "icons/RESOURCE_2",
-        resource_culture_3: "icons/RESOURCE_3",
-        resource_culture_4: "icons/RESOURCE_4",
-        resource_ecology_1: "icons/RESOURCE_1",
-        resource_ecology_2: "icons/RESOURCE_2",
-        resource_ecology_3: "icons/RESOURCE_3",
-        resource_ecology_4: "icons/RESOURCE_4",
-    };
-
-    crisis = {
-        crisis_1: "icons/ICON_CRISIS_CRASH",
-        crisis_2: "icons/ICON_CRISIS_DISPLACEMENT",
-        crisis_3: "icons/ICON_CRISIS_PANDEMIC",
-        crisis_4: "icons/ICON_CRISIS_WAR",
-        crisis_5: "icons/ICON_CRISIS_WATER_SHORTAGE",
-        crisis_6: "icons/ICON_CRISIS_WEATHER"
-    };
-
     RESOURCES = {
         economic: {
             eng: {
@@ -777,8 +1114,6 @@ export class Resources  {
         }
     };
 
-
-
     RESOURCE_MATRIX = [
         [0, 0.4, -0.5, 1, 0, -0.5, -0.2, 0, 0.2, 0.2, 0.1, 0, 0.1, 0.1, 0.1, -0.1],
         [0.1, 0, -0.7, 0, 0, -0.3, -0.1, 0.2, 0.1, 0, -0.2, 0, 0.2, 0.2, 0.1, 0],
@@ -796,6 +1131,25 @@ export class Resources  {
         [0.1, 0.2, 0.5, -0.4, 0.1, 0.5, 0, -0.4, 0.1, 0.4, 0.7, 0, 1, 0, 0.5, 0.3],
         [0.2, 0.4, 0.2, 0.2, 0, 0.2, 0.6, 0.1, 0.2, 0, 0.2, 0, 1, 0.8, 0, 0.5],
         [-0.7, -0.2, -0.1, -1, 0.2, -0.1, 0.5, -1, 0, 0.6, 0.3, 0, 0.6, 0.2, -0.1, 0]    ];
+
+    RESOURCE_ICONS = {
+        resource_economy_1: "icons/RESOURCE_1",
+        resource_economy_2: "icons/RESOURCE_2",
+        resource_economy_3: "icons/RESOURCE_3",
+        resource_economy_4: "icons/RESOURCE_4",
+        resource_politics_1: "icons/RESOURCE_1",
+        resource_politics_2: "icons/RESOURCE_2",
+        resource_politics_3: "icons/RESOURCE_3",
+        resource_politics_4: "icons/RESOURCE_4",
+        resource_culture_1: "icons/RESOURCE_1",
+        resource_culture_2: "icons/RESOURCE_2",
+        resource_culture_3: "icons/RESOURCE_3",
+        resource_culture_4: "icons/RESOURCE_4",
+        resource_ecology_1: "icons/RESOURCE_1",
+        resource_ecology_2: "icons/RESOURCE_2",
+        resource_ecology_3: "icons/RESOURCE_3",
+        resource_ecology_4: "icons/RESOURCE_4",
+    };
 
     CRISES = {
         WATER_SHORTAGE: {
@@ -882,6 +1236,15 @@ export class Resources  {
             influence_of_environmental_loss: 0.3,
             influence_of_preparedness: -0.2 
         }
+    };
+
+    CRISIS_ICONS = {
+        crisis_1: "icons/ICON_CRISIS_CRASH",
+        crisis_2: "icons/ICON_CRISIS_DISPLACEMENT",
+        crisis_3: "icons/ICON_CRISIS_PANDEMIC",
+        crisis_4: "icons/ICON_CRISIS_WAR",
+        crisis_5: "icons/ICON_CRISIS_WATER_SHORTAGE",
+        crisis_6: "icons/ICON_CRISIS_WEATHER"
     };
 
     TUTORIAL_MESSAGES = {
@@ -976,7 +1339,7 @@ export class Resources  {
             MID: {
                 loss: 20,
                 eng: [
-                    "<color=#ccccff>You lost!</color> In spite of your efforts, which have curbed climate change and reduced global carbon footprint, your policy platform was not strong enough to avoid environmental catastrophe. Whilst some Antarctic species have adapted to the new habitat conditions, the loss of ice shelves, the change in salinity, temperature and acidity of the Southern Ocean have completely transformed the Antarctic Continent. Mining explorations are taking place in the eastern side of the continent, after a number of states called for a review of the Environmental Protocol to the Antarctic Treaty. Elsewhere in the world, several cities have become inhospitable and climate migrants are causing several political struggles globally. The future of humanity is at risk."
+                    "<color=#ccccff>You lost!</color> In spite of your efforts, which have curbed climate change and reduced global carbon footprint, your policy platform was not strong enough to avoid environmental catastrophe. Whilst some Antarctic species have adapted to the new habitat conditions, the loss of ice shelves, the change in salinity, temperature and acidity of the Southern Ocean have completely transformed the Antarctic Continent. Mining explorations are taking place in the eastern side of the continent, after  a number of states called for a review of the Environmental Protocol to the Antarctic Treaty. Elsewhere in the world, several cities have become inhospitable and climate migrants are causing several political struggles globally. The future of humanity is at risk."
                 ],
                 esp: [
                     "<color=#ccccff>¡Perdiste!</color> A pesar de tus esfuerzos, que han puesto el freno l cambio climático y reducido la huella de carbono global, tu plataforma política no fue lo suficientemente fuerte como para evitar una catástrofe medioambiental. Si bien algunas especies antárticas se adaptaron a las nuevas condiciones del hábitat, la pérdida de las plataformas de hielo, el cambio en la salinidad, la temperatura y la acidez del Océano Austral han transformado completamente el continente antártico.  Se están llevando a cabo exploraciones mineras en la parte oriental del continente, después de que varios estados solicitaron una revisión del Protocolo Ambiental del Tratado Antártico. En otras partes del mundo, varias ciudades se han vuelto inhóspitas y los migrantes climáticos están causando varias luchas políticas a nivel mundial. El futuro de la humanidad está en peligro."
@@ -994,383 +1357,130 @@ export class Resources  {
         }
     }
 
-    lang = {
-        welcome: {
-            eng: "Welcome to Antarctic Futures!",
-            esp: "¡Bienvenido a Futuros Antárcticos!"
-        },
-        about_game: {
-            eng: "This game is developed as part of a research project, 'Antarctic Cities and the Global Commons'. As part of our research, we collect your IP address, as well as anonymous data during the game. To learn more, click the 'Learn More' button below.",
-            esp: "Este juego forma parte del proyecto de investigación “Las ciudades antárticas y los bienes comunes globales”. Como parte de nuestra investigación recopilamos tu dirección de IP así como algunos datos anónimos de la sesión de juego."
-        },
-        consent: {
-            eng: "I agree to participate in this research project, and understand my gameplay data will be recorded anonymously.",
-            esp: "Acepto participar en este proyecto de investigación y entiendo que los datos de mi sesión de juego serán recopilados de forma anónima."
-        },
-        commands_play: {
-            eng: "PLAY",
-            esp: "JUEGA"
-        },
-        commands_learn_more: {
-            eng: "LEARN MORE",
-            esp: "APRENDE MÁS"
-        },
-        url_learn_more: {
-            eng: "https://antarctic-cities.org/the-game/",
-            esp: "https://antarctic-cities.org/el-juego/",
-        },
-        commands_policy: {
-            eng: "POLICY",
-            esp: "PÓLITICA"
-        },
-        commands_loss: {
-            eng: "Loss",
-            esp: "Pérdida"
-        },
-        commands_prepared: {
-            eng: "Prepared",
-            esp: "Preparado"
-        },
-        commands_stats: {
-            eng: "STATS",
-            esp: "ESTADÍSTICA"
-        },
-        world_label: {
-            eng: "World",
-            esp: "Mundo"
-        },
-        crisis_prefix: {
-            eng: "A ",
-            esp: "Un "
-        },
-        crisis_suffix: {
-            eng: " is taking place in ",
-            esp: " tiene lugar en "
-        },
-        crisis_explanation: {
-            eng: " Crises are unexpected events due to environmental loss. Click on the crisis icon to slow the loss and increase the preparedness of the country to minimise the risk of further crises.",
-            esp: " Las crisis son eventos inesperados como consecuencia de la degradación ambiental. Haz clic sobre el ícono de crisis para detener el daño ambiental; aumenta el nivel de preparación de los países para minimizar el riesgo de nuevas crisis."
-        },
-        crisis_alert: {
-            eng: "Crisis alert!",
-            esp: "¡Alerta de Crisis!"
-        },
-        bulletin: {
-            eng: "Antarctic Bulletin, year ",
-            esp: "Boletín Antártico, año "
-        },
-        start_tutorial: {
-            eng: "Start Tutorial",
-            esp: "Iniciar Tutorial"
-        },
-        start_tutorial_skip: {
-            eng: "Straight to Game",
-            esp: "Directo al juego"
-        },
-        start_prepare: {
-            eng: "Prepare the world...",
-            esp: "Preparar al mundo..."
-        },
-        start_mission_a: {
-            eng: "In 2019, your global policy mission begins in ",
-            esp: "En el 2019 tu misión política global comienza en "
-        },
-        start_mission_b: {
-            eng: ". You have until 2070 to save the Antarctic continent. Invest in policies that will reduce the effects of climate change, arrest environmental loss and increase the preparedness of each country.",
-            esp: ". Tienes tiempo hasta el año 2070 para salvar el continente Antártico. Invertí en políticas que ayuden a reducir los efectos del cambio climático, evitar la pérdida de medio ambiente y aumentar el nivel de preparación de cada país."
-        },
-        crisis_title: {
-            eng: "Congratulations!",
-            esp: "Felicitaciones!"
-        },
-        crisis_message: {
-            eng: "You have averted the ",
-            esp: "Has evitado el "
-        },
-        policy_platform_title: {
-            eng: "Build a policy platform",
-            esp: "Construir una plataforma de políticas"
-        },
-        policy_platform_hint: {
-            eng: "<<< Select one of these policies to invest in it!",
-            esp: "<<< ¡Seleccione una de estas póliticas para invertir en ella!"
-        },
-        policy_platform_cost: {
-            eng: "Cost: ",
-            esp: "Costo: "
-        },
-        policy_platform_invest: {
-            eng: "Invest in this policy",
-            esp: "Invierta en esta política"
-        },
-        policy_platform_completed: {
-            eng: "Policy completed!",
-            esp: "¡Pólitica completa!"
-        },
-        policy_platform_more_resources: {
-            eng: "You need more resources!",
-            esp: "¡Necesita más recursos!"
-        },
-        stats_world: {
-            eng: "World",
-            esp: "Mundo"
-        },
-        stats_countries: {
-            eng: "Countries",
-            esp: "Países"
-        },
-        stats_trends: {
-            eng: "Trends",
-            esp: "Tendencias"
-        },
-        stats_country: {
-            eng: "Country",
-            esp: "País"
-        },
-        stats_year: {
-            eng: "Year ",
-            esp: "Año "
-        },
-        stats_year_message_a: {
-            eng: "You have ",
-            esp: "Usted tiene "
-        },
-        stats_year_message_b: {
-            eng: " years until the end of the simulation.",
-            esp: " años hasta el final de la simulación."
-        },
-        stats_loss: {
-            eng: "Environmental loss",
-            esp: "Pérdida ambiental"
-        },
-        stats_loss_message_a: {
-            eng: "Since ",
-            esp: "Desde que "
-        },
-        stats_loss_message_b: {
-            eng: ", the global environment has declined by ",
-            esp: ", el medio ambiente mundial se ha deteriorado en "
-        },
-        stats_preparedness: {
-            eng: "Preparedness ",
-            esp: "Preparación "
-        },
-        stats_preparedness_message_a: {
-            eng: "Thanks to your policy platform, ",
-            esp: "Gracias a su plataforma de póliticas, "
-        },
-        stats_preparedness_message_b: {
-            eng: " of the world is now more ready to take action against climate change. ",
-            esp: " del mundo está ahora más preparado para tomar medidas contra el cambio climático. "
-        },
-        stats_track: {
-            eng: "Track how the world is doing",
-            esp: "Siga la pista de cómo le va al mundo"
-        },
-        game_over_heading: {
-            eng: "Game Over",
-            esp: "Fin del juego"
-        },
-        game_over_story_heading: {
-            eng: "The Story in ",
-            esp: "La historia en "
-        },
-        game_over_hint_loss: {
-            eng: "Hint: Try a different mix of resources next time!",
-            esp: "Pista: La próxima vez, prueba una combinación diferente de recursos."
-        },
-        game_over_hint_win: {
-            eng: "You're a great policy maker! Could another set of policies work next time?",
-            esp: "¡Armaste muy bien tus  políticas! ¿Podría funcionar otro conjunto de políticas la próxima vez?"
-        },
-        game_over_no_policies: {
-            eng: "(no policies)",
-            esp: "(sin políticas)"
-        },
-        game_over_policy_list: {
-            eng: "These were the policies you chose: ",
-            esp: "Estas son las políticas que elegiste: "
-        },
-        game_over_world_experienced: {
-            eng: "The world has experienced ",
-            esp: "El mundo ha sufrido "
-        },
-        game_over_crises: {
-            eng: " crises.",
-            esp: " crisis."
-        },
-        game_over_whats_next: {
-            eng: "What's next?",
-            esp: "¿Qué sigue?",
-        },
-        game_over_ayc: {
-            eng: "Get involved in real-world Antarctic issues. Visit the <color=#ccccff click='handler' param='https://antarctic-cities.org/ayc/'>Antartic Youth Forum</color>.",
-            esp: "Involúcrate en los asuntos antárticos del mundo real. Visita el <color=#ccccff click='handler' param='https://antarctic-cities.org/ayc/'>Foro Juvenil Antártico</color>.",
-        },
-        game_over_feedback: {
-            eng: "Send us feedback on <color=#ccccff click='handler' param='https://forms.gle/cYkKsquN3i9q5FfY8'>Antartic Futures</color>.",
-            esp: "Envíanos tus comentarios sobre <color=#ccccff click='handler' param='https://forms.gle/cYkKsquN3i9q5FfY8'>Futuros Atlánticos</color>.",
-        },
-        game_over_play_again: {
-            eng: "or PLAY AGAIN?",
-            esp: "o JUEGA OTRA VEZ?",
-        }
-        
-    };
-
-    scenarioData = {
-        "version":"1.0",
-        "eng": { 
-            "name": "Scenario: 'Choosing the future of Antarctica'",
-            "description": "Obtained from Rintoul et al. (2018), 'Choosing the future of Antarctica', Nature, 558, 233-241",
-            "icon": "",
-            "feedback_email": "",
-            "threat_type": "",
-            "threat_type_locked": "",
-            "threat_name": "",
-            "popup_1_title": "Welcome to Antarctic Futures",
-            "popup_1_description": "The future of Antarctica and the future of the world are deeply connected. What kind of policy action will halt climate change and save Antarctica from environmental destruction? The aim of the game is to build the right global policy platform to survive until year 2070.",
-            "popup_2_title": "OK",
-            "popup_2_description": "Click on the lilac icons to collect resources!",
-            "messages": {
-                "negative": [
-                    "Global temperatures are rising, and could be 3.5 degrees higher by 2070!",
-                    "New ice-free areas are appearing on the Antarctic continent!",
-                    "Warming of Southern Ocean pose risks to all marine life.",
-                    "Fishing, tourism and commercial shipping are expanding exponentially in the Southern Ocean!",
-                    "On a planetary scale, sea level rise costs coastal cities $1 trillion USD each year!",
-                    "Ships can now access new parts of the Antarctic continent during winter months...",
-                    "Warmer waters see a rise in baleen whales!",
-                    "Southern Ocean fish and penguin populations are declining...",
-                    "Invasive species, such as grasses and insects - are colonising new environments in Antarctica...",
-                    "Calls to protect endangered species appear to be ignored by Antarctic Treaty signatories...",
-                    "Human population is on track to exceed 10 billion by 2070...",
-                    "New technologies are enabling polar mining for oil and other resources!",
-                    "Antarctica tourism reaches half a million visitors per year!"
-                ],
-                "positive": [
-                    "Finally! The fragile ecosystems of Antarctica and the Southern Ocean are returning to 2020 levels...",
-                    "'Hey Jude'! Ozone levels in the stratosphere over Antarctica are returning to the values of the 1960s...",
-                    "Ocean acidification is no longer increasing dramatically...",
-                    "Major ice shelves remain intact... for now.",
-                    "Sea level rise is restricted to 6mm per annum!",
-                    "Dramatic new conservation policies are being enforced...",
-                    "Great! Invasive species have declined on the Antarctic!",
-                    "Decisive steps are being taken to limit the impact of increased human engagement in Antarctica.",
-                    "Global action on the Sustainable Development Goals continues!",
-                    "Eureka! Scientists discover new compounds from Antarctic biota, with major industrial and medical applications..."
-                ]
+    QUIZZES =
+        [
+            {
+                id: 1,
+                quiz: {
+                    eng: `As access to the Antarctic coast has become easier, thanks to rising temperatures and ice melt, <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Krill'>Antarctic krill</color> is being fished to produce protein-rich animal feed. This is causing a decline in many other marine species around the continent. What can be done?`,
+                    esp: `A medida que el aumento de las temperaturas y el derretimiento del hielo han facilitado el acceso a la costa antártica, se está pescando <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Euphausiacea'>krill antártico</color> para producir alimentación animal rica en proteínas. Esto está llevando a la disminución en muchas otras especies marinas en todo el continente. ¿Qué se puede hacer?`,
+                },
+                wrong_answer: {
+                    eng: `Establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Marine_protected_area'>marine protected area</color>?`,
+                    esp: `¿Establecer un <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/%C3%81rea_marina_protegida'>área marina protegida</color>?`
+                },
+                right_answer: {
+                    eng: `Lobby the parties to the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty</color> secure Antarctica as a natural reserve and establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing in the Southern Ocean?`,
+                    esp: `¿Ejercer presión sobre las partes del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> para asegurar la Antártida como reserva natural y establecer una <color=#AAAAFF click="handler" param='https://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-una-moratoria-a-la-pesca-de-arrastre.html'>moratoria</color> sobre la pesca en el Océano Austral?`
+              }
+            },
+            {
+                id: 2,
+                quiz: {
+                    eng: `Because of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Retreat_of_glaciers_since_1850#Antarctica'>retreat of glaciers</color> on the Antarctic peninsula, two <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Invasive_species'>invasive species</color> have been found to be spreading without control, threatening the local ecosystem. What can be done?`,
+                    esp: `Se ha descubierto que dos <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Especie_invasora'>especies invasoras</color> se extienden sin control y amenazan el ecosistema local, debido al <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Retroceso_de_los_glaciares_desde_1850#Ant%C3%A1rtida'>retroceso de los glaciares</color> en la península antártica. ¿Qué se puede hacer?`,
+                },
+                wrong_answer: {
+                    eng: `Start a social media campaign to support research on non-native invaders by the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty’s</color> Committee for Environmental Protection?`,
+                    esp: `¿Iniciar una campaña en los medios de comunicación social para apoyar la investigación sobre invasores exóticos por parte del <color=#AAAAFF click="handler" param='https://www.ats.aq/s/committee.html'>Comité para la Protección del Medio Ambiente del Tratado Antártico</color>?`
+                },
+                right_answer: {
+                    eng: `Adopt a systematic, <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/DNA_barcoding'>DNA barcoding</color> and web-based surveillance system, which will enable rapid identification of other ‘unusual’ species in order to curb their spread on the peninsula?`,
+                    esp: `¿Adoptar un sistema de vigilancia sistemático, basado en <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/C%C3%B3digo_de_barras_de_la_vida'>códigos de barras de la vida</color> y en la web, que permita la rápida identificación de otras especies ‘inusuales‘ para frenar su propagación en la península?`
+                }
+            },
+            {
+                id: 3,
+                quiz: {
+                    eng: `Because of a global shortage in key minerals, a few nations have started investigating resource potential and extraction technologies in Antarctica, thinly veiled under the guise of scientific exploration. Environmental experts are worried that secret mines will appear on the continent, endangering the ecosystem. What can be done?`,
+                    esp: `Debido a la escasez mundial de minerales clave, algunas naciones han comenzado a investigar el potencial de los recursos y las tecnologías de extracción en la Antártida, apenas velado bajo el pretexto de la exploración científica. A los expertos en medio ambiente les preocupa que aparezcan minas secretas en el continente, poniendo en peligro el ecosistema. ¿Qué se puede hacer?`,
+                },
+                wrong_answer: {
+                    eng: `Call upon the Antarctic Treaty parties to rescind Article 7 of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty'>Protocol on Environmental Protection to the Antarctic Treaty</color>?`,
+                    esp: `¿Llamar a las partes del Tratado Antártico a rescindir el artículo 7 del Protocolo de <color=#AAAAFF click="handler" param='https://www.ats.aq/s/protocol.html'>Protección Ambiental del Tratado Antártico</color>?`
+                },
+                right_answer: {
+                    eng: `Call upon the Antarctic Treaty parties to reinforce Article 7 of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty'>Protocol on Environmental Protection to the Antarctic Treaty</color>?`,
+                    esp: `¿Llamar a las partes del Tratado Antártico a reforzar el artículo 7 del Protocolo de <color=#AAAAFF click="handler" param='https://www.ats.aq/s/protocol.html'>Protección Ambiental del Tratado Antártico</color>?`
+                }
+            },
+            {
+                id: 4,
+                quiz: {
+                    eng: `Mass loss from the melting <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Western Antarctic Ice Sheet (WAIS)</color> is contributing to global sea level rise and continues to accelerate. Antarctica now makes the largest contribution to the rise in global mean sea level, exceeding the contribution from <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Thermal_expansion'>thermal expansion</color>, the retreat of mountain glaciers and melting of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Greenland_ice_sheet'>Greenland Ice Sheet</color>. What can be done?`,
+                    esp: `El derretimiento de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Capa_de_hielo_de_la_Ant%C3%A1rtida_occidental'> está contribuyendo al aumento del nivel del mar a nivel mundial y continúa acelerándose. El aporte antártico al aumento del nivel medio del mar mundial es actualmente el más importante, superando la contribución de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Dilataci%C3%B3n_t%C3%A9rmica'>dilatación térmica</color>, el retroceso de los glaciares montañosos y el derretimiento de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Capa_de_hielo_de_Groenlandia'>capa de hielo de Groenlandia</color>. ¿Qué se puede hacer?`,
+                },
+                wrong_answer: {
+                    eng: `Lobby the Antarctic treaty parties to test a geoengineering solution that delays sea level rise by pumping seawater onto the Antarctic continent to be stored as ice, with power supplied by 850,000 1.5-MW wind turbines?`,
+                    esp: `¿Presionar a las partes del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> para probar una solución de geoingeniería que retrase la subida del nivel del mar bombeando agua de mar al continente antártico para almacenarla como hielo, con la energía suministrada por 850 000 turbinas eólicas de 1,5 MW?`
+                },
+                right_answer: {
+                    eng: `Lobby the UN to adopt a stricter temperature increase target and a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on new <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Fossil_fuel'>fossil fuel</color> explorations?`,
+                    esp: `¿Presionar a la ONU para que adopte un objetivo más estricto para limitar el aumento de la temperatura y una <color=#AAAAFF click="handler" param='https://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-unahttps://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-una-moratoria-a-la-pesca-de-arrastre.html '>moratoria</color> de las nuevas exploraciones de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Combustible_f%C3%B3sil'>combustibles fósiles</color>?`
+                }
+            },
+            {
+                id: 5,
+                quiz: {
+                    eng: `With the increase of tourism to Antarctica, and the construction of eco-hotels in the Antarctic Peninsula, alien plants have spread, threatening the local ecosystem. What can be done?`,
+                    esp: `Con el aumento del turismo hacia la Antártida y la construcción de hoteles <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Combustible_f%C3%B3sil'>ecológicos</color> en la Península Antártica, las plantas exóticas se han extendido, amenazando el ecosistema local. ¿Qué se puede hacer?`,
+                },
+                wrong_answer: {
+                    eng: `Start a social media campaign to ban tourism and non-scientific presence in Antarctica?`,
+                    esp: `¿Empezar una campaña en los medios sociales para prohibir el turismo y la presencia no científica en la Antártida?`
+                },
+                right_answer: {
+                    eng: `Call upon the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty</color> to include a limit on human presence in the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty'>Protocol on Environmental Protection</color>, and enact a systematic surveillance system for alien species?`,
+                    esp: `¿Exhortar al <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> a que incluya un límite a la presencia humana en el <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Protocolo_al_Tratado_Ant%C3%A1rtico_sobre_Protecci%C3%B3n_del_Medio_Ambiente'>Protocolo de Protección Ambiental</color>, y a que promulgue un sistema de vigilancia sistemática de las especies exóticas?`
+                }
+            },
+            {
+                id: 6,
+                quiz: {
+                    eng: `Changes in food availability is endangering the survival of several penguin species, which have to compete with large-scale <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Krill'>krill</color> fishing in the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Peninsula'>Antarctic Peninsula</color>. What can be done?`,
+                    esp: `Los cambios en la disponibilidad de alimentos están poniendo en peligro la supervivencia de varias especies de pingüinos, que tienen que competir con la pesca de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Euphausiacea'>krill</color> a gran escala en <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Pen%C3%ADnsula_Ant%C3%A1rtica'>la Península Antártica</color>. ¿Qué se puede hacer?`,
+                },
+                wrong_answer: {
+                    eng: `Establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Marine_protected_area'>marine protected area</color>?`,
+                    esp: `¿Establecer un <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/%C3%81rea_marina_protegida'>área marina protegida</color>?`
+                },
+                right_answer: {
+                    eng: `Lobby the parties to the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty</color> to secure Antarctica as a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Nature_reserve'>natural reserve</color> and establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing in the Southern Ocean?`,
+                    esp: `¿Presionar a las partes del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> para asegurar la Antártida como <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Reserva_natural'>reserva natural</color> y establecer una <color=#AAAAFF click="handler" param='https://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-una-moratoria-a-la-pesca-de-arrastre.html'>moratoria</color> de la pesca en el Océano Austral?`
+                }
+            },
+            {
+                id: 7,
+                quiz: {
+                    eng: `Owing to tremendous pressure for food to support the ever-growing world population, <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Bioprospecting'>bioprospecting</color> experiments have identified the possibility to harvest several <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Krill'>krill</color> species in the Southern Ocean. Scientists  fear that high levels of fishing will cause irreparable damage to the whole Antarctic ecosystem, whilst several nations are fighting for the apportionment of the krill population. What can be done?`,
+                    esp: `Debido a la tremenda presión para obtener alimentos para sostener la creciente población mundial, los experimentos de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Bioprospecci%C3%B3n'>bioprospección</color> han identificado la posibilidad de cosechar varias especies de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Euphausiacea'>kril</color> en el Océano Austral. Los científicos temen que los altos niveles de pesca causen un daño irreparable a todo el ecosistema antártico, mientras que varias naciones luchan por el reparto de la población de krill. ¿Qué se puede hacer?`,
+                },
+                wrong_answer: {
+                    eng: `Establish <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Marine_protected_area'>marine protected areas</color> within the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty'>Protocol on Environmental Protection of the Antarctic Treaty</color>, and apportion the remainder of the Southern Ocean area to countries that most need food supplies?`,
+                    esp: `¿Establecer <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/%C3%81rea_marina_protegida'>áreas marinas protegidas</color> dentro del <color=#AAAAFF click="handler" param='https://www.ats.aq/s/protocol.html'>Protocolo al Tratado Antártico sobre Protección del Medio Ambiente</color>, y repartir el resto de la superficie del Océano Austral entre los países que más necesitan los suministros alimentarios?`
+                },
+                right_answer: {
+                    eng: `Lobby the Antarctic Treaty parties and the UN to adopt an <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Ecosystem-based_management'>ecosystem-based approach</color> to the conservation of krill in the Southern Ocean, including a possible <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing?`,
+                    esp: `¿Presionar a las partes del Tratado Antártico y a las Naciones Unidas para que adopten un enfoque basado en el <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Ecosistema'>ecosistema</color> para la conservación del krill en el Océano Austral, incluyendo una posible <color=#AAAAFF click="handler" param='https://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-una-moratoria-a-la-pesca-de-arrastre.html'>moratoria</color> de la pesca?`
+                }
+            },
+            {
+                id: 8,
+                quiz: {
+                    eng: `It’s time to spread awareness about environmental damage to the Antarctic region. What can be done?`,
+                    esp: `Se debe aumentar el nivel de concienciación sobre el daño ambiental en la región antártica. ¿Qué se puede hacer?`,
+                },
+                wrong_answer: {
+                    eng: `Hope Antarctica  will take care of itself?`,
+                    esp: `¿Esperar que Antártida se cuide sola?`
+                },
+                right_answer: {
+                    eng: `Lobby the Antarctic Treaty parties and the UN to adopt an <color=#AAAAFF click="handler" param='https://antarctic-cities.org/ayc/'>Antarctic Youth Coalition</color> to the conservation of krill in the Southern Ocean, including a possible <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing?`,
+                    esp: `¿Entrar en contacto con la <color=#AAAAFF click="handler" param='https://antarctic-cities.org/ayc/'>Coalición Juvenil Antártica</color> y hablar sobre ideas para concientizar a la población en tu zona?`
+                }
             }
-        
-        },
-        "esp": {
-            "name": "Escenario: 'Choosing the future of Antarctica'",
-            "description": "Obtenido de Rintoul et al. (2018), 'Choosing the future of Antarctica', Nature, 558, 233-241",
-            "icon": "",
-            "feedback_email": "",
-            "threat_type": "",
-            "threat_type_locked": "",
-            "threat_name": "",
-            "popup_1_title": "¡Bienvenido a Futuros Antárcticos!",
-            "popup_1_description": "El futuro de la Antártida y el futuro del planeta están profundamente interconectados ¿Qué tipo de políticas pueden detener el cambio climático global y salvar a la Antártida de la destrucción medioambiental? El objetivo del juego es construir la plataforma política global correcta para sobrevivir hasta el año 2070.",
-            "popup_2_title": "OK",
-            "popup_2_description": "Haga clic en los iconos lilas para reunir recursos!",
-            "messages": {
-                "negative": [
-                    "Las temperaturas globales están subiendo, ¡y podrían aumentar por3,5 grados para el año 2070!",
-                    "¡Están apareciendo nuevas áreas libres de hielo en el continente antártico!",
-                    "El calentamiento del Océano Austral  pone en riesgo a toda la  vida marina.",
-                    "La pesca, el turismo y la navegación comercial se expande exponencialmente en el Océano Austral",
-                    " El aumento del nivel del mar le cuesta a las ciudades costeras del planeta 1 billón USD cada año.",
-                    "Ya se puede acceder con  barcos, durante los meses de invierno, a nuevas partes del continente antártico....",
-                    "¡Las aguas más cálidas han llevado al aumento en la cantidad de balénidos!",
-                    "Las poblaciones de peces y pingüinos del Océano Austral están disminuyendo....",
-                    "Las especies invasoras, tales como ciertas hierbas, insectos, y biota, están colonizando nuevos entornos antárticos...",
-                    "Los llamamientos a proteger las especies amenazadas parecen ser ignorados por los signatarios del Tratado Antártico...",
-                    "La población humana va camino de superar los 10.000 millones para 2070...",
-                    "¡Las nuevas tecnologías están permitiendo la minería polar del petróleo y de otros recursos!",
-                    "¡El turismo antártico alcanza el medio millón de visitantes al año!"
-                ],
-                "positive": [
-                    "¡Por fin! Los frágiles ecosistemas de Antártida y el Océano Austral están volviendo a los niveles del año 2020....",
-                    "¡Qué bien! Los niveles de ozono en la estratosfera sobre Antártida están volviendo a los valores de 1960....",
-                    "La acidificación de los océanos ya no aumenta de modo dramático....",
-                    "Las principales barreras de hielo permanecen intactas.... por ahora.",
-                    "¡El aumento del nivel del mar se ha limitado a 6 mm por año!",
-                    "Se vienen implementando nuevas políticas de conservación de gran impacto....",
-                    "¡Genial! ¡Han disminuido las especies invasoras en Antártida!",
-                    "Se están tomando medidas decisivas para limitar el impacto del aumento de la participación humana en la Antártida.",
-                    "Continúa la acción a nivel mundial con respecto a los Objetivos de Desarrollo Sostenible.",
-                    "¡Eureka! Las científicas y científicos siguen descubriendo nuevos compuestos en la biota antártica con aplicaciones médicas e industriales de gran alcance...."
-                ]
-            }
-        
-        },
-        "start_country": "",
-        "start_country_locked": "",
-        "start_country_percentage_affected": "",
-        "start_country_percentage_dead": "",
-        "start_country_percentage_zombie": "",
 
-        "scenario_score_adjusted": "",
-        "event_restriction": "",
-        "lock_difficulty": "",
-        "gene_selection": "",
-        "allow_cheats": "",
-
-        "start_specified": 1,
-        "start_day": 1,
-        "start_month": 1,
-        "start_year": 2020,
-        "target_month": 1,
-        "target_year": 2070,
-
-        "starting_resources": 8,
-
-        "threat_details" : {
-            "threat_template": "",
-            "starting_conditions": {
-                "starting_loss": 0.1,
-                "starting_infectivity": 1,
-                "starting_severity": 1,
-                "starting_lethality": 10
-            },
-            "transmission": {
-                "transmission_air": 1.0,
-                "transmission_sea": 1.0,
-                "transmission_land": 1.0    		
-            },
-            "environmental_effectivness": {
-                "wealthy_country": 0.0,
-                "poor_country": 1.0,
-                "urban_country": 1.0,
-                "rural_country": 1.0,
-                "hot_country": 0.1,
-                "cold_country": 0.1,
-                "humid_country": 1.0,
-                "arid_country": 1.0
-            },
-            "other_stats": {
-                "cure_requirement": 0.0, 
-                "mutation_likelihood": 0.5
-            },
-            "advanced_stats": {
-                "loss_increase_speed": 0.1, 
-                "minimum_loss_increase": 0.02, 
-                "infectivity_increase_speed": 1.0, 
-                "minimum_infectivity_increase": 0.1, 
-                "severity_increase_speed": 1.1, 
-                "minimum_severity_increase": 1.0, 
-                "lethality_increase_speed": 0.05, 
-                "minimum_lethality_increase_speed": 0.4, 
-                "enable_corpse_transmission": false,
-                "enable_land_transmission": true,
-                "enable_sea_transmission": true,
-                "enable_air_transmission": true,
-                "infected_points_pot": 0 
-            }
-        }
-    };
+        ];
 
 
     automateScripts = [
@@ -1539,131 +1649,7 @@ export class Resources  {
         }
 
     ];
-
-
-    quizzes =
-        [
-            {
-                id: 1,
-                quiz: {
-                    eng: `As access to the Antarctic coast has become easier, thanks to rising temperatures and ice melt, <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Krill'>Antarctic krill</color> is being fished to produce protein-rich animal feed. This is causing a decline in many other marine species around the continent. What can be done?`,
-                    esp: `A medida que el aumento de las temperaturas y el derretimiento del hielo han facilitado el acceso a la costa antártica, se está pescando <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Euphausiacea'>krill antártico</color> para producir alimentación animal rica en proteínas. Esto está llevando a la disminución en muchas otras especies marinas en todo el continente. ¿Qué se puede hacer?`,
-                },
-                wrong_answer: {
-                    eng: `Establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Marine_protected_area'>marine protected area</color>?`,
-                    esp: `¿Establecer un <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/%C3%81rea_marina_protegida'>área marina protegida</color>?`
-                },
-                right_answer: {
-                    eng: `Lobby the parties to the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty</color> secure Antarctica as a natural reserve and establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing in the Southern Ocean?`,
-                    esp: `¿Ejercer presión sobre las partes del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> para asegurar la Antártida como reserva natural y establecer una <color=#AAAAFF click="handler" param='https://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-una-moratoria-a-la-pesca-de-arrastre.html'>moratoria</color> sobre la pesca en el Océano Austral?`
-              }
-            },
-            {
-                id: 2,
-                quiz: {
-                    eng: `Because of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Retreat_of_glaciers_since_1850#Antarctica'>retreat of glaciers</color> on the Antarctic peninsula, two <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Invasive_species'>invasive species</color> have been found to be spreading without control, threatening the local ecosystem. What can be done?`,
-                    esp: `Se ha descubierto que dos <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Especie_invasora'>especies invasoras</color> se extienden sin control y amenazan el ecosistema local, debido al <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Retroceso_de_los_glaciares_desde_1850#Ant%C3%A1rtida'>retroceso de los glaciares</color> en la península antártica. ¿Qué se puede hacer?`,
-                },
-                wrong_answer: {
-                    eng: `Start a social media campaign to support research on non-native invaders by the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty’s</color> Committee for Environmental Protection?`,
-                    esp: `¿Iniciar una campaña en los medios de comunicación social para apoyar la investigación sobre invasores exóticos por parte del <color=#AAAAFF click="handler" param='https://www.ats.aq/s/committee.html'>Comité para la Protección del Medio Ambiente del Tratado Antártico</color>?`
-                },
-                right_answer: {
-                    eng: `Adopt a systematic, <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/DNA_barcoding'>DNA barcoding</color> and web-based surveillance system, which will enable rapid identification of other ‘unusual’ species in order to curb their spread on the peninsula?`,
-                    esp: `¿Adoptar un sistema de vigilancia sistemático, basado en <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/C%C3%B3digo_de_barras_de_la_vida'>códigos de barras de la vida</color> y en la web, que permita la rápida identificación de otras especies ‘inusuales‘ para frenar su propagación en la península?`
-                }
-            },
-            {
-                id: 3,
-                quiz: {
-                    eng: `Because of a global shortage in key minerals, a few nations have started investigating resource potential and extraction technologies in Antarctica, thinly veiled under the guise of scientific exploration. Environmental experts are worried that secret mines will appear on the continent, endangering the ecosystem. What can be done?`,
-                    esp: `Debido a la escasez mundial de minerales clave, algunas naciones han comenzado a investigar el potencial de los recursos y las tecnologías de extracción en la Antártida, apenas velado bajo el pretexto de la exploración científica. A los expertos en medio ambiente les preocupa que aparezcan minas secretas en el continente, poniendo en peligro el ecosistema. ¿Qué se puede hacer?`,
-                },
-                wrong_answer: {
-                    eng: `Call upon the Antarctic Treaty parties to rescind Article 7 of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty'>Protocol on Environmental Protection to the Antarctic Treaty</color>?`,
-                    esp: `¿Llamar a las partes del Tratado Antártico a rescindir el artículo 7 del Protocolo de <color=#AAAAFF click="handler" param='https://www.ats.aq/s/protocol.html'>Protección Ambiental del Tratado Antártico</color>?`
-                },
-                right_answer: {
-                    eng: `Call upon the Antarctic Treaty parties to reinforce Article 7 of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty'>Protocol on Environmental Protection to the Antarctic Treaty</color>?`,
-                    esp: `¿Llamar a las partes del Tratado Antártico a reforzar el artículo 7 del Protocolo de <color=#AAAAFF click="handler" param='https://www.ats.aq/s/protocol.html'>Protección Ambiental del Tratado Antártico</color>?`
-                }
-            },
-            {
-                id: 4,
-                quiz: {
-                    eng: `Mass loss from the melting <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Western Antarctic Ice Sheet (WAIS)</color> is contributing to global sea level rise and continues to accelerate. Antarctica now makes the largest contribution to the rise in global mean sea level, exceeding the contribution from <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Thermal_expansion'>thermal expansion</color>, the retreat of mountain glaciers and melting of the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Greenland_ice_sheet'>Greenland Ice Sheet</color>. What can be done?`,
-                    esp: `El derretimiento de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Capa_de_hielo_de_la_Ant%C3%A1rtida_occidental'> está contribuyendo al aumento del nivel del mar a nivel mundial y continúa acelerándose. El aporte antártico al aumento del nivel medio del mar mundial es actualmente el más importante, superando la contribución de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Dilataci%C3%B3n_t%C3%A9rmica'>dilatación térmica</color>, el retroceso de los glaciares montañosos y el derretimiento de la <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Capa_de_hielo_de_Groenlandia'>capa de hielo de Groenlandia</color>. ¿Qué se puede hacer?`,
-                },
-                wrong_answer: {
-                    eng: `Lobby the Antarctic treaty parties to test a geoengineering solution that delays sea level rise by pumping seawater onto the Antarctic continent to be stored as ice, with power supplied by 850,000 1.5-MW wind turbines?`,
-                    esp: `¿Presionar a las partes del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> para probar una solución de geoingeniería que retrase la subida del nivel del mar bombeando agua de mar al continente antártico para almacenarla como hielo, con la energía suministrada por 850 000 turbinas eólicas de 1,5 MW?`
-                },
-                right_answer: {
-                    eng: `Lobby the UN to adopt a stricter temperature increase target and a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on new <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Fossil_fuel'>fossil fuel</color> explorations?`,
-                    esp: `¿Presionar a la ONU para que adopte un objetivo más estricto para limitar el aumento de la temperatura y una <color=#AAAAFF click="handler" param='https://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-unahttps://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-una-moratoria-a-la-pesca-de-arrastre.html '>moratoria</color> de las nuevas exploraciones de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Combustible_f%C3%B3sil'>combustibles fósiles</color>?`
-                }
-            },
-            {
-                id: 5,
-                quiz: {
-                    eng: `With the increase of tourism to Antarctica, and the construction of eco-hotels in the Antarctic Peninsula, alien plants have spread, threatening the local ecosystem. What can be done?`,
-                    esp: `Con el aumento del turismo hacia la Antártida y la construcción de hoteles <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Combustible_f%C3%B3sil'>ecológicos</color> en la Península Antártica, las plantas exóticas se han extendido, amenazando el ecosistema local. ¿Qué se puede hacer?`,
-                },
-                wrong_answer: {
-                    eng: `Start a social media campaign to ban tourism and non-scientific presence in Antarctica?`,
-                    esp: `¿Empezar una campaña en los medios sociales para prohibir el turismo y la presencia no científica en la Antártida?`
-                },
-                right_answer: {
-                    eng: `Call upon the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty</color> to include a limit on human presence in the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty'>Protocol on Environmental Protection</color>, and enact a systematic surveillance system for alien species?`,
-                    esp: `¿Exhortar al <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> a que incluya un límite a la presencia humana en el <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Protocolo_al_Tratado_Ant%C3%A1rtico_sobre_Protecci%C3%B3n_del_Medio_Ambiente'>Protocolo de Protección Ambiental</color>, y a que promulgue un sistema de vigilancia sistemática de las especies exóticas?`
-                }
-            },
-            {
-                id: 6,
-                quiz: {
-                    eng: `Changes in food availability is endangering the survival of several penguin species, which have to compete with large-scale <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Krill'>krill</color> fishing in the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Peninsula'>Antarctic Peninsula</color>. What can be done?`,
-                    esp: `Los cambios en la disponibilidad de alimentos están poniendo en peligro la supervivencia de varias especies de pingüinos, que tienen que competir con la pesca de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Euphausiacea'>krill</color> a gran escala en <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Pen%C3%ADnsula_Ant%C3%A1rtica'>la Península Antártica</color>. ¿Qué se puede hacer?`,
-                },
-                wrong_answer: {
-                    eng: `Establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Marine_protected_area'>marine protected area</color>?`,
-                    esp: `¿Establecer un <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/%C3%81rea_marina_protegida'>área marina protegida</color>?`
-                },
-                right_answer: {
-                    eng: `Lobby the parties to the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Antarctic_Treaty_System'>Antarctic Treaty</color> to secure Antarctica as a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Nature_reserve'>natural reserve</color> and establish a <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing in the Southern Ocean?`,
-                    esp: `¿Presionar a las partes del <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Tratado_Ant%C3%A1rtico'>Tratado Antártico</color> para asegurar la Antártida como <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Reserva_natural'>reserva natural</color> y establecer una <color=#AAAAFF click="handler" param='https://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-una-moratoria-a-la-pesca-de-arrastre.html'>moratoria</color> de la pesca en el Océano Austral?`
-                }
-            },
-            {
-                id: 7,
-                quiz: {
-                    eng: `Owing to tremendous pressure for food to support the ever-growing world population, <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Bioprospecting'>bioprospecting</color> experiments have identified the possibility to harvest several <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Krill'>krill</color> species in the Southern Ocean. Scientists  fear that high levels of fishing will cause irreparable damage to the whole Antarctic ecosystem, whilst several nations are fighting for the apportionment of the krill population. What can be done?`,
-                    esp: `Debido a la tremenda presión para obtener alimentos para sostener la creciente población mundial, los experimentos de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Bioprospecci%C3%B3n'>bioprospección</color> han identificado la posibilidad de cosechar varias especies de <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Euphausiacea'>kril</color> en el Océano Austral. Los científicos temen que los altos niveles de pesca causen un daño irreparable a todo el ecosistema antártico, mientras que varias naciones luchan por el reparto de la población de krill. ¿Qué se puede hacer?`,
-                },
-                wrong_answer: {
-                    eng: `Establish <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Marine_protected_area'>marine protected areas</color> within the <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Protocol_on_Environmental_Protection_to_the_Antarctic_Treaty'>Protocol on Environmental Protection of the Antarctic Treaty</color>, and apportion the remainder of the Southern Ocean area to countries that most need food supplies?`,
-                    esp: `¿Establecer <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/%C3%81rea_marina_protegida'>áreas marinas protegidas</color> dentro del <color=#AAAAFF click="handler" param='https://www.ats.aq/s/protocol.html'>Protocolo al Tratado Antártico sobre Protección del Medio Ambiente</color>, y repartir el resto de la superficie del Océano Austral entre los países que más necesitan los suministros alimentarios?`
-                },
-                right_answer: {
-                    eng: `Lobby the Antarctic Treaty parties and the UN to adopt an <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Ecosystem-based_management'>ecosystem-based approach</color> to the conservation of krill in the Southern Ocean, including a possible <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing?`,
-                    esp: `¿Presionar a las partes del Tratado Antártico y a las Naciones Unidas para que adopten un enfoque basado en el <color=#AAAAFF click="handler" param='https://es.wikipedia.org/wiki/Ecosistema'>ecosistema</color> para la conservación del krill en el Océano Austral, incluyendo una posible <color=#AAAAFF click="handler" param='https://www.lavanguardia.com/vida/20041126/51262801243/la-uicn-pide-una-moratoria-a-la-pesca-de-arrastre.html'>moratoria</color> de la pesca?`
-                }
-            },
-            {
-                id: 8,
-                quiz: {
-                    eng: `It’s time to spread awareness about environmental damage to the Antarctic region. What can be done?`,
-                    esp: `Se debe aumentar el nivel de concienciación sobre el daño ambiental en la región antártica. ¿Qué se puede hacer?`,
-                },
-                wrong_answer: {
-                    eng: `Hope Antarctica  will take care of itself?`,
-                    esp: `¿Esperar que Antártida se cuide sola?`
-                },
-                right_answer: {
-                    eng: `Lobby the Antarctic Treaty parties and the UN to adopt an <color=#AAAAFF click="handler" param='https://antarctic-cities.org/ayc/'>Antarctic Youth Coalition</color> to the conservation of krill in the Southern Ocean, including a possible <color=#AAAAFF click="handler" param='https://en.wikipedia.org/wiki/Moratorium_(law)'>moratorium</color> on fishing?`,
-                    esp: `¿Entrar en contacto con la <color=#AAAAFF click="handler" param='https://antarctic-cities.org/ayc/'>Coalición Juvenil Antártica</color> y hablar sobre ideas para concientizar a la población en tu zona?`
-                }
-            }
-
-        ];
+    
+    
 }
 

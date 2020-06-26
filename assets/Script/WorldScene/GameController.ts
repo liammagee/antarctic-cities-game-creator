@@ -270,20 +270,20 @@ export default class GameController extends cc.Component {
         let btn1 = layerGameOver.getChildByName("btn1").getComponent(cc.Button);
 
         // Title
-        lblTitle.string = world.res.lang.game_over_heading[cc.sys.localStorage.language];
+        lblTitle.string = world.res.LANG.game_over_heading[cc.sys.localStorage.language];
 
         // Narrative
-        let sh = world.res.lang.game_over_story_heading[cc.sys.localStorage.language];
+        let sh = world.res.LANG.game_over_story_heading[cc.sys.localStorage.language];
         lblStoryHeading.string = `${sh} ${world.gameState.currentDate.getFullYear()}...`;
         if (world.gameState.totalLoss < 20) {
 
-            let sm = world.res.lang.game_over_hint_loss[cc.sys.localStorage.language];
+            let sm = world.res.LANG.game_over_hint_loss[cc.sys.localStorage.language];
             message += `\n\n<color=#99cc66>${sm}</color>`;
 
         }
         else {
 
-            let sm = world.res.lang.game_over_hint_win[cc.sys.localStorage.language];
+            let sm = world.res.LANG.game_over_hint_win[cc.sys.localStorage.language];
             message += `\n\n<color=#99cc66>${sm}</color>`;
 
         }
@@ -299,10 +299,10 @@ export default class GameController extends cc.Component {
         world.res.RESOURCES.cultural.policyOptions.map((opt)    => { policyIds[opt.id] = opt.eng.text; });
         world.res.RESOURCES.ecology.policyOptions.map((opt)     => { policyIds[opt.id] = opt.eng.text; });
         let policyString = Object.entries(world.gameState.policies).map((entry) => { return `<i>${policyIds[entry[0]]}</i> <b>(${entry[1]})</b>`;  }).join(', ');
-        policyString = policyString.length === 0 ? world.res.lang.game_over_no_policies[cc.sys.localStorage.language] : policyString; 
-        policyString = world.res.lang.game_over_policy_list[cc.sys.localStorage.language] + ' ' + policyString;
+        policyString = policyString.length === 0 ? world.res.LANG.game_over_no_policies[cc.sys.localStorage.language] : policyString; 
+        policyString = world.res.LANG.game_over_policy_list[cc.sys.localStorage.language] + ' ' + policyString;
         let statsString = policyString;
-        statsString += `\n\n` + world.res.lang.game_over_world_experienced[cc.sys.localStorage.language] + world.gameState.crisisCount + world.res.lang.game_over_crises[cc.sys.localStorage.language];
+        statsString += `\n\n` + world.res.LANG.game_over_world_experienced[cc.sys.localStorage.language] + world.gameState.crisisCount + world.res.LANG.game_over_crises[cc.sys.localStorage.language];
 
         let y1 = 0, y2 = 0, ml = 0, mp = 0;
         Object.entries(world.gameState.stats).forEach((a) => {
@@ -538,13 +538,13 @@ export default class GameController extends cc.Component {
         let layout = scene.getChildByName('Canvas').getChildByName('layout');
         let bottomBar = layout.getChildByName('bottomBar');
 
-        bottomBar.getChildByName('btnDesignPolicy').getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = world.res.lang.commands_policy[cc.sys.localStorage.language];
-        bottomBar.getChildByName('lblLossLabel').getComponent(cc.Label).string = world.res.lang.commands_loss[cc.sys.localStorage.language];
-        bottomBar.getChildByName('lblPreparednessLabel').getComponent(cc.Label).string = world.res.lang.commands_prepared[cc.sys.localStorage.language];
-        bottomBar.getChildByName('btnStats').getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = world.res.lang.commands_stats[cc.sys.localStorage.language];
+        bottomBar.getChildByName('btnDesignPolicy').getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = world.res.LANG.commands_policy[cc.sys.localStorage.language];
+        bottomBar.getChildByName('lblLossLabel').getComponent(cc.Label).string = world.res.LANG.commands_loss[cc.sys.localStorage.language];
+        bottomBar.getChildByName('lblPreparednessLabel').getComponent(cc.Label).string = world.res.LANG.commands_prepared[cc.sys.localStorage.language];
+        bottomBar.getChildByName('btnStats').getChildByName('Background').getChildByName('Label').getComponent(cc.Label).string = world.res.LANG.commands_stats[cc.sys.localStorage.language];
 
-        world.gameState.messagesNegative = world.res.scenarioData[cc.sys.localStorage.language].messages.negative;
-        world.gameState.messagesPositive = world.res.scenarioData[cc.sys.localStorage.language].messages.positive;
+        world.gameState.messagesNegative = world.res.SCENARIO_DATA[cc.sys.localStorage.language].messages.negative;
+        world.gameState.messagesPositive = world.res.SCENARIO_DATA[cc.sys.localStorage.language].messages.positive;
         world.gameState.messageOverride = null;
 
         controller.initPolicyDesign();
@@ -981,7 +981,7 @@ export default class GameController extends cc.Component {
             prevButton = btn;
 
             policyLabel.opacity = 0;
-            const policyGeneralLabel = world.res.lang.policy_platform_hint[cc.sys.localStorage.language];
+            const policyGeneralLabel = world.res.LANG.policy_platform_hint[cc.sys.localStorage.language];
             policyDescription.getComponent(cc.Label).string = policyGeneralLabel;
             policyCostLabel.opacity = 0;
             btnPolicyInvest.opacity = 0;
@@ -1053,24 +1053,24 @@ export default class GameController extends cc.Component {
             }
 
             let newCost = world.costCalculation(policySelected);
-            policyCostLabel.getComponent(cc.Label).string = (world.res.lang.policy_platform_cost[cc.sys.localStorage.language] + newCost.toString());
+            policyCostLabel.getComponent(cc.Label).string = (world.res.LANG.policy_platform_cost[cc.sys.localStorage.language] + newCost.toString());
 
             if (world.gameState.policies[policySelected.id] == 3) {
 
                 btnPolicyInvest.getComponent(cc.Button).interactable = false;
-                btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = (world.res.lang.policy_platform_completed[cc.sys.localStorage.language]);
+                btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = (world.res.LANG.policy_platform_completed[cc.sys.localStorage.language]);
 
             }
             else if (newCost <= world.gameState.resources) {
 
                 btnPolicyInvest.getComponent(cc.Button).interactable = true;
-                btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = (world.res.lang.policy_platform_invest[cc.sys.localStorage.language]);
+                btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = (world.res.LANG.policy_platform_invest[cc.sys.localStorage.language]);
 
             }
             else {
 
                 btnPolicyInvest.getComponent(cc.Button).interactable = false;
-                btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = (world.res.lang.policy_platform_more_resources[cc.sys.localStorage.language]);
+                btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = (world.res.LANG.policy_platform_more_resources[cc.sys.localStorage.language]);
 
             }
 
@@ -1137,25 +1137,25 @@ export default class GameController extends cc.Component {
                     policyDescription.getComponent(cc.Label).string = (opt[cc.sys.localStorage.language].description);
 
                     const cost = world.costCalculation(opt);
-                    policyCostLabel.getComponent(cc.Label).string = world.res.lang.policy_platform_cost[cc.sys.localStorage.language] + cost.toString();
+                    policyCostLabel.getComponent(cc.Label).string = world.res.LANG.policy_platform_cost[cc.sys.localStorage.language] + cost.toString();
                     btnPolicyInvest.attr({ 'policy': opt });
 
                     if (world.gameState.policies[opt.id] == 3) {
 
                         btnPolicyInvest.getComponent(cc.Button).interactable = false;
-                        btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = world.res.lang.policy_platform_completed[cc.sys.localStorage.language];
+                        btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = world.res.LANG.policy_platform_completed[cc.sys.localStorage.language];
 
                     }
                     else if (cost <= world.gameState.resources) {
 
                         btnPolicyInvest.getComponent(cc.Button).interactable = true;
-                        btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = world.res.lang.policy_platform_invest[cc.sys.localStorage.language];
+                        btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = world.res.LANG.policy_platform_invest[cc.sys.localStorage.language];
 
                     }
                     else {
 
                         btnPolicyInvest.getComponent(cc.Button).interactable = false;
-                        btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = world.res.lang.policy_platform_more_resources[cc.sys.localStorage.language];
+                        btnPolicyInvest.getChildByName("Background").getChildByName("Label").getComponent(cc.Label).string = world.res.LANG.policy_platform_more_resources[cc.sys.localStorage.language];
 
                     }
 
@@ -1287,7 +1287,7 @@ export default class GameController extends cc.Component {
         policyLabel.opacity = 0;
         policyLabel.getComponent(cc.Label).string = "<< Select";
         policyDescription.opacity = 255;
-        const policyGeneralLabel = world.res.lang.policy_platform_hint[cc.sys.localStorage.language];
+        const policyGeneralLabel = world.res.LANG.policy_platform_hint[cc.sys.localStorage.language];
         policyDescription.getComponent(cc.Label).string = policyGeneralLabel;
         policyCostLabel.opacity = 0;
         btnPolicyInvest.getComponent(cc.Button).interactable = true;
@@ -1379,12 +1379,12 @@ export default class GameController extends cc.Component {
         let page3 = stats.getChildByName("pageview").getChildByName("view").getChildByName("content").getChildByName("page_3");
 
         // World
-        page1.getChildByName("lblYear").getComponent(cc.Label).string = world.res.lang.stats_year[cc.sys.localStorage.language] + world.gameState.currentDate.getFullYear();
-        page1.getChildByName("lblYearMessage").getComponent(cc.Label).string = world.res.lang.stats_year_message_a[cc.sys.localStorage.language] + (world.gameState.targetDate.getFullYear() - world.gameState.currentDate.getFullYear()) + world.res.lang.stats_year_message_b[cc.sys.localStorage.language];
-        page1.getChildByName("lblLoss").getComponent(cc.Label).string = world.res.lang.stats_loss[cc.sys.localStorage.language];
-        page1.getChildByName("lblLossMessage").getComponent(cc.Label).string = world.res.lang.stats_loss_message_a[cc.sys.localStorage.language] + world.gameState.startDate.getFullYear() + world.res.lang.stats_loss_message_b[cc.sys.localStorage.language] + this.makeString(world.gameState.totalLoss) + ".";
-        page1.getChildByName("lblPreparedness").getComponent(cc.Label).string = world.res.lang.stats_preparedness[cc.sys.localStorage.language] + this.makeString(world.gameState.populationPreparedPercent) + " / " + Math.round(world.gameState.populationPrepared / 1000000) + "M";
-        let pd = world.res.lang.stats_preparedness_message_a[cc.sys.localStorage.language] + this.makeString(world.gameState.populationPreparedPercent) + world.res.lang.stats_preparedness_message_b[cc.sys.localStorage.language];
+        page1.getChildByName("lblYear").getComponent(cc.Label).string = world.res.LANG.stats_year[cc.sys.localStorage.language] + world.gameState.currentDate.getFullYear();
+        page1.getChildByName("lblYearMessage").getComponent(cc.Label).string = world.res.LANG.stats_year_message_a[cc.sys.localStorage.language] + (world.gameState.targetDate.getFullYear() - world.gameState.currentDate.getFullYear()) + world.res.LANG.stats_year_message_b[cc.sys.localStorage.language];
+        page1.getChildByName("lblLoss").getComponent(cc.Label).string = world.res.LANG.stats_loss[cc.sys.localStorage.language];
+        page1.getChildByName("lblLossMessage").getComponent(cc.Label).string = world.res.LANG.stats_loss_message_a[cc.sys.localStorage.language] + world.gameState.startDate.getFullYear() + world.res.LANG.stats_loss_message_b[cc.sys.localStorage.language] + this.makeString(world.gameState.totalLoss) + ".";
+        page1.getChildByName("lblPreparedness").getComponent(cc.Label).string = world.res.LANG.stats_preparedness[cc.sys.localStorage.language] + this.makeString(world.gameState.populationPreparedPercent) + " / " + Math.round(world.gameState.populationPrepared / 1000000) + "M";
+        let pd = world.res.LANG.stats_preparedness_message_a[cc.sys.localStorage.language] + this.makeString(world.gameState.populationPreparedPercent) + world.res.LANG.stats_preparedness_message_b[cc.sys.localStorage.language];
         page1.getChildByName("lblPreparednessMessage").getComponent(cc.Label).string = pd;
 
         // Countries
@@ -1627,8 +1627,8 @@ export default class GameController extends cc.Component {
             world.gameState.alertCrisis = true;
 
             controller.showMessageBox(world,
-                world.res.lang.crisis_title[cc.sys.localStorage.language],
-                world.res.lang.crisis_message[cc.sys.localStorage.language] + crisis[cc.sys.localStorage.language] + "!", "OK!", function () {
+                world.res.LANG.crisis_title[cc.sys.localStorage.language],
+                world.res.LANG.crisis_message[cc.sys.localStorage.language] + crisis[cc.sys.localStorage.language] + "!", "OK!", function () {
 
                     world.gameState.state = world.res.GAME_STATES.STARTED;
 
@@ -1641,8 +1641,8 @@ export default class GameController extends cc.Component {
             if (Math.random() < world.res.QUIZ_CHANCE) {
 
                 // Show quiz
-                let qindex = Math.floor(Math.random() * world.res.quizzes.length);
-                let qi = world.res.quizzes[qindex];
+                let qindex = Math.floor(Math.random() * world.res.QUIZZES.length);
+                let qi = world.res.QUIZZES[qindex];
 
                 // Prevent the same quiz question being asked twice
                 if (world.gameState.quizzes.indexOf(qindex) > -1)
@@ -1653,7 +1653,7 @@ export default class GameController extends cc.Component {
                 let quiz = qi.quiz[cc.sys.localStorage.language];
                 let wrong_answer = qi.wrong_answer[cc.sys.localStorage.language];
                 let right_answer = qi.right_answer[cc.sys.localStorage.language];
-                let title = world.res.lang.crisis_alert[cc.sys.localStorage.language];
+                let title = world.res.LANG.crisis_alert[cc.sys.localStorage.language];
 
                 controller.showQuizBox(world, title, quiz, wrong_answer, right_answer);
 
@@ -1715,7 +1715,7 @@ export default class GameController extends cc.Component {
         let controller = this.controller;
         let world = this.world;
 
-        controller.countryLabel.string = (world.res.lang.world_label[cc.sys.localStorage.language]);
+        controller.countryLabel.string = (world.res.LANG.world_label[cc.sys.localStorage.language]);
 
         const lossPercent = Math.round(world.gameState.totalLoss);
         const preparedPercent = Math.round(world.gameState.populationPreparedPercent);
@@ -1822,52 +1822,52 @@ export default class GameController extends cc.Component {
 
         switch (policyIndex) {
             case 0:
-                icon = world.res.res.resource_economy_1;
+                icon = world.res.RESOURCE_ICONS.resource_economy_1;
                 break;
             case 1:
-                icon = world.res.res.resource_economy_2;
+                icon = world.res.RESOURCE_ICONS.resource_economy_2;
                 break;
             case 2:
-                icon = world.res.res.resource_economy_3;
+                icon = world.res.RESOURCE_ICONS.resource_economy_3;
                 break;
             case 3:
-                icon = world.res.res.resource_economy_4;
+                icon = world.res.RESOURCE_ICONS.resource_economy_4;
                 break;
             case 4:
-                icon = world.res.res.resource_politics_1;;
+                icon = world.res.RESOURCE_ICONS.resource_politics_1;;
                 break;
             case 5:
-                icon = world.res.res.resource_politics_2;;
+                icon = world.res.RESOURCE_ICONS.resource_politics_2;;
                 break;
             case 6:
-                icon = world.res.res.resource_politics_3;;
+                icon = world.res.RESOURCE_ICONS.resource_politics_3;;
                 break;
             case 7:
-                icon = world.res.res.resource_politics_4;;
+                icon = world.res.RESOURCE_ICONS.resource_politics_4;;
                 break;
             case 8:
-                icon = world.res.res.resource_culture_1;;
+                icon = world.res.RESOURCE_ICONS.resource_culture_1;;
                 break;
             case 9:
-                icon = world.res.res.resource_culture_2;;
+                icon = world.res.RESOURCE_ICONS.resource_culture_2;;
                 break;
             case 10:
-                icon = world.res.res.resource_culture_3;;
+                icon = world.res.RESOURCE_ICONS.resource_culture_3;;
                 break;
             case 11:
-                icon = world.res.res.resource_culture_4;;
+                icon = world.res.RESOURCE_ICONS.resource_culture_4;;
                 break;
             case 12:
-                icon = world.res.res.resource_ecology_1;;
+                icon = world.res.RESOURCE_ICONS.resource_ecology_1;;
                 break;
             case 13:
-                icon = world.res.res.resource_ecology_2;;
+                icon = world.res.RESOURCE_ICONS.resource_ecology_2;;
                 break;
             case 14:
-                icon = world.res.res.resource_ecology_3;;
+                icon = world.res.RESOURCE_ICONS.resource_ecology_3;;
                 break;
             case 15:
-                icon = world.res.res.resource_ecology_4;;
+                icon = world.res.RESOURCE_ICONS.resource_ecology_4;;
                 break;
         }
 
@@ -1968,17 +1968,17 @@ export default class GameController extends cc.Component {
         btnCrisis.on(cc.Node.EventType.TOUCH_END, controller.processCrisisSelection, this);
 
         // After the third crisis, add notifications to the news feed
-        let message = world.res.lang.crisis_prefix[cc.sys.localStorage.language] +
+        let message = world.res.LANG.crisis_prefix[cc.sys.localStorage.language] +
             crisis[cc.sys.localStorage.language] +
-            world.res.lang.crisis_suffix[cc.sys.localStorage.language] +
+            world.res.LANG.crisis_suffix[cc.sys.localStorage.language] +
             country.name + ".";
 
         if (world.gameState.crisisCount < 4) {
 
             world.gameState.state = world.res.GAME_STATES.PAUSED;
-            message += world.res.lang.crisis_explanation[cc.sys.localStorage.language];
+            message += world.res.LANG.crisis_explanation[cc.sys.localStorage.language];
 
-            controller.showMessageBox(world, world.res.lang.crisis_alert[cc.sys.localStorage.language], message, "OK!", (that) => {
+            controller.showMessageBox(world, world.res.LANG.crisis_alert[cc.sys.localStorage.language], message, "OK!", (that) => {
 
                 if (world.gameState.tutorialMode)
                     world.gameState.state = world.res.GAME_STATES.PAUSED_TUTORIAL;
@@ -2213,9 +2213,9 @@ export default class GameController extends cc.Component {
 
         // Load policy icons
         controller.policyIcons = [];
-        Object.keys(world.res.res).forEach(function (r) {
+        Object.keys(world.res.RESOURCE_ICONS).forEach(function (r) {
 
-            let resUrl = world.res.res[r];
+            let resUrl = world.res.RESOURCE_ICONS[r];
             cc.loader.loadRes(resUrl, cc.SpriteFrame, function (err, asset) {
 
                 controller.policyIcons.push(asset);
@@ -2328,9 +2328,9 @@ export default class GameController extends cc.Component {
                 let startCountry = antCountries[Math.floor(Math.random() * antCountries.length)];
 
                 controller.showMessageBox(world,
-                    world.res.scenarioData[cc.sys.localStorage.language].popup_1_title,
-                    world.res.scenarioData[cc.sys.localStorage.language].popup_1_description,
-                    world.res.lang.start_tutorial[cc.sys.localStorage.language], (that) => {
+                    world.res.SCENARIO_DATA[cc.sys.localStorage.language].popup_1_title,
+                    world.res.SCENARIO_DATA[cc.sys.localStorage.language].popup_1_description,
+                    world.res.LANG.start_tutorial[cc.sys.localStorage.language], (that) => {
 
                         world.gameState.tutorialMode = true;
                         world.gameState.startCountry = startCountry;
@@ -2340,11 +2340,11 @@ export default class GameController extends cc.Component {
                         const countryName = world.countries[world.gameState.startCountry].name;
 
                         controller.showMessageBox(world,
-                            world.res.lang.start_prepare[cc.sys.localStorage.language],
-                            world.res.lang.start_mission_a[cc.sys.localStorage.language] +
+                            world.res.LANG.start_prepare[cc.sys.localStorage.language],
+                            world.res.LANG.start_mission_a[cc.sys.localStorage.language] +
                             countryName +
-                            world.res.lang.start_mission_b[cc.sys.localStorage.language],
-                            world.res.scenarioData[cc.sys.localStorage.language].popup_2_title,
+                            world.res.LANG.start_mission_b[cc.sys.localStorage.language],
+                            world.res.SCENARIO_DATA[cc.sys.localStorage.language].popup_2_title,
                             (that) => {
 
                                 beginSim();
@@ -2353,7 +2353,7 @@ export default class GameController extends cc.Component {
 
                     },
 
-                    world.res.lang.start_tutorial_skip[cc.sys.localStorage.language], (that) => {
+                    world.res.LANG.start_tutorial_skip[cc.sys.localStorage.language], (that) => {
 
                         world.gameState.tutorialMode = false;
                         world.gameState.startCountry = startCountry;
@@ -2363,11 +2363,11 @@ export default class GameController extends cc.Component {
                         const countryName = world.countries[world.gameState.startCountry].name;
 
                         controller.showMessageBox(world,
-                            world.res.lang.start_prepare[cc.sys.localStorage.language],
-                            world.res.lang.start_mission_a[cc.sys.localStorage.language] +
+                            world.res.LANG.start_prepare[cc.sys.localStorage.language],
+                            world.res.LANG.start_mission_a[cc.sys.localStorage.language] +
                             countryName +
-                            world.res.lang.start_mission_b[cc.sys.localStorage.language],
-                            world.res.scenarioData[cc.sys.localStorage.language].popup_2_title,
+                            world.res.LANG.start_mission_b[cc.sys.localStorage.language],
+                            world.res.SCENARIO_DATA[cc.sys.localStorage.language].popup_2_title,
                             (that) => {
 
                                 beginSim();
@@ -2469,7 +2469,7 @@ export default class GameController extends cc.Component {
                 world.gameState.state = world.res.GAME_STATES.PAUSED;
                 const currentYear = world.gameState.currentDate.getFullYear();
                 controller.showMessageBox(world,
-                    world.res.lang.bulletin[cc.sys.localStorage.language] + currentYear,
+                    world.res.LANG.bulletin[cc.sys.localStorage.language] + currentYear,
                     message, "OK", function () {
                         world.gameState.state = world.res.GAME_STATES.STARTED;
                     }, undefined, undefined);
