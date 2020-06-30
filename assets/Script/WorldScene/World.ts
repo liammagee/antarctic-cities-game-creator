@@ -751,8 +751,9 @@ export class World {
 
         if (lossNew > 100)
             lossNew = 100;
-        if (lossNew < 0)
-            lossNew = 0;
+        // Must stay above zero
+        if (lossNew < 0.1)
+            lossNew = 0.1;
     
     
         return lossNew;

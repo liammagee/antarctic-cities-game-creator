@@ -300,7 +300,7 @@ export default class GameController extends cc.Component {
         world.res.RESOURCES.ecology.policyOptions.map((opt)     => { policyIds[opt.id] = opt.eng.text; });
         let policyString = Object.entries(world.gameState.policies).map((entry) => { return `<i>${policyIds[entry[0]]}</i> <b>(${entry[1]})</b>`;  }).join(', ');
         policyString = policyString.length === 0 ? world.res.LANG.game_over_no_policies[cc.sys.localStorage.language] : policyString; 
-        policyString = world.res.LANG.game_over_policy_list[cc.sys.localStorage.language] + ' ' + policyString;
+        policyString = world.res.LANG.game_over_policy_list[cc.sys.localStorage.language] + ' ' + policyString + '.';
         let statsString = policyString;
         statsString += `\n\n` + world.res.LANG.game_over_world_experienced[cc.sys.localStorage.language] + world.gameState.crisisCount + world.res.LANG.game_over_crises[cc.sys.localStorage.language];
 
@@ -1556,7 +1556,7 @@ export default class GameController extends cc.Component {
         lblPolicyScore.font = controller.titleFont;
         lblPolicyScore.fontSize = 28;
         lblPolicyScoreNode.color = colorP;
-        lblPolicyScoreNode.setPosition(4 + graphX + x, graphY + yP);
+        lblPolicyScoreNode.setPosition(44 + graphX + x, graphY + yP);
         lblPolicyScoreNode.setAnchorPoint(0, 0.5);
         lblPolicyScoreNode.parent = drawNode;
         lblPolicyScoreNode.zIndex = 106;
