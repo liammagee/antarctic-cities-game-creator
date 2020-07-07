@@ -1,0 +1,31 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "TweetAnimation",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 24,
+  "sample": 30,
+  "speed": 1,
+  "wrapMode": 2,
+  "curveData": {
+    "props": {
+      "x": [
+        {
+          "frame": 0,
+          "value": 800
+        },
+        {
+          "frame": 24,
+          "value": -800
+        }
+      ]
+    }
+  },
+  "events": [
+    {
+      "frame": 23.933333333333334,
+      "func": "tweetRendered",
+      "params": []
+    }
+  ]
+}

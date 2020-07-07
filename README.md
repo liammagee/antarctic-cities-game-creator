@@ -194,15 +194,22 @@ Copy the generated tile map and other files to the resources folder:
 
 ## Acknowledgements
 
-*Antarctic Futures* is developed as part of an Australian Research Council (ARC) project, "Antarctic Cities and the Global Commons: Rethinking the Gateways" (LP160100210). The authors acknowledge the generous support of the ARC and project partners to make the game possible.
+*Antarctic Futures* is developed by:
+
+- [Liam Magee](https://github.com/liammagee)
+- [Andrea Pollio](https://github.com/atwpollio)
+- [Marina Khan](https://github.com/mkkhanzadi)
+
+It is part of an Australian Research Council (ARC) project, "Antarctic Cities and the Global Commons: Rethinking the Gateways" (LP160100210). The authors acknowledge the generous support of the ARC and [project partners](https://antarctic-cities.org/the-partners/) to make the game possible.
 
 In addition, we thank the following contributors:
 
-- Dr Sebastián Martin Valdez for supplying Spanish language translations.
+- Silvia Martinez and Sebastián Martin Valdez for supplying Spanish language translations.
 - The *Antarctic Cities* research team for their support, feedback and encouragement (see <https://antarctic-cities.org/the-partners/> for the project team).
 - Co-researchers in Hobart, Christchurch, Punta Arenas, Ushuaia and Cape Town, who generously gave their time and ideas through a series of game workshops between 2017 and 2019.
 - Daniel Birch, for the composition [Environmental Disaster Zone](https://freemusicarchive.org/music/Daniel_Birch/MUSIC_FOR_TV_FILM__GAMES_VOL3/Environmental_Disaster_Zone). The composition is credited as follows:
 
-*Environmental Disaster Zone* by Daniel Birch (<www.danielbirchmusic.com>)
-Licensed under Creative Commons: By [Attribution-NonCommercial 4.0 International
-(CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/)
+    *Environmental Disaster Zone* by Daniel Birch (<www.danielbirchmusic.com>)
+    Licensed under Creative Commons: By [Attribution-NonCommercial 4.0 International
+    (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/)
+
