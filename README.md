@@ -14,6 +14,7 @@ This repository contains the source code and associated assets for the game. It 
 - [Liam Magee](https://github.com/liammagee)
 - [Andrea Pollio](https://github.com/atwpollio)
 - [Marina Khan](https://github.com/mkkhanzadi)
+- [Juan Francisco Salazar](https://www.westernsydney.edu.au/ics/people/school_based_researchers/juan_francisco_salazar_sutil)
 
 It is part of an Australian Research Council (ARC) project, "Antarctic Cities and the Global Commons: Rethinking the Gateways" (LP160100210). The authors acknowledge the generous support of the ARC and [project partners](https://antarctic-cities.org/the-partners/) to make the game possible.
 
